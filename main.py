@@ -1,5 +1,7 @@
+from env import SnakeEnv
 
-print("Hello")
-env = SnakeEnv(300, 300)
+
+env = SnakeEnv(600, 600)
 env.reset()
 
+env.step(1)
