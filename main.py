@@ -6,7 +6,7 @@ env = SnakeEnv(600, 600)
 env.reset()
 
 
-for n in range(10):
+for n in range(1):
     env.step(1)
    
 

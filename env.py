@@ -34,11 +34,13 @@ class SnakeEnv:
 
         self.snake.move(direction)
        
-        self.wn.update()
+        
 
         if self.__touch_food():
             self.points += 1
             self.__generate_food()
+
+        self.wn.update()
 
     
 
