@@ -5,6 +5,7 @@ import turtle
 import random
 from snake import Snake
 from food import Food
+import numpy as np
 
 
 class SnakeEnv:
@@ -32,15 +33,26 @@ class SnakeEnv:
         
         direction = self.actions[action]
 
-        self.snake.move(direction)
-       
-        
+        reward = 0
+        done = False
+        state = np.zeros(6, dtype=np.float32)
+        print(direction)
 
-        if self.__touch_food():
+        ## Move the snake in the desired direction and check whether it touches food
+        self.snake.move(direction)
+
+        if self.__touch_wall() or self.__touch_snake():
+            reward = -1
+            done = True
+       
+        elif self.__touch_food():
             self.points += 1
+            reward = 1
             self.__generate_food()
 
         self.wn.update()
+
+        return (state, reward, done)
 
     
 
@@ -57,7 +69,14 @@ class SnakeEnv:
 
 
     def __touch_food(self):
-        if self.snake.food_distance(self.current_food) < 20:
+        if self.snake.food_distance(self.current_food) < 20.0:
             return True
+        return False
+
+    
+    def __touch_wall(self):
+        return False
+
+    def __touch_snake(self):
         return False
 

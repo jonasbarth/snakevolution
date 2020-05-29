@@ -1,13 +1,13 @@
 from env import SnakeEnv
 import time
+from human_agent import Human_Agent
 
 
 env = SnakeEnv(600, 600)
-env.reset()
 
+agent = HumanAgent(env)
 
-for n in range(1):
-    env.step(1)
+agent.play()
    
 
 
