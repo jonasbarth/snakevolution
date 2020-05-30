@@ -13,6 +13,12 @@ env.snake.add_tail()
 env.step(1)
 env.snake.add_tail()
 env.step(1)
+env.snake.add_tail()
+env.step(1)
+env.snake.add_tail()
+env.step(1)
+
+
 
 
 env.wn.mainloop()
