@@ -36,10 +36,11 @@ class SnakeEnv:
         reward = 0
         done = False
         state = np.zeros(6, dtype=np.float32)
-        print(direction)
 
         ## Move the snake in the desired direction and check whether it touches food
         self.snake.move(direction)
+
+        print(self.__touch_wall())
 
         if self.__touch_wall() or self.__touch_snake():
             reward = -1
@@ -48,6 +49,7 @@ class SnakeEnv:
         elif self.__touch_food():
             self.points += 1
             reward = 1
+            self.snake.add_tail()
             self.__generate_food()
 
         self.wn.update()
@@ -75,6 +77,19 @@ class SnakeEnv:
 
     
     def __touch_wall(self):
+        x, y = self.snake.head.xcor(), self.snake.head.ycor()
+
+        x_start = (-1) * self.screen_width / 2
+        x_end = self.screen_width / 2
+        y_start = (-1) * self.screen_height / 2
+        y_end = self.screen_height / 2
+
+        if x <= x_start or x >= x_end:
+            return True
+
+        if y <= y_start or y >= y_end:
+            return True
+
         return False
 
     def __touch_snake(self):
