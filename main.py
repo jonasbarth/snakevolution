@@ -20,6 +20,11 @@ env.snake.add_tail()
 env.step(1)
 env.snake.add_tail()
 env.step(1)
+env.snake.add_tail()
+env.step(1)
+env.snake.add_tail()
+env.step(1)
+env.snake.add_tail()
 
 for n in range(20):
     state, reward, done = env.step(1)

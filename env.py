@@ -6,6 +6,8 @@ import random
 from snake import Snake
 from food import Food
 import numpy as np
+import scipy.spatial.distance as distance
+
 
 
 class SnakeEnv:
@@ -40,7 +42,7 @@ class SnakeEnv:
         ## Move the snake in the desired direction and check whether it touches food
         self.snake.move(direction)
 
-        print(self.__touch_wall())
+        print(self.__touch_wall(), self.__touch_snake())
 
         if self.__touch_wall() or self.__touch_snake():
             reward = -1
@@ -93,5 +95,17 @@ class SnakeEnv:
         return False
 
     def __touch_snake(self):
+
+        head_x = self.snake.head.xcor()
+        head_y = self.snake.head.ycor()
+
+        for tail in self.snake.tail[1:]:
+            tail_x = tail.head.xcor()
+            tail_y = tail.head.ycor()
+
+            if distance.euclidean(np.array([head_x, head_y]), np.array([tail_x, tail_y])) < 20:
+                return True
+
+
         return False
 
