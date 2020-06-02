@@ -7,6 +7,7 @@ from snake import Snake
 from food import Food
 import numpy as np
 import scipy.spatial.distance as distance
+import math
 
 
 
@@ -28,7 +29,7 @@ class SnakeEnv:
         self.wn.bgcolor("white")
         self.wn.setup(width=self.screen_width, height=self.screen_height)
         self.__generate_food()
-        #self.wn.tracer(0)
+        
 
       
     def step(self, action):
@@ -41,8 +42,6 @@ class SnakeEnv:
 
         ## Move the snake in the desired direction and check whether it touches food
         self.snake.move(direction)
-
-        print(self.__touch_wall(), self.__touch_snake())
 
         if self.__touch_wall() or self.__touch_snake():
             reward = -1
@@ -108,4 +107,55 @@ class SnakeEnv:
 
 
         return False
+
+    
+    def __wall_dist_up(self):
+        snake_x, snake_y, = self.snake.head.pos()
+
+        wall_x = snake_x
+        wall_y = self.screen_height / 2
+            
+        return distance.cityblock(np.array([snake_x, snake_y]), np.array([wall_x, wall_y]))
+
+
+    def __wall_dist_down(self):
+        snake_x, snake_y, = self.snake.head.pos()
+        wall_x = snake_x
+        wall_y = (-1) * self.screen.height / 2
+
+        return distance.cityblock(np.array([snake_x, snake_y]), np.array([wall_x, wall_y]))
+
+    def __wall_dist_left(self):
+        snake_x, snake_y, = self.snake.head.pos()
+        wall_y = snake_y
+        wall_x = (-1) * self.screen.width / 2
+
+        return distance.cityblock(np.array([snake_x, snake_y]), np.array([wall_x, wall_y]))
+
+    def __wall_dist_right(self):
+        snake_x, snake_y, = self.snake.head.pos()
+        wall_y = snake_y
+        wall_x = self.screen.width / 2
+
+        return distance.cityblock(np.array([snake_x, snake_y]), np.array([wall_x, wall_y]))
+
+    def __wall_dist_up_right(self):
+        snake_x, snake_y = self.snake.head.pos()
+        opposite_x = snake_x
+        opposite_y = self.screen_height / 2
+
+        opposite = distance.euclidean(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
+
+        adjacent = opposite / math.tan(45)
+
+
+
+    def __wall_dist_down_right(self):
+        pass
+
+    def __wall_dist_up_left(self):
+        pass
+
+    def __wall_dist_down_left(self):
+        pass
 
