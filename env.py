@@ -21,6 +21,7 @@ class SnakeEnv:
         self.snake = Snake()
         self.actions = {0: "up", 1: "right", 2: "down", 3: "left"}
         self.points = 0
+        self.theta = 45
         
         
 
@@ -39,7 +40,7 @@ class SnakeEnv:
         reward = 0
         done = False
         state = np.zeros(6, dtype=np.float32)
-
+        self.print_lidar()
         ## Move the snake in the desired direction and check whether it touches food
         self.snake.move(direction)
 
@@ -121,41 +122,76 @@ class SnakeEnv:
     def __wall_dist_down(self):
         snake_x, snake_y, = self.snake.head.pos()
         wall_x = snake_x
-        wall_y = (-1) * self.screen.height / 2
+        wall_y = (-1) * self.screen_height / 2
 
         return distance.cityblock(np.array([snake_x, snake_y]), np.array([wall_x, wall_y]))
 
     def __wall_dist_left(self):
         snake_x, snake_y, = self.snake.head.pos()
         wall_y = snake_y
-        wall_x = (-1) * self.screen.width / 2
+        wall_x = (-1) * self.screen_width / 2
 
         return distance.cityblock(np.array([snake_x, snake_y]), np.array([wall_x, wall_y]))
 
     def __wall_dist_right(self):
         snake_x, snake_y, = self.snake.head.pos()
         wall_y = snake_y
-        wall_x = self.screen.width / 2
+        wall_x = self.screen_width / 2
 
         return distance.cityblock(np.array([snake_x, snake_y]), np.array([wall_x, wall_y]))
 
     def __wall_dist_up_right(self):
         snake_x, snake_y = self.snake.head.pos()
-        opposite_x = snake_x
+        adjacent_x = snake_x
+        adjacent_y = self.screen_height / 2
+
+        opposite = self.screen_height / 2
+
+        opposite_x = adjacent_x + opposite
         opposite_y = self.screen_height / 2
 
-        opposite = distance.euclidean(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
-
-        adjacent = opposite / math.tan(45)
-
+        return distance.cityblock(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
 
 
     def __wall_dist_down_right(self):
-        pass
+        snake_x, snake_y = self.snake.head.pos()
+        adjacent_x = snake_x
+        adjacent_y = (-1) * self.screen_height / 2
+
+        opposite = self.screen_height / 2
+
+        opposite_x = adjacent_x + opposite
+        opposite_y = (-1) * self.screen_height / 2
+
+        return distance.cityblock(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
+        
 
     def __wall_dist_up_left(self):
-        pass
+        snake_x, snake_y = self.snake.head.pos()
+        adjacent_x = snake_x
+        adjacent_y = self.screen_height / 2
+
+        opposite = self.screen_height / 2
+
+        opposite_x = adjacent_x - opposite
+        opposite_y = self.screen_height / 2
+
+        return distance.cityblock(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
+        
 
     def __wall_dist_down_left(self):
-        pass
+        snake_x, snake_y = self.snake.head.pos()
+        adjacent_x = snake_x
+        adjacent_y = (-1) * self.screen_height / 2
+
+        opposite = self.screen_height / 2
+
+        opposite_x = adjacent_x - opposite
+        opposite_y = (-1) * self.screen_height / 2
+
+        return distance.cityblock(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
+
+    def print_lidar(self):
+        print(self.__wall_dist_up(),self.__wall_dist_down(), self.__wall_dist_left(), self.__wall_dist_right())
+        print(self.__wall_dist_up_right(), self.__wall_dist_up_left(), self.__wall_dist_down_right(), self.__wall_dist_down_left())
 
