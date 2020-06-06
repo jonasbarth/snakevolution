@@ -40,7 +40,6 @@ class SnakeEnv:
         reward = 0
         done = False
         state = np.zeros(6, dtype=np.float32)
-        self.print_lidar()
         ## Move the snake in the desired direction and check whether it touches food
         self.snake.move(direction)
 
@@ -145,12 +144,14 @@ class SnakeEnv:
         adjacent_x = snake_x
         adjacent_y = self.screen_height / 2
 
-        opposite = self.screen_height / 2
+        # Length of the opposite side of the triangle
+        adjacent = distance.euclidean(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
+        opposite = adjacent
 
         opposite_x = adjacent_x + opposite
         opposite_y = self.screen_height / 2
 
-        return distance.cityblock(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
+        return distance.cityblock(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
 
 
     def __wall_dist_down_right(self):
@@ -158,12 +159,14 @@ class SnakeEnv:
         adjacent_x = snake_x
         adjacent_y = (-1) * self.screen_height / 2
 
-        opposite = self.screen_height / 2
+        # Length of the opposite side of the triangle
+        adjacent = distance.euclidean(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
+        opposite = adjacent
 
         opposite_x = adjacent_x + opposite
         opposite_y = (-1) * self.screen_height / 2
 
-        return distance.cityblock(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
+        return distance.cityblock(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
         
 
     def __wall_dist_up_left(self):
@@ -171,12 +174,14 @@ class SnakeEnv:
         adjacent_x = snake_x
         adjacent_y = self.screen_height / 2
 
-        opposite = self.screen_height / 2
+        # Length of the opposite side of the triangle
+        adjacent = distance.euclidean(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
+        opposite = adjacent
 
         opposite_x = adjacent_x - opposite
         opposite_y = self.screen_height / 2
 
-        return distance.cityblock(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
+        return distance.cityblock(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
         
 
     def __wall_dist_down_left(self):
@@ -184,12 +189,78 @@ class SnakeEnv:
         adjacent_x = snake_x
         adjacent_y = (-1) * self.screen_height / 2
 
-        opposite = self.screen_height / 2
+        # Length of the opposite side of the triangle
+        adjacent = distance.euclidean(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
+        opposite = adjacent
 
         opposite_x = adjacent_x - opposite
         opposite_y = (-1) * self.screen_height / 2
 
-        return distance.cityblock(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
+        return distance.cityblock(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
+
+    
+    def __up_lidar(self):
+        lidar = np.zeros((5))
+
+        lidar[0] = self.__wall_dist_up()
+        lidar[1] = self.__wall_dist_left()
+        lidar[2] = self.__wall_dist_right()
+        lidar[3] = self.__wall_dist_up_left()
+        lidar[4] = self.__wall_dist_up_right()
+
+        return lidar
+
+
+    def __right_lidar(self):
+        lidar = np.zeros((5))
+
+        lidar[0] = self.__wall_dist_up()
+        lidar[1] = self.__wall_dist_down()
+        lidar[2] = self.__wall_dist_right()
+        lidar[3] = self.__wall_dist_up_right()
+        lidar[4] = self.__wall_dist_down_right()
+
+        return lidar
+
+
+    def __down_lidar(self):
+        lidar = np.zeros((5))
+
+        lidar[0] = self.__wall_dist_left()
+        lidar[1] = self.__wall_dist_down()
+        lidar[2] = self.__wall_dist_right()
+        lidar[3] = self.__wall_dist_down_left()
+        lidar[4] = self.__wall_dist_down_right()
+
+        return lidar
+
+    def __left_lidar(self):
+        lidar = np.zeros((5))
+
+        lidar[0] = self.__wall_dist_left()
+        lidar[1] = self.__wall_dist_down()
+        lidar[2] = self.__wall_dist_up()
+        lidar[3] = self.__wall_dist_down_left()
+        lidar[4] = self.__wall_dist_up_left()
+
+        return lidar
+
+
+    def __get_lidar(self, direction):
+        lidar = np.zeros((5))
+
+        if direction == "up":
+            return self.__up_lidar()
+
+        elif direction == "right":
+            return self.__right_lidar()
+
+        elif direction == "down":
+            return self.__down_lidar()
+
+        elif direction == "left":
+            return self.__left_lidar()
+
 
     def print_lidar(self):
         print(self.__wall_dist_up(),self.__wall_dist_down(), self.__wall_dist_left(), self.__wall_dist_right())

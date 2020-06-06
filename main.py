@@ -9,8 +9,12 @@ import math
 
 env = SnakeEnv(600, 600)
 env.reset()
+env.step(0)
+env.print_lidar()
 env.step(1)
+env.print_lidar()
 
+"""
 wall_x = 0
 wall_y = 600 / 2
 
@@ -33,6 +37,6 @@ t.goto(wall_x + adjacent, wall_y)
 t.goto(wall_x - adjacent, wall_y)
 t.goto(wall_x - adjacent, (-1) * wall_y)
 t.goto(wall_x + adjacent, (-1) * wall_y)
-
+"""
 
 env.wn.mainloop()
