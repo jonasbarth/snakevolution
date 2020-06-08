@@ -11,7 +11,10 @@ env = SnakeEnv(600, 600)
 env.reset()
 env.step(0)
 env.print_lidar()
-env.step(1)
+
+for n in range(4):
+    env.step(1)
+
 env.print_lidar()
 
 """

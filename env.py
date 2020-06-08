@@ -171,6 +171,9 @@ class SnakeEnv:
         opposite_x = adjacent_x + opposite
         opposite_y = (-1) * self.screen_height / 2
 
+        if opposite_x > self.screen_width / 2:
+            return self.__wall_dist_right_down()
+
         return dist_metric(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
         
 
@@ -185,6 +188,9 @@ class SnakeEnv:
 
         opposite_x = adjacent_x - opposite
         opposite_y = self.screen_height / 2
+
+        if opposite_x < self.screen_width / 2:
+            return self.__wall_dist_left_up()
 
         return dist_metric(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
         
@@ -201,10 +207,14 @@ class SnakeEnv:
         opposite_x = adjacent_x - opposite
         opposite_y = (-1) * self.screen_height / 2
 
+        if opposite_x < self.screen_width / 2:
+            return self.__wall_dist_left_down()
+
         return dist_metric(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
 
 
     def __wall_dist_right_up(self, dist_metric=distance.cityblock):
+        snake_x, snake_y = self.snake.head.pos()
         adjacent_x = self.screen_width / 2
         adjacent_y = snake_y
 
@@ -217,7 +227,8 @@ class SnakeEnv:
         return dist_metric(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
 
 
-    def __wall_dist_right_up(self, dist_metric=distance.cityblock):
+    def __wall_dist_right_down(self, dist_metric=distance.cityblock):
+        snake_x, snake_y = self.snake.head.pos()
         adjacent_x = self.screen_width / 2
         adjacent_y = snake_y
 
@@ -231,6 +242,7 @@ class SnakeEnv:
 
 
     def __wall_dist_left_up(self, dist_metric=distance.cityblock):
+        snake_x, snake_y = self.snake.head.pos()
         adjacent_x = (-1) * self.screen_width / 2
         adjacent_y = snake_y
 
@@ -243,7 +255,8 @@ class SnakeEnv:
         return dist_metric(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
 
 
-    def __wall_dist_left_up(self, dist_metric=distance.cityblock):
+    def __wall_dist_left_down(self, dist_metric=distance.cityblock):
+        snake_x, snake_y = self.snake.head.pos()
         adjacent_x = (-1) * self.screen_width / 2
         adjacent_y = snake_y
 
@@ -323,6 +336,6 @@ class SnakeEnv:
 
 
     def print_lidar(self):
-        print(self.__wall_dist_up(),self.__wall_dist_down(), self.__wall_dist_left(), self.__wall_dist_right())
-        print(self.__wall_dist_up_right(), self.__wall_dist_up_left(), self.__wall_dist_down_right(), self.__wall_dist_down_left())
+        print("Up", self.__wall_dist_up(), "Down", self.__wall_dist_down(), "Left",self.__wall_dist_left(), "Right",self.__wall_dist_right())
+        print("Up-Right",self.__wall_dist_up_right(), "Up-Left", self.__wall_dist_up_left(), "Down-Right",self.__wall_dist_down_right(), "Down-Left", self.__wall_dist_down_left())
 
