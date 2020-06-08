@@ -76,6 +76,12 @@ class SnakeEnv:
             return True
         return False
 
+
+    def __food_distance(self, dist_metric=distance.cityblock):
+        snake_x, snake_y = self.snake.head.pos()
+        food_x, food_y = self.current_food.head.pos()
+        return dist_metric(np.array([snake_x, snake_y]), np.array([food_x, food_y]))
+
     
     def __touch_wall(self):
         x, y = self.snake.head.xcor(), self.snake.head.ycor()
@@ -306,6 +312,7 @@ class SnakeEnv:
         lidar[4] = self.__wall_dist_down_right()
 
         return lidar
+
 
     def __left_lidar(self):
         lidar = np.zeros((5))
