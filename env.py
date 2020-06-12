@@ -26,33 +26,53 @@ class SnakeEnv:
         
 
     def reset(self):
+        """
+        Resets the Snake environment
+        """
         self.wn.title("Snake Game")
         self.wn.bgcolor("white")
         self.wn.setup(width=self.screen_width, height=self.screen_height)
         self.__generate_food()
+        self.snake = Snake()
         
 
       
     def step(self, action):
+        """
+        Take a step in the Snake environment and return the next state, reward and whether the game is over.
+
+        Parameters:
+            action - An integer between 0 and 3 denoting the action to be taken.
+
+        Returns:
+            state - an ND numpy array
+            reward - an integer denoting the reward 
+            done - a boolean indicating whether the episode is over
+        """
         
         direction = self.actions[action]
 
+        ## The variables to be returned. Reward will remain 0 if the snake doesn't touch anything.
         reward = 0
         done = False
         state = np.zeros(6, dtype=np.float32)
+
         ## Move the snake in the desired direction and check whether it touches food
         self.snake.move(direction)
 
+        ## If the snake touches a wall or itself, the episode is over
         if self.__touch_wall() or self.__touch_snake():
             reward = -1
             done = True
-       
+
+        ## If the snake touches food, add to the tail
         elif self.__touch_food():
             self.points += 1
             reward = 1
             self.snake.add_tail()
             self.__generate_food()
 
+        ## Update the visuals
         self.wn.update()
 
         return (state, reward, done)
@@ -60,12 +80,26 @@ class SnakeEnv:
     
 
     def __generate_food(self):
+        """
+        Generates a piece of food at a random x,y coordinate in the environment.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+        """
+
+        ## Get the min and max x-value in the environment
         x_start = (-1) * self.screen_width / 2
         x_end = self.screen_width / 2
-        x_rand = random.randrange(x_start, x_end)
 
+        ## Get the min and max y-value in the environment
         y_start = (-1) * self.screen_height / 2
         y_end = self.screen_height / 2
+
+        ## Get pseudorandom x,y coordinates for the food
+        x_rand = random.randrange(x_start, x_end)
         y_rand = random.randrange(y_start, y_end)
 
         self.current_food = Food(x_rand, y_rand)
