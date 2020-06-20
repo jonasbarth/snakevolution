@@ -7,6 +7,14 @@ import numpy as np
 class Snake:
 
     def __init__(self, colour="black", x=0, y=0):
+        """
+        Constructor for the Snake.
+
+        Parameters:
+            colour - a string for the colour of the head of the Snake. Default value is Black.
+            x - an integer for the x position of the Snake
+            y - an integer for the y position of the Snake
+        """
         self.head = turtle.Turtle()
         self.head.speed(0)
         self.head.shape("square")
