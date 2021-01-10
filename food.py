@@ -1,11 +1,10 @@
 ## Class for a food item in the environment
-
 import turtle
 
 class Food:
 
     def __init__(self, x, y, colour="red"):
-         """
+        """
         Constructor for the Food.
 
         Parameters:

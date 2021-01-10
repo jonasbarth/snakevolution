@@ -5,15 +5,14 @@ import scipy.spatial.distance as distance
 import numpy as np
 import turtle
 import math
+from snake import Snake
 
 
 env = SnakeEnv(600, 600)
 env.reset()
 env.step(0)
-env.print_lidar()
 
-for n in range(4):
-    env.step(1)
+
 
 env.print_lidar()
 

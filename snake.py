@@ -99,12 +99,14 @@ class Snake:
         """
 
         if self.head.direction == "up":
+            
             ## Move the head
             y = self.head.ycor()
             x = self.head.xcor()
+            print("Currently at", x,y)
             self.head.sety(y + 20)
 
-
+            print("Moving up to", x, self.head.ycor())
             ## Move all tail sections to the coordinates of the section that is in front of them
             for section in self.tail[1:]:
                 old_x = section.head.xcor()
@@ -113,6 +115,8 @@ class Snake:
                 section.head.setx(x)
                 x = old_x
                 y = old_y
+
+            print(self.tail[0].head.ycor())
 
 
     def __left(self):
@@ -208,6 +212,17 @@ class Snake:
 
         for t in zip(self.tail[1:]):
             tail_xy.append(t.pos())
+
+
+    def reset(self):
+        # remove all the tail drawings
+        for section in self.tail[1:]:
+            section.clear()
+
+        self.tail = [self]
+        self.head.goto(0, 0)
+        self.head.direction = "stop"
+
 
     
         

@@ -33,7 +33,7 @@ class SnakeEnv:
         self.wn.bgcolor("white")
         self.wn.setup(width=self.screen_width, height=self.screen_height)
         self.__generate_food()
-        self.snake = Snake()
+        self.snake.reset()
         
 
       
@@ -59,7 +59,7 @@ class SnakeEnv:
 
         ## Move the snake in the desired direction and check whether it touches food
         self.snake.move(direction)
-
+        
         ## If the snake touches a wall or itself, the episode is over
         if self.__touch_wall() or self.__touch_snake():
             reward = -1
@@ -78,6 +78,17 @@ class SnakeEnv:
         return (state, reward, done)
 
     
+    def __delete_current_food(self):
+        """
+        Deletes the current piece of food from the screen.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+        """
+        self.current_food.he
 
     def __generate_food(self):
         """
@@ -102,7 +113,11 @@ class SnakeEnv:
         x_rand = random.randrange(x_start, x_end)
         y_rand = random.randrange(y_start, y_end)
 
-        self.current_food = Food(x_rand, y_rand)
+        # if a food object has been previously created, just move it to a new random location
+        if (self.current_food):
+            self.current_food.head.goto(x_rand, y_rand)
+        else:
+            self.current_food = Food(x_rand, y_rand)
 
 
     def __touch_food(self):
@@ -187,7 +202,6 @@ class SnakeEnv:
 
             if distance.euclidean(np.array([head_x, head_y]), np.array([tail_x, tail_y])) < 20:
                 return True
-
 
         return False
 
