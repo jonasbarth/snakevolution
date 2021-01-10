@@ -8,6 +8,7 @@ from food import Food
 import numpy as np
 import scipy.spatial.distance as distance
 import math
+from point import Point
 
 
 
@@ -34,6 +35,7 @@ class SnakeEnv:
         self.wn.setup(width=self.screen_width, height=self.screen_height)
         self.__generate_food()
         self.snake.reset()
+        self.snake.add_tail()
         
 
       
@@ -59,6 +61,8 @@ class SnakeEnv:
 
         ## Move the snake in the desired direction and check whether it touches food
         self.snake.move(direction)
+
+        self.lidar_pulse()
         
         ## If the snake touches a wall or itself, the episode is over
         if self.__touch_wall() or self.__touch_snake():
@@ -77,18 +81,6 @@ class SnakeEnv:
 
         return (state, reward, done)
 
-    
-    def __delete_current_food(self):
-        """
-        Deletes the current piece of food from the screen.
-
-        Parameters:
-            None
-
-        Returns:
-            None
-        """
-        self.current_food.he
 
     def __generate_food(self):
         """
@@ -180,7 +172,7 @@ class SnakeEnv:
 
         return False
 
-    def __touch_snake(self):
+    def __touch_snake(self, dist_metric=distance.cityblock):
         """
         Checks if the snake is currently touching itself.
 
@@ -200,7 +192,7 @@ class SnakeEnv:
             tail_x = tail.head.xcor()
             tail_y = tail.head.ycor()
 
-            if distance.euclidean(np.array([head_x, head_y]), np.array([tail_x, tail_y])) < 20:
+            if dist_metric(np.array([head_x, head_y]), np.array([tail_x, tail_y])) < 20:
                 return True
 
         return False
@@ -581,6 +573,28 @@ class SnakeEnv:
 
         elif direction == "left":
             return self.__left_lidar()
+
+    def lidar_pulse(self):
+        self.lidar_south_pulse()
+
+
+    def lidar_east_pulse(self):
+        pulse_x, pulse_y = self.snake.head.pos()
+        east_pulse = Point(pulse_x, pulse_y)
+        east_wall = Point(self.screen_width / 2, pulse_y)
+        while (east_pulse.x < east_wall.x):
+            print(self.snake.point_is_in_tail(east_pulse))
+            east_pulse.move_to(east_pulse.x + 20, pulse_y)
+
+
+    def lidar_south_pulse(self):
+        pulse_x, pulse_y = self.snake.head.pos()
+        south_pulse = Point(pulse_x, pulse_y)
+        south_wall = Point(pulse_x, (-1) * (self.screen_height / 2))
+        while (south_pulse.y > south_wall.y):
+            print(self.snake.point_is_in_tail(south_pulse))
+            south_pulse.move_to(pulse_x, south_pulse.y - 20)
+
 
 
     def print_lidar(self):

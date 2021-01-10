@@ -214,6 +214,27 @@ class Snake:
             tail_xy.append(t.pos())
 
 
+    def point_is_in_tail(self, point):
+        for section in self.tail[1:]:
+            cx, cy = section.head.pos()
+            x_1 = cx - 10
+            y_1 = cy - 10
+            x_2 = cx + 10
+            y_2 = cy + 10
+
+            print(cx, cy, x_1, y_1, x_2, y_2, point.x, point.y)
+
+            t = turtle.Turtle()
+            t.speed(0)
+            t.goto(x_1, y_1)
+            t.goto(x_2, y_2)
+
+            if (x_1 < point.x < x_2) and (y_1 < point.y < y_2):
+                return (True, (cx, cy))
+
+            return (False, (cx, cy))
+
+
     def reset(self):
         # remove all the tail drawings
         for section in self.tail[1:]:
