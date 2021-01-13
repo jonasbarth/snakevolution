@@ -224,14 +224,11 @@ class Snake:
 
             print(cx, cy, x_1, y_1, x_2, y_2, point.x, point.y)
 
-            t = turtle.Turtle()
-            t.speed(0)
-            t.goto(x_1, y_1)
-            t.goto(x_2, y_2)
-
             if (x_1 < point.x < x_2) and (y_1 < point.y < y_2):
+                print(point.x, point.y, "are in the tail");
                 return (True, (cx, cy))
 
+            print(point.x, point.y, "are not in the tail");
             return (False, (cx, cy))
 
 

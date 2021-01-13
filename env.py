@@ -575,26 +575,88 @@ class SnakeEnv:
             return self.__left_lidar()
 
     def lidar_pulse(self):
-        self.lidar_south_pulse()
+        t = turtle.Turtle()
+        t.speed(0)
+        t.penup()
+        pulse = self.lidar_south_west_pulse()
+        x, y = pulse.x, pulse.y
+        t.goto(x, y)
+        print(x,y)
 
 
     def lidar_east_pulse(self):
         pulse_x, pulse_y = self.snake.head.pos()
         east_pulse = Point(pulse_x, pulse_y)
         east_wall = Point(self.screen_width / 2, pulse_y)
-        while (east_pulse.x < east_wall.x):
+        while (east_pulse.x < east_wall.x and not self.snake.point_is_in_tail(east_pulse)[0]):
             print(self.snake.point_is_in_tail(east_pulse))
-            east_pulse.move_to(east_pulse.x + 20, pulse_y)
+            east_pulse.move_to(east_pulse.x +1, 20, pulse_y)
 
 
     def lidar_south_pulse(self):
         pulse_x, pulse_y = self.snake.head.pos()
         south_pulse = Point(pulse_x, pulse_y)
         south_wall = Point(pulse_x, (-1) * (self.screen_height / 2))
-        while (south_pulse.y > south_wall.y):
+        while (south_pulse.y > south_wall.y and not self.snake.point_is_in_tail(south_pulse)[0]):
             print(self.snake.point_is_in_tail(south_pulse))
-            south_pulse.move_to(pulse_x, south_pulse.y - 20)
+            south_pulse.move_to(pulse_x, south_pulse.y - 1)
 
+        return south_pulse
+
+    def lidar_west_pulse(self):
+        pulse_x, pulse_y = self.snake.head.pos()
+        west_pulse = Point(pulse_x, pulse_y)
+        west_wall = Point((-1) * (self.screen_width / 2), pulse_y)
+        while (west_pulse.x > west_wall.x and not self.snake.point_is_in_tail(west_pulse)[0]):
+            print(self.snake.point_is_in_tail(west_pulse))
+            west_pulse.move_to(pulse_x - 1, west_pulse.y)
+
+        return west_pulse
+
+    def lidar_north_pulse(self):
+        pulse_x, pulse_y = self.snake.head.pos()
+        north_pulse = Point(pulse_x, pulse_y)
+        north_wall = Point(pulse_x, self.screen_height / 2)
+        while (north_pulse.y < north_wall.y and not self.snake.point_is_in_tail(north_pulse)[0]):
+            print(self.snake.point_is_in_tail(north_pulse))
+            north_pulse.move_to(pulse_x, north_pulse.y - 1)
+
+        return north_pulse
+
+    def lidar_north_east_pulse(self):
+        pulse_x, pulse_y = self.snake.head.pos()
+        north_east_pulse = Point(pulse_x, pulse_y)
+        north_wall = Point(pulse_x, self.screen_height / 2)
+        east_wall = Point(self.screen_width / 2, pulse_y)
+
+        while (north_east_pulse.y < north_wall.y and north_east_pulse.x < east_wall.x and not self.snake.point_is_in_tail(north_east_pulse)[0]):
+            print("Is in tail", self.snake.point_is_in_tail(north_east_pulse))
+            print("Bool", north_east_pulse.y < north_wall.y, north_east_pulse.x < east_wall.x)
+            north_east_pulse.move_to(north_east_pulse.x + 1, north_east_pulse.y + 1)
+            
+        return north_east_pulse
+
+    def lidar_south_east_pulse(self):
+        pulse_x, pulse_y = self.snake.head.pos()
+        south_east_pulse = Point(pulse_x, pulse_y)
+        south_wall = Point(pulse_x, (-1) * (self.screen_height / 2))
+        east_wall = Point(self.screen_width / 2, pulse_y)
+
+        while (south_east_pulse.y > south_wall.y and south_east_pulse.x < east_wall.x and not self.snake.point_is_in_tail(south_east_pulse)[0]):
+            south_east_pulse.move_to(south_east_pulse.x + 1, south_east_pulse.y - 1)
+
+        return south_east_pulse
+
+    def lidar_south_west_pulse(self):
+        pulse_x, pulse_y = self.snake.head.pos()
+        south_west_pulse = Point(pulse_x, pulse_y)
+        south_wall = Point(pulse_x, (-1) * (self.screen_height / 2))
+        west_wall = Point((-1) * (self.screen_width / 2), pulse_y)
+
+        while (south_west_pulse.y > south_wall.y and south_west_pulse.x > west_wall.x and not self.snake.point_is_in_tail(south_west_pulse)[0]):
+            south_west_pulse.move_to(south_west_pulse.x - 1, south_west_pulse.y - 1)
+
+        return south_west_pulse
 
 
     def print_lidar(self):
