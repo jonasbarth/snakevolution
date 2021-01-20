@@ -477,12 +477,16 @@ class SnakeEnv:
             lidar - A 1D numpy array with 5 entries, one for each lidar distance.
         """
         lidar = np.zeros((5))
+        snake_x, snake_y = self.snake.head.pos()[0], self.snake.head.pos()[1]
+        snake_pos = Point(snake_x, snake_y)
 
-        lidar[0] = self.__wall_dist_up()
-        lidar[1] = self.__wall_dist_left()
-        lidar[2] = self.__wall_dist_right()
-        lidar[3] = self.__wall_dist_up_left()
-        lidar[4] = self.__wall_dist_up_right()
+
+
+        lidar[0] = snake_pos.distance(self.lidar_north_pulse())
+        lidar[1] = snake_pos.distance(self.lidar_west_pulse())
+        lidar[2] = snake_pos.distance(self.lidar_east_pulse())
+        lidar[3] = snake_pos.distance(self.lidar_north_west_pulse())
+        lidar[4] = snake_pos.distance(self.lidar_north_east_pulse())
 
         return lidar
 
@@ -575,13 +579,7 @@ class SnakeEnv:
             return self.__left_lidar()
 
     def lidar_pulse(self):
-        t = turtle.Turtle()
-        t.speed(0)
-        t.penup()
-        pulse = self.lidar_south_west_pulse()
-        x, y = pulse.x, pulse.y
-        t.goto(x, y)
-        print(x,y)
+        print(self.__get_lidar("up"))
 
 
     def lidar_east_pulse(self):
@@ -589,8 +587,11 @@ class SnakeEnv:
         east_pulse = Point(pulse_x, pulse_y)
         east_wall = Point(self.screen_width / 2, pulse_y)
         while (east_pulse.x < east_wall.x and not self.snake.point_is_in_tail(east_pulse)[0]):
-            print(self.snake.point_is_in_tail(east_pulse))
-            east_pulse.move_to(east_pulse.x +1, 20, pulse_y)
+           # print(self.snake.point_is_in_tail(east_pulse))
+            east_pulse.offset(+1, 0)
+
+        print("Returning east")
+        return east_pulse
 
 
     def lidar_south_pulse(self):
@@ -598,9 +599,10 @@ class SnakeEnv:
         south_pulse = Point(pulse_x, pulse_y)
         south_wall = Point(pulse_x, (-1) * (self.screen_height / 2))
         while (south_pulse.y > south_wall.y and not self.snake.point_is_in_tail(south_pulse)[0]):
-            print(self.snake.point_is_in_tail(south_pulse))
-            south_pulse.move_to(pulse_x, south_pulse.y - 1)
+            #print(self.snake.point_is_in_tail(south_pulse))
+            south_pulse.offset(0, -1)
 
+        print("Returning south")
         return south_pulse
 
     def lidar_west_pulse(self):
@@ -608,9 +610,10 @@ class SnakeEnv:
         west_pulse = Point(pulse_x, pulse_y)
         west_wall = Point((-1) * (self.screen_width / 2), pulse_y)
         while (west_pulse.x > west_wall.x and not self.snake.point_is_in_tail(west_pulse)[0]):
-            print(self.snake.point_is_in_tail(west_pulse))
-            west_pulse.move_to(pulse_x - 1, west_pulse.y)
+            #print("West pulse", self.snake.point_is_in_tail(west_pulse))
+            west_pulse.offset(-1, 0)
 
+        print("Returning west")
         return west_pulse
 
     def lidar_north_pulse(self):
@@ -618,9 +621,9 @@ class SnakeEnv:
         north_pulse = Point(pulse_x, pulse_y)
         north_wall = Point(pulse_x, self.screen_height / 2)
         while (north_pulse.y < north_wall.y and not self.snake.point_is_in_tail(north_pulse)[0]):
-            print(self.snake.point_is_in_tail(north_pulse))
-            north_pulse.move_to(pulse_x, north_pulse.y - 1)
-
+            #print(self.snake.point_is_in_tail(north_pulse))
+            north_pulse.offset(0, 1)
+        print("Returning north")
         return north_pulse
 
     def lidar_north_east_pulse(self):
@@ -630,11 +633,26 @@ class SnakeEnv:
         east_wall = Point(self.screen_width / 2, pulse_y)
 
         while (north_east_pulse.y < north_wall.y and north_east_pulse.x < east_wall.x and not self.snake.point_is_in_tail(north_east_pulse)[0]):
-            print("Is in tail", self.snake.point_is_in_tail(north_east_pulse))
-            print("Bool", north_east_pulse.y < north_wall.y, north_east_pulse.x < east_wall.x)
-            north_east_pulse.move_to(north_east_pulse.x + 1, north_east_pulse.y + 1)
-            
+            #print("Is in tail", self.snake.point_is_in_tail(north_east_pulse))
+            #print("Bool", north_east_pulse.y < north_wall.y, north_east_pulse.x < east_wall.x)
+            north_east_pulse.offset(1, 1)
+
+        print("Returning north east")
         return north_east_pulse
+
+    def lidar_north_west_pulse(self):
+        pulse_x, pulse_y = self.snake.head.pos()
+        north_west_pulse = Point(pulse_x, pulse_y)
+        north_wall = Point(pulse_x, self.screen_height / 2)
+        west_wall = Point(((-1) * self.screen_width) / 2, pulse_y)
+
+        while (north_west_pulse.y < north_wall.y and north_west_pulse.x > west_wall.x and not self.snake.point_is_in_tail(north_west_pulse)[0]):
+            #print("Is in tail", self.snake.point_is_in_tail(north_east_pulse))
+            #print("Bool", north_east_pulse.y < north_wall.y, north_east_pulse.x < east_wall.x)
+            north_west_pulse.offset(-1, 1)
+
+        print("Returning north west")
+        return north_west_pulse
 
     def lidar_south_east_pulse(self):
         pulse_x, pulse_y = self.snake.head.pos()
@@ -643,8 +661,9 @@ class SnakeEnv:
         east_wall = Point(self.screen_width / 2, pulse_y)
 
         while (south_east_pulse.y > south_wall.y and south_east_pulse.x < east_wall.x and not self.snake.point_is_in_tail(south_east_pulse)[0]):
-            south_east_pulse.move_to(south_east_pulse.x + 1, south_east_pulse.y - 1)
+            south_east_pulse.offset(1, -1)
 
+        print("Returning south east")
         return south_east_pulse
 
     def lidar_south_west_pulse(self):
@@ -654,12 +673,14 @@ class SnakeEnv:
         west_wall = Point((-1) * (self.screen_width / 2), pulse_y)
 
         while (south_west_pulse.y > south_wall.y and south_west_pulse.x > west_wall.x and not self.snake.point_is_in_tail(south_west_pulse)[0]):
-            south_west_pulse.move_to(south_west_pulse.x - 1, south_west_pulse.y - 1)
+            south_west_pulse.offset(-1, -1)
 
+        print("Returning south west")
         return south_west_pulse
 
 
     def print_lidar(self):
-        print("Up", self.__wall_dist_up(), "Down", self.__wall_dist_down(), "Left",self.__wall_dist_left(), "Right",self.__wall_dist_right())
-        print("Up-Right",self.__wall_dist_up_right(), "Up-Left", self.__wall_dist_up_left(), "Down-Right",self.__wall_dist_down_right(), "Down-Left", self.__wall_dist_down_left())
+        print()
+        #print("Up", self.__wall_dist_up(), "Down", self.__wall_dist_down(), "Left",self.__wall_dist_left(), "Right",self.__wall_dist_right())
+       # print("Up-Right",self.__wall_dist_up_right(), "Up-Left", self.__wall_dist_up_left(), "Down-Right",self.__wall_dist_down_right(), "Down-Left", self.__wall_dist_down_left())
 

@@ -222,13 +222,13 @@ class Snake:
             x_2 = cx + 10
             y_2 = cy + 10
 
-            print(cx, cy, x_1, y_1, x_2, y_2, point.x, point.y)
+            #print(cx, cy, x_1, y_1, x_2, y_2, point.x, point.y)
 
             if (x_1 < point.x < x_2) and (y_1 < point.y < y_2):
-                print(point.x, point.y, "are in the tail");
+                #print(point.x, point.y, "are in the tail");
                 return (True, (cx, cy))
 
-            print(point.x, point.y, "are not in the tail");
+            #print(point.x, point.y, "are not in the tail");
             return (False, (cx, cy))
 
 
