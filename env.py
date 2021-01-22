@@ -62,7 +62,7 @@ class SnakeEnv:
         ## Move the snake in the desired direction and check whether it touches food
         self.snake.move(direction)
 
-        self.lidar_pulse()
+        state = self.lidar_pulse()
         
         ## If the snake touches a wall or itself, the episode is over
         if self.__touch_wall() or self.__touch_snake():
@@ -480,13 +480,11 @@ class SnakeEnv:
         snake_x, snake_y = self.snake.head.pos()[0], self.snake.head.pos()[1]
         snake_pos = Point(snake_x, snake_y)
 
-
-
-        lidar[0] = snake_pos.distance(self.lidar_north_pulse())
-        lidar[1] = snake_pos.distance(self.lidar_west_pulse())
-        lidar[2] = snake_pos.distance(self.lidar_east_pulse())
-        lidar[3] = snake_pos.distance(self.lidar_north_west_pulse())
-        lidar[4] = snake_pos.distance(self.lidar_north_east_pulse())
+        lidar[0] = snake_pos.distance(self.lidar_west_pulse())
+        lidar[1] = snake_pos.distance(self.lidar_north_west_pulse())
+        lidar[2] = snake_pos.distance(self.lidar_north_pulse())
+        lidar[3] = snake_pos.distance(self.lidar_north_east_pulse())
+        lidar[4] = snake_pos.distance(self.lidar_east_pulse())
 
         return lidar
 
@@ -502,12 +500,14 @@ class SnakeEnv:
             lidar - A 1D numpy array with 5 entries, one for each lidar distance.
         """
         lidar = np.zeros((5))
+        snake_x, snake_y = self.snake.head.pos()[0], self.snake.head.pos()[1]
+        snake_pos = Point(snake_x, snake_y)
 
-        lidar[0] = self.__wall_dist_up()
-        lidar[1] = self.__wall_dist_down()
-        lidar[2] = self.__wall_dist_right()
-        lidar[3] = self.__wall_dist_up_right()
-        lidar[4] = self.__wall_dist_down_right()
+        lidar[0] = snake_pos.distance(self.lidar_north_pulse())
+        lidar[1] = snake_pos.distance(self.lidar_north_east_pulse())
+        lidar[2] = snake_pos.distance(self.lidar_east_pulse())
+        lidar[3] = snake_pos.distance(self.lidar_south_east_pulse())
+        lidar[4] = snake_pos.distance(self.lidar_south_pulse())
 
         return lidar
 
@@ -523,12 +523,14 @@ class SnakeEnv:
             lidar - A 1D numpy array with 5 entries, one for each lidar distance.
         """
         lidar = np.zeros((5))
+        snake_x, snake_y = self.snake.head.pos()[0], self.snake.head.pos()[1]
+        snake_pos = Point(snake_x, snake_y)
 
-        lidar[0] = self.__wall_dist_left()
-        lidar[1] = self.__wall_dist_down()
-        lidar[2] = self.__wall_dist_right()
-        lidar[3] = self.__wall_dist_down_left()
-        lidar[4] = self.__wall_dist_down_right()
+        lidar[0] = snake_pos.distance(self.lidar_east_pulse())
+        lidar[1] = snake_pos.distance(self.lidar_south_east_pulse())
+        lidar[2] = snake_pos.distance(self.lidar_south_pulse())
+        lidar[3] = snake_pos.distance(self.lidar_south_west_pulse())
+        lidar[4] = snake_pos.distance(self.lidar_west_pulse())
 
         return lidar
 
@@ -544,12 +546,14 @@ class SnakeEnv:
             lidar - A 1D numpy array with 5 entries, one for each lidar distance.
         """
         lidar = np.zeros((5))
+        snake_x, snake_y = self.snake.head.pos()[0], self.snake.head.pos()[1]
+        snake_pos = Point(snake_x, snake_y)
 
-        lidar[0] = self.__wall_dist_left()
-        lidar[1] = self.__wall_dist_down()
-        lidar[2] = self.__wall_dist_up()
-        lidar[3] = self.__wall_dist_down_left()
-        lidar[4] = self.__wall_dist_up_left()
+        lidar[0] = snake_pos.distance(self.lidar_south_pulse())
+        lidar[1] = snake_pos.distance(self.lidar_south_west_pulse())
+        lidar[2] = snake_pos.distance(self.lidar_west_pulse())
+        lidar[3] = snake_pos.distance(self.lidar_north_west_pulse())
+        lidar[4] = snake_pos.distance(self.lidar_north_pulse())
 
         return lidar
 
@@ -578,8 +582,10 @@ class SnakeEnv:
         elif direction == "left":
             return self.__left_lidar()
 
-    def lidar_pulse(self):
-        print(self.__get_lidar("up"))
+    #def lidar_pulse(self):
+
+
+
 
 
     def lidar_east_pulse(self):
@@ -678,9 +684,4 @@ class SnakeEnv:
         print("Returning south west")
         return south_west_pulse
 
-
-    def print_lidar(self):
-        print()
-        #print("Up", self.__wall_dist_up(), "Down", self.__wall_dist_down(), "Left",self.__wall_dist_left(), "Right",self.__wall_dist_right())
-       # print("Up-Right",self.__wall_dist_up_right(), "Up-Left", self.__wall_dist_up_left(), "Down-Right",self.__wall_dist_down_right(), "Down-Left", self.__wall_dist_down_left())
 
