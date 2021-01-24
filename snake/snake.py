@@ -23,6 +23,7 @@ class Snake:
         self.head.goto(x,y)
         self.head.direction = "stop"
         self.moves = {"up": self.__up, "right": self.__right, "down": self.__down, "left": self.__left}
+        self.legal_direction = {"up": self.__get_legal_directions_x, "right": self.__get_legal_directions_y, "down": self.__get_legal_directions_x, "left": self.__get_legal_directions_y}
         self.tail = [self]
 
 
@@ -229,7 +230,9 @@ class Snake:
                 return (True, (cx, cy))
 
             #print(point.x, point.y, "are not in the tail");
-            return (False, (cx, cy))
+            return (False, (0, 0))
+
+        return (False, (0, 0))
 
 
     def reset(self):
@@ -242,6 +245,18 @@ class Snake:
         self.head.direction = "stop"
 
 
+    def __direction_is_legal(self, direction):
+        try:
+            return direction in self.legal_direction[self.head.direction]
+
+        except KeyError:
+            return False
+
+    def __get_legal_directions_x(self):
+        return ["up", 'down']
+
+    def __get_legal_directions_y(self):
+        return ["left", "right"]
     
         
 

@@ -3,12 +3,11 @@
 
 import turtle
 import random
-from snake import Snake
-from food import Food
+from snake.snake import Snake
+from snake.food import Food
 import numpy as np
 import scipy.spatial.distance as distance
-import math
-from point import Point
+from snake.point import Point
 
 
 
@@ -35,8 +34,13 @@ class SnakeEnv:
         self.wn.setup(width=self.screen_width, height=self.screen_height)
         self.__generate_food()
         self.snake.reset()
-        self.snake.add_tail()
-        
+        state = self.__get_current_state()
+        done = False
+        reward = 0
+
+        return (state, reward, done)
+
+
 
       
     def step(self, action):
@@ -57,12 +61,12 @@ class SnakeEnv:
         ## The variables to be returned. Reward will remain 0 if the snake doesn't touch anything.
         reward = 0
         done = False
-        state = np.zeros(6, dtype=np.float32)
+        state = None
 
         ## Move the snake in the desired direction and check whether it touches food
         self.snake.move(direction)
 
-        state = self.lidar_pulse()
+        state = self.__get_current_state()
         
         ## If the snake touches a wall or itself, the episode is over
         if self.__touch_wall() or self.__touch_snake():
@@ -80,6 +84,13 @@ class SnakeEnv:
         self.wn.update()
 
         return (state, reward, done)
+
+
+    def __get_current_state(self):
+        lidar = self.__get_lidar("up")
+        food_dist = np.array([self.__food_distance()])
+        state = np.concatenate((lidar, food_dist))
+        return state
 
 
     def __generate_food(self):
@@ -138,11 +149,14 @@ class SnakeEnv:
             dist_metric - The distance metric function taking two 1D numpy arrays as input
 
         Returns:
-            float - The distance between the snake and the food
+            float - The distance between the snake and the food. Returns -1 if the either the snake or food does not exist.
         """
-        snake_x, snake_y = self.snake.head.pos()
-        food_x, food_y = self.current_food.head.pos()
-        return dist_metric(np.array([snake_x, snake_y]), np.array([food_x, food_y]))
+        if (self.snake and self.current_food):
+            snake_x, snake_y = self.snake.head.pos()
+            food_x, food_y = self.current_food.head.pos()
+            return dist_metric(np.array([snake_x, snake_y]), np.array([food_x, food_y]))
+
+        return -1
 
     
     def __touch_wall(self):
@@ -476,7 +490,7 @@ class SnakeEnv:
         Returns:
             lidar - A 1D numpy array with 5 entries, one for each lidar distance.
         """
-        lidar = np.zeros((5))
+        lidar = np.zeros((5), dtype=np.float32)
         snake_x, snake_y = self.snake.head.pos()[0], self.snake.head.pos()[1]
         snake_pos = Point(snake_x, snake_y)
 
@@ -499,7 +513,7 @@ class SnakeEnv:
         Returns:
             lidar - A 1D numpy array with 5 entries, one for each lidar distance.
         """
-        lidar = np.zeros((5))
+        lidar = np.zeros((5), dtype=np.float32)
         snake_x, snake_y = self.snake.head.pos()[0], self.snake.head.pos()[1]
         snake_pos = Point(snake_x, snake_y)
 
@@ -522,7 +536,7 @@ class SnakeEnv:
         Returns:
             lidar - A 1D numpy array with 5 entries, one for each lidar distance.
         """
-        lidar = np.zeros((5))
+        lidar = np.zeros((5), dtype=np.float32)
         snake_x, snake_y = self.snake.head.pos()[0], self.snake.head.pos()[1]
         snake_pos = Point(snake_x, snake_y)
 
@@ -545,7 +559,7 @@ class SnakeEnv:
         Returns:
             lidar - A 1D numpy array with 5 entries, one for each lidar distance.
         """
-        lidar = np.zeros((5))
+        lidar = np.zeros((5), dtype=np.float32)
         snake_x, snake_y = self.snake.head.pos()[0], self.snake.head.pos()[1]
         snake_pos = Point(snake_x, snake_y)
 

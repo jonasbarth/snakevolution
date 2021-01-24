@@ -1,44 +1,15 @@
-from env import SnakeEnv
-import time
-from human_agent import HumanAgent
-import scipy.spatial.distance as distance
-import numpy as np
-import turtle
-import math
-from snake import Snake
-
+from snake.env import SnakeEnv
+from random import randint
+from agents.random_agent import RandomAgent
 
 env = SnakeEnv(600, 600)
-env.reset()
-env.step(0)
+state, reward, done = env.reset()
+
+agent = RandomAgent([0, 1, 2, 3])
 
 
-
-env.print_lidar()
-
-"""
-wall_x = 0
-wall_y = 600 / 2
-
-snake_x, snake_y = 0, 0
-opposite_x = snake_x
-opposite_y = 600 / 2
-
-opposite = distance.euclidean(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
-
-adjacent = opposite * math.tan(45)
-adjacent = 600 / 2
-
-hypotenuse = math.sqrt(opposite**2 + adjacent**2)
-
-
-t = turtle.Turtle()
-t.color("red")
-t.goto(wall_x, wall_y)
-t.goto(wall_x + adjacent, wall_y)
-t.goto(wall_x - adjacent, wall_y)
-t.goto(wall_x - adjacent, (-1) * wall_y)
-t.goto(wall_x + adjacent, (-1) * wall_y)
-"""
+while (not done):
+    action = agent.get_action(state)
+    state, reward, done = env.step(action)
 
 env.wn.mainloop()
