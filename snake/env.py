@@ -87,6 +87,10 @@ class SnakeEnv:
 
 
     def __get_current_state(self):
+        """
+        Gets the current state of the the MDP.
+        :return: A numpy array of dimension (1, 6) where the first 5 entries are the lidar and the final entry is the distance to the food
+        """
         lidar = self.__get_lidar("up")
         food_dist = np.array([self.__food_distance()])
         state = np.concatenate((lidar, food_dist))
@@ -105,12 +109,12 @@ class SnakeEnv:
         """
 
         ## Get the min and max x-value in the environment
-        x_start = (-1) * self.screen_width / 2
-        x_end = self.screen_width / 2
+        x_start = (-1) * self.screen_width / 2 + 20
+        x_end = self.screen_width / 2 - 20
 
         ## Get the min and max y-value in the environment
-        y_start = (-1) * self.screen_height / 2
-        y_end = self.screen_height / 2
+        y_start = (-1) * self.screen_height / 2 + 20
+        y_end = self.screen_height / 2 - 20
 
         ## Get pseudorandom x,y coordinates for the food
         x_rand = random.randrange(x_start, x_end)
@@ -210,274 +214,6 @@ class SnakeEnv:
                 return True
 
         return False
-
-    
-    def __wall_dist_up(self, dist_metric=distance.cityblock):
-        """
-        Measure the distance to the Northern environment boundary.
-
-        Parameters:
-            dist_metric - The distance metric function, taking two 1D numpy arrays
-
-        Returns:
-            float - The distance between the snake head and the Northern wall.
-        """
-        snake_x, snake_y, = self.snake.head.pos()
-
-        wall_x = snake_x
-        wall_y = self.screen_height / 2
-            
-        return dist_metric(np.array([snake_x, snake_y]), np.array([wall_x, wall_y]))
-
-
-    def __wall_dist_down(self, dist_metric=distance.cityblock):
-        """
-        Measure the distance to the Southern environment boundary.
-
-        Parameters:
-            dist_metric - The distance metric function, taking two 1D numpy arrays
-
-        Returns:
-            float - The distance between the snake head and the Southern wall.
-        """
-        snake_x, snake_y, = self.snake.head.pos()
-        wall_x = snake_x
-        wall_y = (-1) * self.screen_height / 2
-
-        return dist_metric(np.array([snake_x, snake_y]), np.array([wall_x, wall_y]))
-
-    def __wall_dist_left(self, dist_metric=distance.cityblock):
-        """
-        Measure the distance to the Western environment boundary.
-
-        Parameters:
-            dist_metric - The distance metric function, taking two 1D numpy arrays
-
-        Returns:
-            float - The distance between the snake head and the Western wall.
-        """
-        snake_x, snake_y, = self.snake.head.pos()
-        wall_y = snake_y
-        wall_x = (-1) * self.screen_width / 2
-
-        return dist_metric(np.array([snake_x, snake_y]), np.array([wall_x, wall_y]))
-
-    def __wall_dist_right(self, dist_metric=distance.cityblock):
-        """
-        Measure the distance to the Eastern environment boundary.
-
-        Parameters:
-            dist_metric - The distance metric function, taking two 1D numpy arrays
-
-        Returns:
-            float - The distance between the snake head and the Eastern wall.
-        """
-        snake_x, snake_y, = self.snake.head.pos()
-        wall_y = snake_y
-        wall_x = self.screen_width / 2
-
-        return dist_metric(np.array([snake_x, snake_y]), np.array([wall_x, wall_y]))
-
-    def __wall_dist_up_right(self, dist_metric=distance.cityblock):
-        """
-        Measure the 45° diagonal distance to the boundary in the North-East direction.
-
-        Parameters:
-            dist_metric - The distance metric function, taking two 1D numpy arrays
-
-        Returns:
-            float - The distance between the snake head and the closest wall in the North-East direction.
-        """
-        snake_x, snake_y = self.snake.head.pos()
-        adjacent_x = snake_x
-        adjacent_y = self.screen_height / 2
-
-        # Length of the opposite side of the triangle
-        adjacent = distance.euclidean(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
-        opposite = adjacent
-
-        opposite_x = adjacent_x + opposite
-        opposite_y = self.screen_height / 2
-
-        # If the opposite is outside of the screen, turn the head 90 degrees and recompute the distance
-        if opposite_x > self.screen_width / 2:
-            return self.__wall_dist_right_up()
-
-            
-        return dist_metric(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
-
-
-    def __wall_dist_down_right(self, dist_metric=distance.cityblock):
-        """
-        Measure the 45° diagonal distance to the boundary in the South-East direction.
-
-        Parameters:
-            dist_metric - The distance metric function, taking two 1D numpy arrays
-
-        Returns:
-            float - The distance between the snake head and the closest wall in the South-East direction.
-        """
-        snake_x, snake_y = self.snake.head.pos()
-        adjacent_x = snake_x
-        adjacent_y = (-1) * self.screen_height / 2
-
-        # Length of the opposite side of the triangle
-        adjacent = distance.euclidean(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
-        opposite = adjacent
-
-        opposite_x = adjacent_x + opposite
-        opposite_y = (-1) * self.screen_height / 2
-
-        if opposite_x > self.screen_width / 2:
-            return self.__wall_dist_right_down()
-
-        return dist_metric(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
-        
-
-    def __wall_dist_up_left(self, dist_metric=distance.cityblock):
-        """
-        Measure the 45° diagonal distance to the boundary in the North-West direction.
-
-        Parameters:
-            dist_metric - The distance metric function, taking two 1D numpy arrays
-
-        Returns:
-            float - The distance between the snake head and the closest wall in the North-West direction.
-        """
-        snake_x, snake_y = self.snake.head.pos()
-        adjacent_x = snake_x
-        adjacent_y = self.screen_height / 2
-
-        # Length of the opposite side of the triangle
-        adjacent = distance.euclidean(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
-        opposite = adjacent
-
-        opposite_x = adjacent_x - opposite
-        opposite_y = self.screen_height / 2
-
-        if opposite_x < self.screen_width / 2:
-            return self.__wall_dist_left_up()
-
-        return dist_metric(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
-        
-
-    def __wall_dist_down_left(self, dist_metric=distance.cityblock):
-        """
-        Measure the 45° diagonal distance to the boundary in the South-West direction.
-
-        Parameters:
-            dist_metric - The distance metric function, taking two 1D numpy arrays
-
-        Returns:
-            float - The distance between the snake head and the closest wall in the South-West direction.
-        """
-        snake_x, snake_y = self.snake.head.pos()
-        adjacent_x = snake_x
-        adjacent_y = (-1) * self.screen_height / 2
-
-        # Length of the opposite side of the triangle
-        adjacent = distance.euclidean(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
-        opposite = adjacent
-
-        opposite_x = adjacent_x - opposite
-        opposite_y = (-1) * self.screen_height / 2
-
-        if opposite_x < self.screen_width / 2:
-            return self.__wall_dist_left_down()
-
-        return dist_metric(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
-
-
-    def __wall_dist_right_up(self, dist_metric=distance.cityblock):
-        """
-        Measure the 45° diagonal distance to the boundary in the East-North direction.
-
-        Parameters:
-            dist_metric - The distance metric function, taking two 1D numpy arrays
-
-        Returns:
-            float - The distance between the snake head and the closest wall in the East-North direction.
-        """
-        snake_x, snake_y = self.snake.head.pos()
-        adjacent_x = self.screen_width / 2
-        adjacent_y = snake_y
-
-        adjacent = distance.euclidean(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
-        opposite = adjacent
-
-        opposite_x = self.screen_width / 2
-        opposite_y = adjacent_y + opposite
-
-        return dist_metric(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
-
-
-    def __wall_dist_right_down(self, dist_metric=distance.cityblock):
-        """
-        Measure the 45° diagonal distance to the boundary in the East-South direction.
-
-        Parameters:
-            dist_metric - The distance metric function, taking two 1D numpy arrays
-
-        Returns:
-            float - The distance between the snake head and the closest wall in the East-North direction.
-        """
-        snake_x, snake_y = self.snake.head.pos()
-        adjacent_x = self.screen_width / 2
-        adjacent_y = snake_y
-
-        adjacent = distance.euclidean(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
-        opposite = adjacent
-
-        opposite_x = self.screen_width / 2
-        opposite_y = adjacent_y - opposite
-
-        return dist_metric(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
-
-
-    def __wall_dist_left_up(self, dist_metric=distance.cityblock):
-        """
-        Measure the 45° diagonal distance to the boundary in the West-North direction.
-
-        Parameters:
-            dist_metric - The distance metric function, taking two 1D numpy arrays
-
-        Returns:
-            float - The distance between the snake head and the closest wall in the West-North direction.
-        """
-        snake_x, snake_y = self.snake.head.pos()
-        adjacent_x = (-1) * self.screen_width / 2
-        adjacent_y = snake_y
-
-        adjacent = distance.euclidean(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
-        opposite = adjacent
-
-        opposite_x = (-1) * self.screen_width / 2
-        opposite_y = adjacent_y + opposite
-
-        return dist_metric(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
-
-
-    def __wall_dist_left_down(self, dist_metric=distance.cityblock):
-        """
-        Measure the 45° diagonal distance to the boundary in the West-South direction.
-
-        Parameters:
-            dist_metric - The distance metric function, taking two 1D numpy arrays
-
-        Returns:
-            float - The distance between the snake head and the closest wall in the West-South direction.
-        """
-        snake_x, snake_y = self.snake.head.pos()
-        adjacent_x = (-1) * self.screen_width / 2
-        adjacent_y = snake_y
-
-        adjacent = distance.euclidean(np.array([snake_x, snake_y]), np.array([adjacent_x, adjacent_y]))
-        opposite = adjacent
-
-        opposite_x = (-1) * self.screen_width / 2
-        opposite_y = adjacent_y - opposite
-
-        return dist_metric(np.array([snake_x, snake_y]), np.array([opposite_x, opposite_y]))
 
 
     def __up_lidar(self):
@@ -603,6 +339,10 @@ class SnakeEnv:
 
 
     def lidar_east_pulse(self):
+        """
+        The lidar beam that travels east within the game.
+        :return: a point of where the beam either hit a wall or a part of the snake.
+        """
         pulse_x, pulse_y = self.snake.head.pos()
         east_pulse = Point(pulse_x, pulse_y)
         east_wall = Point(self.screen_width / 2, pulse_y)
@@ -615,6 +355,10 @@ class SnakeEnv:
 
 
     def lidar_south_pulse(self):
+        """
+        The lidar beam that travels south within the game.
+        :return: a point of where the beam either hit a wall or a part of the snake.
+        """
         pulse_x, pulse_y = self.snake.head.pos()
         south_pulse = Point(pulse_x, pulse_y)
         south_wall = Point(pulse_x, (-1) * (self.screen_height / 2))
@@ -626,6 +370,10 @@ class SnakeEnv:
         return south_pulse
 
     def lidar_west_pulse(self):
+        """
+        The lidar beam that travels west within the game.
+        :return: a point of where the beam either hit a wall or a part of the snake.
+        """
         pulse_x, pulse_y = self.snake.head.pos()
         west_pulse = Point(pulse_x, pulse_y)
         west_wall = Point((-1) * (self.screen_width / 2), pulse_y)
@@ -637,6 +385,10 @@ class SnakeEnv:
         return west_pulse
 
     def lidar_north_pulse(self):
+        """
+        The lidar beam that travels north within the game.
+        :return: a point of where the beam either hit a wall or a part of the snake.
+        """
         pulse_x, pulse_y = self.snake.head.pos()
         north_pulse = Point(pulse_x, pulse_y)
         north_wall = Point(pulse_x, self.screen_height / 2)
@@ -647,6 +399,10 @@ class SnakeEnv:
         return north_pulse
 
     def lidar_north_east_pulse(self):
+        """
+        The lidar beam that travels north east within the game.
+        :return: a point of where the beam either hit a wall or a part of the snake.
+        """
         pulse_x, pulse_y = self.snake.head.pos()
         north_east_pulse = Point(pulse_x, pulse_y)
         north_wall = Point(pulse_x, self.screen_height / 2)
@@ -661,6 +417,10 @@ class SnakeEnv:
         return north_east_pulse
 
     def lidar_north_west_pulse(self):
+        """
+        The lidar beam that travels north west within the game.
+        :return: a point of where the beam either hit a wall or a part of the snake.
+        """
         pulse_x, pulse_y = self.snake.head.pos()
         north_west_pulse = Point(pulse_x, pulse_y)
         north_wall = Point(pulse_x, self.screen_height / 2)
@@ -675,6 +435,10 @@ class SnakeEnv:
         return north_west_pulse
 
     def lidar_south_east_pulse(self):
+        """
+        The lidar beam that travels south east within the game.
+        :return: a point of where the beam either hit a wall or a part of the snake.
+        """
         pulse_x, pulse_y = self.snake.head.pos()
         south_east_pulse = Point(pulse_x, pulse_y)
         south_wall = Point(pulse_x, (-1) * (self.screen_height / 2))
@@ -687,6 +451,10 @@ class SnakeEnv:
         return south_east_pulse
 
     def lidar_south_west_pulse(self):
+        """
+        The lidar beam that travels south west within the game.
+        :return: a point of where the beam either hit a wall or a part of the snake.
+        """
         pulse_x, pulse_y = self.snake.head.pos()
         south_west_pulse = Point(pulse_x, pulse_y)
         south_wall = Point(pulse_x, (-1) * (self.screen_height / 2))

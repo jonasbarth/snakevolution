@@ -187,10 +187,6 @@ class Snake:
         food_cor = np.array([food.head.pos()[0], food.head.pos()[1]], dtype=np.float32)
        
         return metric(snake_cor, food_cor)
-
-    def tail_distance(self):
-
-        head_cor = np.array([self.head.xcor(), self.head.ycor()], dtype=np.float32)
         
 
     def add_tail(self):
@@ -208,14 +204,14 @@ class Snake:
         new_part = Snake(colour="gray", x=x, y=y)
         self.tail.append(new_part)
 
-    def tail_pos(self):
-        tail_xy = []
-
-        for t in zip(self.tail[1:]):
-            tail_xy.append(t.pos())
-
 
     def point_is_in_tail(self, point):
+        """
+        Checks whether the provided point is somewhere in the tail of the snake.
+        :param point: an object of type Point
+        :return: a triples (False, (0, 0)) if the point does not exist in the tail. A triples (True, (cx, cy)) where
+        cx and cy are the coordinates of the point.
+        """
         for section in self.tail[1:]:
             cx, cy = section.head.pos()
             x_1 = cx - 10
@@ -223,19 +219,19 @@ class Snake:
             x_2 = cx + 10
             y_2 = cy + 10
 
-            #print(cx, cy, x_1, y_1, x_2, y_2, point.x, point.y)
-
             if (x_1 < point.x < x_2) and (y_1 < point.y < y_2):
-                #print(point.x, point.y, "are in the tail");
                 return (True, (cx, cy))
 
-            #print(point.x, point.y, "are not in the tail");
             return (False, (0, 0))
 
         return (False, (0, 0))
 
 
     def reset(self):
+        """
+        Resets the snake to the starting position (0, 0), sets the direction to stop and remove all the tail elements.
+        :return:
+        """
         # remove all the tail drawings
         for section in self.tail[1:]:
             section.clear()
@@ -246,6 +242,13 @@ class Snake:
 
 
     def __direction_is_legal(self, direction):
+        """
+        Checks whether the direction is legal. A snake can not move in the opposite direction on the same axis but needs
+        to move on a different axis. E.g. if the snake is moving left, it cannot move right but needs to move either
+        up or down.
+        :param direction: a string that specifies the direction to be checked.
+        :return: False if the direction is not permitted. True if the direction is permitted.
+        """
         try:
             return direction in self.legal_direction[self.head.direction]
 
@@ -253,10 +256,25 @@ class Snake:
             return False
 
     def __get_legal_directions_x(self):
+        """
+        Gets a list of legal directions that the snake can move to when its current direction is on the x axis.
+        :return: a list of strings with legal directions.
+        """
         return ["up", 'down']
 
     def __get_legal_directions_y(self):
+        """
+        Gets a list of legal directions that the snake can move to when its current direction is on the y axis.
+        :return: a list of strings with legal directions.
+        """
         return ["left", "right"]
+
+    def __get_legal_directions_stop(self):
+        """
+        Gets a list of legal directions that the snake can move to when its current direction is stop.
+        :return: a list of strings with legal directions.
+        """
+        return self.__get_legal_directions_x() + self.__get_legal_directions_y()
     
         
 
