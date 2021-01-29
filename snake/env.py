@@ -21,6 +21,7 @@ class SnakeEnv:
         self.snake = Snake()
         self.actions = {0: "up", 1: "right", 2: "down", 3: "left"}
         self.points = 0
+        self.n_moves = 0
         self.theta = 45
         
         
@@ -34,6 +35,7 @@ class SnakeEnv:
         self.wn.setup(width=self.screen_width, height=self.screen_height)
         self.__generate_food()
         self.snake.reset()
+        self.points = 0
         state = self.__get_current_state()
         done = False
         reward = 0
@@ -59,18 +61,19 @@ class SnakeEnv:
         direction = self.actions[action]
 
         ## The variables to be returned. Reward will remain 0 if the snake doesn't touch anything.
-        reward = 0
+        reward = -1
         done = False
         state = None
 
         ## Move the snake in the desired direction and check whether it touches food
         self.snake.move(direction)
+        self.n_moves += 1
 
         state = self.__get_current_state()
         
         ## If the snake touches a wall or itself, the episode is over
         if self.__touch_wall() or self.__touch_snake():
-            reward = -1
+            reward = -10
             done = True
 
         ## If the snake touches food, add to the tail
@@ -350,7 +353,7 @@ class SnakeEnv:
            # print(self.snake.point_is_in_tail(east_pulse))
             east_pulse.offset(+1, 0)
 
-        print("Returning east")
+        #print("Returning east")
         return east_pulse
 
 
@@ -366,7 +369,7 @@ class SnakeEnv:
             #print(self.snake.point_is_in_tail(south_pulse))
             south_pulse.offset(0, -1)
 
-        print("Returning south")
+        #print("Returning south")
         return south_pulse
 
     def lidar_west_pulse(self):
@@ -381,7 +384,7 @@ class SnakeEnv:
             #print("West pulse", self.snake.point_is_in_tail(west_pulse))
             west_pulse.offset(-1, 0)
 
-        print("Returning west")
+        #print("Returning west")
         return west_pulse
 
     def lidar_north_pulse(self):
@@ -395,7 +398,7 @@ class SnakeEnv:
         while (north_pulse.y < north_wall.y and not self.snake.point_is_in_tail(north_pulse)[0]):
             #print(self.snake.point_is_in_tail(north_pulse))
             north_pulse.offset(0, 1)
-        print("Returning north")
+       #print("Returning north")
         return north_pulse
 
     def lidar_north_east_pulse(self):
@@ -413,7 +416,7 @@ class SnakeEnv:
             #print("Bool", north_east_pulse.y < north_wall.y, north_east_pulse.x < east_wall.x)
             north_east_pulse.offset(1, 1)
 
-        print("Returning north east")
+       # print("Returning north east")
         return north_east_pulse
 
     def lidar_north_west_pulse(self):
@@ -431,7 +434,7 @@ class SnakeEnv:
             #print("Bool", north_east_pulse.y < north_wall.y, north_east_pulse.x < east_wall.x)
             north_west_pulse.offset(-1, 1)
 
-        print("Returning north west")
+        #print("Returning north west")
         return north_west_pulse
 
     def lidar_south_east_pulse(self):
@@ -447,7 +450,7 @@ class SnakeEnv:
         while (south_east_pulse.y > south_wall.y and south_east_pulse.x < east_wall.x and not self.snake.point_is_in_tail(south_east_pulse)[0]):
             south_east_pulse.offset(1, -1)
 
-        print("Returning south east")
+        #print("Returning south east")
         return south_east_pulse
 
     def lidar_south_west_pulse(self):
@@ -463,7 +466,14 @@ class SnakeEnv:
         while (south_west_pulse.y > south_wall.y and south_west_pulse.x > west_wall.x and not self.snake.point_is_in_tail(south_west_pulse)[0]):
             south_west_pulse.offset(-1, -1)
 
-        print("Returning south west")
+        #print("Returning south west")
         return south_west_pulse
+
+    def get_episode_statistic(self):
+        """
+        Gets statistics about the current episode.
+        :return:
+        """
+        return (self.points, self.n_moves, self.snake.get_tail_length())
 
 

@@ -104,10 +104,8 @@ class Snake:
             ## Move the head
             y = self.head.ycor()
             x = self.head.xcor()
-            print("Currently at", x,y)
             self.head.sety(y + 20)
 
-            print("Moving up to", x, self.head.ycor())
             ## Move all tail sections to the coordinates of the section that is in front of them
             for section in self.tail[1:]:
                 old_x = section.head.xcor()
@@ -117,7 +115,6 @@ class Snake:
                 x = old_x
                 y = old_y
 
-            print(self.tail[0].head.ycor())
 
 
     def __left(self):
@@ -234,7 +231,7 @@ class Snake:
         """
         # remove all the tail drawings
         for section in self.tail[1:]:
-            section.clear()
+            section.head.clear()
 
         self.tail = [self]
         self.head.goto(0, 0)
@@ -275,6 +272,9 @@ class Snake:
         :return: a list of strings with legal directions.
         """
         return self.__get_legal_directions_x() + self.__get_legal_directions_y()
+
+    def get_tail_length(self):
+        return len(self.tail)
     
         
 
