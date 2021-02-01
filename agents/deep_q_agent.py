@@ -46,6 +46,7 @@ class DeepQAgent(object):
 
     def learn(self):
         if self.mem_counter > self.batch_size:
+            print("Learning")
             self.Q.optimiser.zero_grad()
 
             max_mem = self.mem_counter if self.mem_counter < self.mem_size \

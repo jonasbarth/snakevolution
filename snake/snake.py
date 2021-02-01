@@ -4,6 +4,9 @@ import turtle
 import scipy.spatial.distance as distance
 import numpy as np
 
+from snake.point import Point
+
+
 class Snake:
 
     def __init__(self, colour="black", x=0, y=0):
@@ -275,7 +278,9 @@ class Snake:
 
     def get_tail_length(self):
         return len(self.tail)
-    
+
+    def get_current_location(self):
+        return Point(self.head.xcor(), self.head.ycor())
         
 
     

@@ -35,7 +35,6 @@ class SnakeEnv:
         self.wn.setup(width=self.screen_width, height=self.screen_height)
         self.__generate_food()
         self.snake = Snake()
-        #self.snake.reset()
         self.points = 0
         state = self.__get_current_state()
         done = False
@@ -60,27 +59,30 @@ class SnakeEnv:
         """
         
         direction = self.actions[action]
-
-        ## The variables to be returned. Reward will remain 0 if the snake doesn't touch anything.
-        reward = 0
-        done = False
-        state = None
+        previous_location = self.snake.get_current_location()
 
         ## Move the snake in the desired direction and check whether it touches food
         self.snake.move(direction)
         self.n_moves += 1
+        current_location = self.snake.get_current_location()
+
+        ## The variables to be returned. Reward will remain 0 if the snake doesn't touch anything.
+        reward = self.__get_food_distance_reward(previous_location, current_location)
+        done = False
+        state = None
 
         state = self.__get_current_state()
-        
+
+
         ## If the snake touches a wall or itself, the episode is over
         if self.__touch_wall() or self.__touch_snake():
-            reward = -1
+            reward = -100
             done = True
 
         ## If the snake touches food, add to the tail
         elif self.__touch_food():
             self.points += 1
-            reward = 1
+            reward = 10
             self.snake.add_tail()
             self.__generate_food()
 
@@ -478,5 +480,31 @@ class SnakeEnv:
         :return:
         """
         return (self.points, self.n_moves, self.snake.get_tail_length())
+
+    def __get_food_distance_reward(self, previous_location: Point, current_location: Point):
+        """
+
+        :param previous_location: A type point that specifies previous location of the snake
+        :param current_location: A type point that specifies the current location of the snake
+        :return: 1 if the snake moved towards the food, 0 if the snake moved away from the food
+        """
+        """
+        food_x = self.current_food.head.xcor()
+        food_y = self.current_food.head.ycor()
+        food_point = Point(food_x, food_y)
+        if (previous_location.distance(food_point) > current_location.distance(food_point)):
+            return 1
+
+        return 
+        """
+
+        def sigmoid(x):
+            return 1 / (1 + np.exp(-x))
+
+
+        food_x = self.current_food.head.xcor()
+        food_y = self.current_food.head.ycor()
+        food_point = Point(food_x, food_y)
+        return sigmoid(current_location.distance(food_point))
 
 
