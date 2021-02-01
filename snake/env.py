@@ -18,23 +18,24 @@ class SnakeEnv:
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.current_food = None
-        self.snake = Snake()
+        self.snake = None
         self.actions = {0: "up", 1: "right", 2: "down", 3: "left"}
         self.points = 0
         self.n_moves = 0
         self.theta = 45
-        
-        
 
     def reset(self):
         """
         Resets the Snake environment
         """
+        self.wn.clear()
+        self.current_food = None
         self.wn.title("Snake Game")
         self.wn.bgcolor("white")
         self.wn.setup(width=self.screen_width, height=self.screen_height)
         self.__generate_food()
-        self.snake.reset()
+        self.snake = Snake()
+        #self.snake.reset()
         self.points = 0
         state = self.__get_current_state()
         done = False
@@ -61,7 +62,7 @@ class SnakeEnv:
         direction = self.actions[action]
 
         ## The variables to be returned. Reward will remain 0 if the snake doesn't touch anything.
-        reward = -1
+        reward = 0
         done = False
         state = None
 
@@ -73,7 +74,7 @@ class SnakeEnv:
         
         ## If the snake touches a wall or itself, the episode is over
         if self.__touch_wall() or self.__touch_snake():
-            reward = -10
+            reward = -1
             done = True
 
         ## If the snake touches food, add to the tail
@@ -125,8 +126,10 @@ class SnakeEnv:
 
         # if a food object has been previously created, just move it to a new random location
         if (self.current_food):
+            print("Ate food")
             self.current_food.head.goto(x_rand, y_rand)
         else:
+            print("generated food")
             self.current_food = Food(x_rand, y_rand)
 
 

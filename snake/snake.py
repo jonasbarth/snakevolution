@@ -231,7 +231,7 @@ class Snake:
         """
         # remove all the tail drawings
         for section in self.tail[1:]:
-            section.head.clear()
+            section.reset()
 
         self.tail = [self]
         self.head.goto(0, 0)

@@ -4,6 +4,7 @@ import numpy as np
 import torch as T
 
 
+
 class DeepQAgent(object):
     def __init__(self, gamma, epsilon, learning_rate, input_dims, batch_size, n_actions, max_mem_size=1000000, eps_end=0.01, eps_dec=0.996):
         self.gamma = gamma
@@ -21,6 +22,7 @@ class DeepQAgent(object):
         self.action_memory = np.zeros((self.mem_size, n_actions), dtype=np.uint8)
         self.reward_memory = np.zeros(self.mem_size)
         self.terminal_memory = np.zeros(self.mem_size, dtype=np.uint8)
+
 
     def store_transition(self, state, action, reward, state_, terminal):
         index = self.mem_counter % self.mem_size
@@ -73,3 +75,6 @@ class DeepQAgent(object):
             loss = self.Q.loss(Q_target, Q).to(self.Q.device)
             loss.backward()
             self.Q.optimiser.step()
+            return loss
+
+        return None
