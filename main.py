@@ -12,13 +12,13 @@ env = SnakeEnv(600, 600)
 
 action_space = np.array([0,1,2,3])
 
-agent = DeepQAgent(gamma=0.99, epsilon=1.0, batch_size=64, n_actions=4, input_dims=[6], learning_rate=0.003)
-n_games = 100
+agent = DeepQAgent(gamma=0.99, epsilon=1.0, batch_size=64, learn_start=64, n_actions=4, input_dims=[6], learning_rate=0.0005)
+n_games = 1000
 score = 0
 global_step = 0
 
+
 for i in range(n_games):
-    print("Episode", i)
     score = 0
     state, reward, done = env.reset()
 
@@ -30,14 +30,14 @@ for i in range(n_games):
         agent.store_transition(state, action, reward, state_, done)
         loss = agent.learn()
         state = state_
-        print(reward)
         if (loss):
             writer.add_scalar("Loss", loss, global_step=global_step)
-            writer.add_scalar("Reward", reward, global_step=global_step)
 
+        writer.add_scalar("Reward", reward, global_step=global_step)
         global_step += 1
 
-    print("Score is", score)
+    writer.add_scalar("Episode score", score, global_step=i)
+    writer.add_scalar("Moves per episode", env.n_moves, global_step=i)
 
 
 env.wn.mainloop()

@@ -17,11 +17,13 @@ class SnakeEnv:
         self.wn = turtle.Screen() 
         self.screen_width = screen_width
         self.screen_height = screen_height
+        self.max_distance = distance.cityblock(np.array([0, 0]), np.array([screen_width, screen_height]))
         self.current_food = None
         self.snake = None
         self.actions = {0: "up", 1: "right", 2: "down", 3: "left"}
         self.points = 0
         self.n_moves = 0
+        self.max_moves_without_food = 1000
         self.theta = 45
 
     def reset(self):
@@ -36,6 +38,7 @@ class SnakeEnv:
         self.__generate_food()
         self.snake = Snake()
         self.points = 0
+        self.n_moves = 0
         state = self.__get_current_state()
         done = False
         reward = 0
@@ -57,7 +60,8 @@ class SnakeEnv:
             reward - an integer denoting the reward 
             done - a boolean indicating whether the episode is over
         """
-        
+
+        # TODO add timeout after x amount of steps without eating food.
         direction = self.actions[action]
         previous_location = self.snake.get_current_location()
 
@@ -75,7 +79,7 @@ class SnakeEnv:
 
 
         ## If the snake touches a wall or itself, the episode is over
-        if self.__touch_wall() or self.__touch_snake():
+        if self.__touch_wall() or self.__touch_snake() or self.n_moves > self.max_moves_without_food:
             reward = -100
             done = True
 
@@ -97,7 +101,7 @@ class SnakeEnv:
         Gets the current state of the the MDP.
         :return: A numpy array of dimension (1, 6) where the first 5 entries are the lidar and the final entry is the distance to the food
         """
-        lidar = self.__get_lidar("up")
+        lidar = self.__get_lidar(self.snake.head.direction)
         food_dist = np.array([self.__food_distance()])
         state = np.concatenate((lidar, food_dist))
         return state
@@ -115,12 +119,12 @@ class SnakeEnv:
         """
 
         ## Get the min and max x-value in the environment
-        x_start = (-1) * self.screen_width / 2 + 20
-        x_end = self.screen_width / 2 - 20
+        x_start = (-1) * self.screen_width / 2 + 10
+        x_end = self.screen_width / 2 - 10
 
         ## Get the min and max y-value in the environment
-        y_start = (-1) * self.screen_height / 2 + 20
-        y_end = self.screen_height / 2 - 20
+        y_start = (-1) * self.screen_height / 2 + 10
+        y_end = self.screen_height / 2 - 10
 
         ## Get pseudorandom x,y coordinates for the food
         x_rand = random.randrange(x_start, x_end)
@@ -244,6 +248,8 @@ class SnakeEnv:
         lidar[3] = snake_pos.distance(self.lidar_north_east_pulse())
         lidar[4] = snake_pos.distance(self.lidar_east_pulse())
 
+        self.lidar_end_points = [self.lidar_west_pulse(), self.lidar_north_west_pulse(), self.lidar_north_pulse(), self.lidar_north_east_pulse(), self.lidar_east_pulse()]
+
         return lidar
 
 
@@ -266,6 +272,9 @@ class SnakeEnv:
         lidar[2] = snake_pos.distance(self.lidar_east_pulse())
         lidar[3] = snake_pos.distance(self.lidar_south_east_pulse())
         lidar[4] = snake_pos.distance(self.lidar_south_pulse())
+
+        self.lidar_end_points = [self.lidar_north_pulse(), self.lidar_north_east_pulse(), self.lidar_east_pulse(), self.lidar_south_east_pulse(), self.lidar_south_pulse()]
+
 
         return lidar
 
@@ -290,6 +299,9 @@ class SnakeEnv:
         lidar[3] = snake_pos.distance(self.lidar_south_west_pulse())
         lidar[4] = snake_pos.distance(self.lidar_west_pulse())
 
+        self.lidar_end_points = [self.lidar_east_pulse(), self.lidar_south_east_pulse(),self.lidar_south_pulse(),self.lidar_south_west_pulse(),self.lidar_west_pulse() ]
+
+
         return lidar
 
 
@@ -312,6 +324,9 @@ class SnakeEnv:
         lidar[2] = snake_pos.distance(self.lidar_west_pulse())
         lidar[3] = snake_pos.distance(self.lidar_north_west_pulse())
         lidar[4] = snake_pos.distance(self.lidar_north_pulse())
+
+        self.lidar_end_points = [self.lidar_south_pulse(),self.lidar_south_west_pulse(),self.lidar_west_pulse(),self.lidar_north_west_pulse(),self.lidar_north_pulse()]
+
 
         return lidar
 
@@ -498,13 +513,22 @@ class SnakeEnv:
         return 
         """
 
-        def sigmoid(x):
-            return 1 / (1 + np.exp(-x))
+        def normalise(x):
+            return 1 - (x / self.max_distance)
 
 
         food_x = self.current_food.head.xcor()
         food_y = self.current_food.head.ycor()
         food_point = Point(food_x, food_y)
-        return sigmoid(current_location.distance(food_point))
+        multiplier = len(self.snake.tail) if len(self.snake.tail) > 2 else 1
+        return normalise(current_location.distance(food_point)) * multiplier
+
+    def draw_lidar(self):
+        for end_point in self.lidar_end_points:
+            t = turtle.Turtle()
+            t.penup()
+            t.goto(self.snake.head.xcor(), self.snake.head.ycor())
+            t.pendown()
+            t.goto(end_point.x, end_point.y)
 
 
