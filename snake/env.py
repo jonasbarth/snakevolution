@@ -60,8 +60,6 @@ class SnakeEnv:
             reward - an integer denoting the reward 
             done - a boolean indicating whether the episode is over
         """
-
-        # TODO add timeout after x amount of steps without eating food.
         direction = self.actions[action]
         previous_location = self.snake.get_current_location()
 

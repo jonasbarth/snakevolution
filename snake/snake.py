@@ -26,7 +26,7 @@ class Snake:
         self.head.goto(x,y)
         self.head.direction = "up"
         self.moves = {"up": self.__up, "right": self.__right, "down": self.__down, "left": self.__left}
-        self.legal_direction = {"up": self.__get_legal_directions_x, "right": self.__get_legal_directions_y, "down": self.__get_legal_directions_x, "left": self.__get_legal_directions_y}
+        self.legal_direction = {"up": ["up", "left", "right"], "right": ["right", "up", "down"], "down": ["down", "right", "left"], "left": ["left", "up", "down"]}
         self.tail = [self]
 
 
@@ -57,9 +57,9 @@ class Snake:
         Returns:
             None
         """
-        self.__set_direction(direction)
-
-        self.moves[direction]()
+        if (self.__direction_is_legal(direction)):
+            self.__set_direction(direction)
+            self.moves[direction]()
 
 
     def __down(self):
@@ -250,31 +250,12 @@ class Snake:
         :return: False if the direction is not permitted. True if the direction is permitted.
         """
         try:
+
             return direction in self.legal_direction[self.head.direction]
 
         except KeyError:
             return False
 
-    def __get_legal_directions_x(self):
-        """
-        Gets a list of legal directions that the snake can move to when its current direction is on the x axis.
-        :return: a list of strings with legal directions.
-        """
-        return ["up", 'down']
-
-    def __get_legal_directions_y(self):
-        """
-        Gets a list of legal directions that the snake can move to when its current direction is on the y axis.
-        :return: a list of strings with legal directions.
-        """
-        return ["left", "right"]
-
-    def __get_legal_directions_stop(self):
-        """
-        Gets a list of legal directions that the snake can move to when its current direction is stop.
-        :return: a list of strings with legal directions.
-        """
-        return self.__get_legal_directions_x() + self.__get_legal_directions_y()
 
     def get_tail_length(self):
         return len(self.tail)
