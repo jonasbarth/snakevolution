@@ -20,6 +20,7 @@ class Snake:
         """
         self.head = turtle.Turtle()
         self.head.speed(0)
+        turtle.delay(0)
         self.head.shape("square")
         self.head.color(colour)
         self.head.penup()
@@ -76,19 +77,12 @@ class Snake:
         if self.head.direction == "down":
 
             ## Move the head
-            y = self.head.ycor()
-            x = self.head.xcor()
-            self.head.sety(y - 20)
+            for i in range(len(self.tail) - 1, 0, -1):
+                x = self.tail[i - 1].head.xcor()
+                y = self.tail[i - 1].head.ycor()
+                self.tail[i].head.goto(x, y)
 
-
-            ## Move all tail sections to the coordinates of the section that is in front of them
-            for section in self.tail[1:]:
-                old_x = section.head.xcor()
-                old_y = section.head.ycor()
-                section.head.sety(y)
-                section.head.setx(x)
-                x = old_x
-                y = old_y
+            self.head.sety(self.head.ycor() - 20)
 
         
     def __up(self):
@@ -103,20 +97,13 @@ class Snake:
         """
 
         if self.head.direction == "up":
-            
-            ## Move the head
-            y = self.head.ycor()
-            x = self.head.xcor()
-            self.head.sety(y + 20)
+            for i in range(len(self.tail) - 1, 0, -1):
+                x = self.tail[i - 1].head.xcor()
+                y = self.tail[i - 1].head.ycor()
+                self.tail[i].head.goto(x, y)
+                turtle.update()
 
-            ## Move all tail sections to the coordinates of the section that is in front of them
-            for section in self.tail[1:]:
-                old_x = section.head.xcor()
-                old_y = section.head.ycor()
-                section.head.sety(y)
-                section.head.setx(x)
-                x = old_x
-                y = old_y
+            self.head.sety(self.head.ycor() + 20)
 
 
 
@@ -132,18 +119,12 @@ class Snake:
         """
         if self.head.direction == "left":
             ## Move the head
-            y = self.head.ycor()
-            x = self.head.xcor()
-            self.head.setx(x - 20)
+            for i in range(len(self.tail) - 1, 0, -1):
+                x = self.tail[i - 1].head.xcor()
+                y = self.tail[i - 1].head.ycor()
+                self.tail[i].head.goto(x, y)
 
-            for section in self.tail[1:]:
-                ## Move all tail sections to the coordinates of the section that is in front of them
-                old_x = section.head.xcor()
-                old_y = section.head.ycor()
-                section.head.sety(y)
-                section.head.setx(x)
-                x = old_x
-                y = old_y
+            self.head.setx(self.head.xcor() - 20)
 
     def __right(self):
         """
@@ -157,18 +138,15 @@ class Snake:
         """
         if self.head.direction == "right":
             ## Move the head
-            y = self.head.ycor()
-            x = self.head.xcor()
-            self.head.setx(x + 20)
 
-            for section in self.tail[1:]:
-                ## Move all tail sections to the coordinates of the section that is in front of them
-                old_x = section.head.xcor()
-                old_y = section.head.ycor()
-                section.head.sety(y)
-                section.head.setx(x)
-                x = old_x
-                y = old_y
+
+            for i in range(len(self.tail) - 1, 0, -1):
+                x = self.tail[i-1].head.xcor()
+                y = self.tail[i-1].head.ycor()
+                self.tail[i].head.goto(x, y)
+
+            self.head.setx(self.head.xcor() + 20)
+
 
 
     def food_distance(self, food, metric=distance.cityblock):

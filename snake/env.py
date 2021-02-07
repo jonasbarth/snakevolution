@@ -117,16 +117,16 @@ class SnakeEnv:
         """
 
         ## Get the min and max x-value in the environment
-        x_start = (-1) * self.screen_width / 2 + 10
-        x_end = self.screen_width / 2 - 10
+        x_start = ((-1) * self.screen_width / 2) / 20 - 1
+        x_end = (self.screen_width / 2) / 20 + 1
 
         ## Get the min and max y-value in the environment
-        y_start = (-1) * self.screen_height / 2 + 10
-        y_end = self.screen_height / 2 - 10
+        y_start = ((-1) * self.screen_height / 2) / 20 - 1
+        y_end = (self.screen_height / 2) / 20 + 1
 
         ## Get pseudorandom x,y coordinates for the food
-        x_rand = random.randrange(x_start, x_end)
-        y_rand = random.randrange(y_start, y_end)
+        x_rand = random.randrange(x_start, x_end) * 20
+        y_rand = random.randrange(y_start, y_end) * 20
 
         # if a food object has been previously created, just move it to a new random location
         if (self.current_food):
