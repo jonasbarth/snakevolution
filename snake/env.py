@@ -100,8 +100,10 @@ class SnakeEnv:
         :return: A numpy array of dimension (1, 6) where the first 5 entries are the lidar and the final entry is the distance to the food
         """
         lidar = self.__get_lidar(self.snake.head.direction)
+        head_direction = np.array(self.snake.get_current_one_hot_direction())
+        tail_direction = np.array(self.snake.get_tail_one_hot_direction())
         food_dist = np.array([self.__food_distance()])
-        state = np.concatenate((lidar, food_dist))
+        state = np.concatenate((lidar, head_direction, tail_direction, food_dist))
         return state
 
 
@@ -117,12 +119,12 @@ class SnakeEnv:
         """
 
         ## Get the min and max x-value in the environment
-        x_start = ((-1) * self.screen_width / 2) / 20 - 1
-        x_end = (self.screen_width / 2) / 20 + 1
+        x_start = ((-1) * self.screen_width / 2) / 20 + 1
+        x_end = (self.screen_width / 2) / 20 - 1
 
         ## Get the min and max y-value in the environment
-        y_start = ((-1) * self.screen_height / 2) / 20 - 1
-        y_end = (self.screen_height / 2) / 20 + 1
+        y_start = ((-1) * self.screen_height / 2) / 20 + 1
+        y_end = (self.screen_height / 2) / 20 - 1
 
         ## Get pseudorandom x,y coordinates for the food
         x_rand = random.randrange(x_start, x_end) * 20
@@ -130,10 +132,8 @@ class SnakeEnv:
 
         # if a food object has been previously created, just move it to a new random location
         if (self.current_food):
-            print("Ate food")
             self.current_food.head.goto(x_rand, y_rand)
         else:
-            print("generated food")
             self.current_food = Food(x_rand, y_rand)
 
 
@@ -339,8 +339,25 @@ class SnakeEnv:
         Returns:
             numpy.array - Returns a 1D numpy array with 5 entries, one for each lidar distance.
         """
-        
+        lidar = np.zeros((8), dtype=np.float32)
+        snake_x, snake_y = self.snake.head.pos()[0], self.snake.head.pos()[1]
+        snake_pos = Point(snake_x, snake_y)
+        lidar[0] = snake_pos.distance(self.lidar_north_pulse())
+        lidar[1] = snake_pos.distance(self.lidar_north_east_pulse())
+        lidar[2] = snake_pos.distance(self.lidar_east_pulse())
+        lidar[3] = snake_pos.distance(self.lidar_south_east_pulse())
+        lidar[4] = snake_pos.distance(self.lidar_south_pulse())
+        lidar[5] = snake_pos.distance(self.lidar_south_west_pulse())
+        lidar[6] = snake_pos.distance(self.lidar_west_pulse())
+        lidar[7] = snake_pos.distance(self.lidar_north_west_pulse())
 
+
+
+        self.lidar_end_points = [self.lidar_north_pulse(), self.lidar_north_east_pulse(), self.lidar_east_pulse(), self.lidar_south_east_pulse(), self.lidar_south_pulse(), self.lidar_south_west_pulse(), self.lidar_west_pulse(), self.lidar_north_west_pulse()]
+
+        return lidar
+
+        """
         if direction == "up":
             return self.__up_lidar()
 
@@ -352,10 +369,7 @@ class SnakeEnv:
 
         elif direction == "left":
             return self.__left_lidar()
-
-    #def lidar_pulse(self):
-
-
+        """
 
 
 
@@ -528,5 +542,22 @@ class SnakeEnv:
             t.goto(self.snake.head.xcor(), self.snake.head.ycor())
             t.pendown()
             t.goto(end_point.x, end_point.y)
+
+
+    def grid_positions(self):
+        rows = (self.screen_width / 20) - 1
+        columns = (self.screen_height / 20) - 1
+        self.grid = np.zeros((rows, columns))
+
+    def update_grid(self):
+        for segment in self.snake.tail:
+            segment_row = segment.head.xcor() / 20
+            segment_column = segment.head.ycor() / 20
+            self.grid[segment_row][segment_column] = 1
+
+    def available_points(self):
+        return
+
+
 
 

@@ -69,9 +69,12 @@ class DeepQAgent(object):
             loss.backward()
             self.Q_eval.optimiser.step()
 
-            self.epsilon = self.epsilon - self.eps_dec if self.epsilon > self.eps_min \
-                else self.eps_min
+
 
             return loss
 
         return None
+
+    def decay_epsilon(self):
+        self.epsilon = self.epsilon - self.eps_dec if self.epsilon > self.eps_min \
+            else self.eps_min

@@ -1,6 +1,8 @@
 # Class for the Snake 
 
 import turtle
+from collections import OrderedDict
+
 import scipy.spatial.distance as distance
 import numpy as np
 
@@ -25,13 +27,16 @@ class Snake:
         self.head.color(colour)
         self.head.penup()
         self.head.goto(x,y)
-        self.head.direction = "up"
+        self.head.direction = "stop"
+        self.previous_direction = "stop"
+        self.final_tail_section = "stop"
         self.moves = {"up": self.__up, "right": self.__right, "down": self.__down, "left": self.__left}
-        self.legal_direction = {"up": ["up", "left", "right"], "right": ["right", "up", "down"], "down": ["down", "right", "left"], "left": ["left", "up", "down"]}
+        self.one_hot = {"up": [1,0,0,0], "right": [0,1,0,0], "down": [0,0,1,0], "left": [0,0,0,1], "stop": [0,0,0,0]}
+        self.legal_direction = {"up": ["up", "left", "right"], "right": ["right", "up", "down"], "down": ["down", "right", "left"], "left": ["left", "up", "down"], "stop": ["left", "right", "up", "down"]}
         self.tail = [self]
 
 
-    def __set_direction(self, direction):
+    def set_direction(self, direction):
         """ 
         Sets the direction that the Snake head is facing.
 
@@ -44,6 +49,7 @@ class Snake:
 
         ## ensure that the direction is legal
         if direction in ["stop", "up", "down", "left", "right"]:
+            self.previous_direction = self.head.direction
             self.head.direction = direction
 
 
@@ -59,7 +65,7 @@ class Snake:
             None
         """
         if (self.__direction_is_legal(direction)):
-            self.__set_direction(direction)
+            self.set_direction(direction)
             self.moves[direction]()
 
 
@@ -80,7 +86,9 @@ class Snake:
             for i in range(len(self.tail) - 1, 0, -1):
                 x = self.tail[i - 1].head.xcor()
                 y = self.tail[i - 1].head.ycor()
+                self.tail[i].head.direction = self.tail[i-1].previous_direction
                 self.tail[i].head.goto(x, y)
+
 
             self.head.sety(self.head.ycor() - 20)
 
@@ -100,8 +108,9 @@ class Snake:
             for i in range(len(self.tail) - 1, 0, -1):
                 x = self.tail[i - 1].head.xcor()
                 y = self.tail[i - 1].head.ycor()
+                self.tail[i].head.direction = self.tail[i-1].previous_direction
                 self.tail[i].head.goto(x, y)
-                turtle.update()
+
 
             self.head.sety(self.head.ycor() + 20)
 
@@ -122,6 +131,7 @@ class Snake:
             for i in range(len(self.tail) - 1, 0, -1):
                 x = self.tail[i - 1].head.xcor()
                 y = self.tail[i - 1].head.ycor()
+                self.tail[i].head.direction = self.tail[i-1].previous_direction
                 self.tail[i].head.goto(x, y)
 
             self.head.setx(self.head.xcor() - 20)
@@ -136,6 +146,7 @@ class Snake:
         Returns:
             None
         """
+        #TODO set the direction of each element to the direction of t
         if self.head.direction == "right":
             ## Move the head
 
@@ -143,7 +154,9 @@ class Snake:
             for i in range(len(self.tail) - 1, 0, -1):
                 x = self.tail[i-1].head.xcor()
                 y = self.tail[i-1].head.ycor()
+                self.tail[i].head.direction = self.tail[i-1].previous_direction
                 self.tail[i].head.goto(x, y)
+
 
             self.head.setx(self.head.xcor() + 20)
 
@@ -177,10 +190,12 @@ class Snake:
         Returns:
             None
         """ 
-        x = self.tail[-1].head.pos()[0] 
-        y = self.tail[-1].head.pos()[1]
+        x = int(self.tail[-1].head.pos()[0])
+        y = int(self.tail[-1].head.pos()[1])
         new_part = Snake(colour="gray", x=x, y=y)
+        new_part.set_direction(self.tail[-1].previous_direction)
         self.tail.append(new_part)
+
 
 
     def point_is_in_tail(self, point):
@@ -217,6 +232,7 @@ class Snake:
         self.tail = [self]
         self.head.goto(0, 0)
         self.head.direction = "stop"
+        self.previous_direction = "stop"
 
 
     def __direction_is_legal(self, direction):
@@ -234,13 +250,20 @@ class Snake:
         except KeyError:
             return False
 
+    def get_current_one_hot_direction(self):
+        return self.one_hot[self.head.direction]
+
+    def get_tail_one_hot_direction(self):
+        return self.one_hot[self.tail[-1].head.direction]
+
 
     def get_tail_length(self):
         return len(self.tail)
 
     def get_current_location(self):
         return Point(self.head.xcor(), self.head.ycor())
-        
+
+
 
     
  
