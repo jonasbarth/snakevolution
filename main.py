@@ -1,6 +1,6 @@
 from agents.deep_q_agent import DeepQAgent
 from agents.human_agent import HumanAgent
-from snake.env import SnakeEnv
+from environment.env import SnakeEnv
 from random import randint
 from agents.random_agent import RandomAgent
 import numpy as np
@@ -11,15 +11,18 @@ writer = SummaryWriter()
 env = SnakeEnv(600, 600)
 
 
-action_space = np.array([0,1,2,3])
 
-agent = HumanAgent(env)
-agent.play()
-"""
-agent = DeepQAgent(gamma=0.99, epsilon=1.0, batch_size=64, learn_start=50000, n_actions=4, input_dims=[6], learning_rate=0.0005)
-n_games = 0
+
+action_space = np.array([0,1,2,3])
+n_games = 1000
 score = 0
 global_step = 0
+eps_dec = 1 / (n_games * 0.8)
+
+
+
+agent = DeepQAgent(gamma=0.99, epsilon=1.0, batch_size=64, learn_start=10000, n_actions=4, input_dims=[17], learning_rate=0.0005, eps_dec=eps_dec)
+
 
 
 for i in range(n_games):
@@ -36,13 +39,14 @@ for i in range(n_games):
         state = state_
         if (loss):
             writer.add_scalar("Loss", loss, global_step=global_step)
+            writer.add_scalar("Epsilon", agent.epsilon, global_step=global_step)
 
         writer.add_scalar("Reward", reward, global_step=global_step)
         global_step += 1
 
+    agent.decay_epsilon()
     writer.add_scalar("Episode score", score, global_step=i)
     writer.add_scalar("Moves per episode", env.n_moves, global_step=i)
 
 
 env.wn.mainloop()
-"""

@@ -1,4 +1,4 @@
-from snake.env import SnakeEnv
+from environment.env import SnakeEnv
 
 
 class HumanAgent:
