@@ -5,13 +5,12 @@ from random import randint
 from agents.random_agent import RandomAgent
 import numpy as np
 from torch.utils.tensorboard import SummaryWriter
+from environment.state import LidarAndOneHot
 import torch
 
 writer = SummaryWriter()
-env = SnakeEnv(600, 600)
 
-
-
+env = SnakeEnv(600, 600, LidarAndOneHot)
 
 action_space = np.array([0,1,2,3])
 n_games = 1000
@@ -21,7 +20,7 @@ eps_dec = 1 / (n_games * 0.8)
 
 
 
-agent = DeepQAgent(gamma=0.99, epsilon=1.0, batch_size=64, learn_start=10000, n_actions=4, input_dims=[17], learning_rate=0.0005, eps_dec=eps_dec)
+agent = DeepQAgent(gamma=0.99, epsilon=1.0, batch_size=64, learn_start=10000, n_actions=4, input_dims=[33], learning_rate=0.0005, eps_dec=eps_dec)
 
 
 
@@ -30,7 +29,6 @@ for i in range(n_games):
     state, reward, done = env.reset()
 
     while not done:
-
         action = agent.choose_action(state)
         state_, reward, done = env.step(action)
         score += reward

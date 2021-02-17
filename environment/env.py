@@ -8,12 +8,12 @@ from environment.food import Food
 import numpy as np
 import scipy.spatial.distance as distance
 from environment.point import Point
-
+from environment.state import LidarAndOneHot
 
 
 class SnakeEnv:
 
-    def __init__(self, screen_width, screen_height):
+    def __init__(self, screen_width, screen_height, state_representation):
         self.wn = turtle.Screen() 
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -25,6 +25,7 @@ class SnakeEnv:
         self.n_moves = 0
         self.max_moves_without_food = 1000
         self.theta = 45
+        self.state_representation = state_representation(self)
 
     def reset(self):
         """
@@ -39,7 +40,7 @@ class SnakeEnv:
         self.snake = Snake()
         self.points = 0
         self.n_moves = 0
-        state = self.__get_current_state()
+        state = self.state_representation.get_state()
         done = False
         reward = 0
 
@@ -73,16 +74,16 @@ class SnakeEnv:
         done = False
         state = None
 
-        state = self.__get_current_state()
+        state = self.state_representation.get_state()
 
 
         ## If the environment touches a wall or itself, the episode is over
-        if self.__touch_wall() or self.__touch_snake() or self.n_moves > self.max_moves_without_food:
+        if self.touch_wall() or self.touch_snake() or self.n_moves > self.max_moves_without_food:
             reward = -100
             done = True
 
         ## If the environment touches food, add to the tail
-        elif self.__touch_food():
+        elif self.touch_food():
             self.points += 1
             reward = 10
             self.snake.add_tail()
@@ -93,18 +94,6 @@ class SnakeEnv:
 
         return (state, reward, done)
 
-
-    def __get_current_state(self):
-        """
-        Gets the current state of the the MDP.
-        :return: A numpy array of dimension (1, 6) where the first 5 entries are the lidar and the final entry is the distance to the food
-        """
-        lidar = self.__get_lidar(self.snake.head.direction)
-        head_direction = np.array(self.snake.get_current_one_hot_direction())
-        tail_direction = np.array(self.snake.get_tail_one_hot_direction())
-        food_dist = np.array([self.__food_distance()])
-        state = np.concatenate((lidar, head_direction, tail_direction, food_dist))
-        return state
 
 
     def __generate_food(self):
@@ -137,7 +126,7 @@ class SnakeEnv:
             self.current_food = Food(x_rand, y_rand)
 
 
-    def __touch_food(self):
+    def touch_food(self):
         """
         Checks if the environment is currently touching the piece of food in the environment. Touching
         means to be within 20 pixels of the food.
@@ -154,7 +143,7 @@ class SnakeEnv:
         return False
 
 
-    def __food_distance(self, dist_metric=distance.cityblock):
+    def food_distance(self, dist_metric=distance.cityblock):
         """
         Measures the distance between the environment and the food according to the given distance metric.
         Default distance metric is the Manhattan distance.
@@ -173,7 +162,7 @@ class SnakeEnv:
         return -1
 
     
-    def __touch_wall(self):
+    def touch_wall(self):
         """
         Checks if the environment head is currently touching a wall.
 
@@ -200,7 +189,7 @@ class SnakeEnv:
 
         return False
 
-    def __touch_snake(self, dist_metric=distance.cityblock):
+    def touch_snake(self, dist_metric=distance.cityblock):
         """
         Checks if the environment is currently touching itself.
 
@@ -226,302 +215,7 @@ class SnakeEnv:
         return False
 
 
-    def __up_lidar(self):
-        """ 
-        Gets the Snake's 5 point lidar distances when it is facing up.
 
-        Parameters:
-            None
-
-        Returns:
-            lidar - A 1D numpy array with 5 entries, one for each lidar distance.
-        """
-        lidar = np.zeros((8), dtype=np.float32)
-        snake_x, snake_y = self.snake.head.pos()[0], self.snake.head.pos()[1]
-        snake_pos = Point(snake_x, snake_y)
-
-        lidar[0] = snake_pos.distance(self.lidar_north_pulse())
-        lidar[1] = snake_pos.distance(self.lidar_north_east_pulse())
-        lidar[2] = snake_pos.distance(self.lidar_east_pulse())
-        lidar[3] = 0
-        lidar[4] = 0
-        lidar[5] = 0
-        lidar[6] = snake_pos.distance(self.lidar_west_pulse())
-        lidar[7] = snake_pos.distance(self.lidar_north_west_pulse())
-
-
-        self.lidar_end_points = [self.lidar_north_pulse(), self.lidar_north_east_pulse(), self.lidar_east_pulse(),Point(0,0),Point(0,0),Point(0,0), self.lidar_west_pulse(), self.lidar_north_west_pulse()]
-
-        return lidar
-
-
-    def __right_lidar(self):
-        """ 
-        Gets the Snake's 5 point lidar distances when it is facing right.
-
-        Parameters:
-            None
-
-        Returns:
-            lidar - A 1D numpy array with 5 entries, one for each lidar distance.
-        """
-        lidar = np.zeros((8), dtype=np.float32)
-        snake_x, snake_y = self.snake.head.pos()[0], self.snake.head.pos()[1]
-        snake_pos = Point(snake_x, snake_y)
-
-        lidar[0] = snake_pos.distance(self.lidar_north_pulse())
-        lidar[1] = snake_pos.distance(self.lidar_north_east_pulse())
-        lidar[2] = snake_pos.distance(self.lidar_east_pulse())
-        lidar[3] = snake_pos.distance(self.lidar_south_east_pulse())
-        lidar[4] = snake_pos.distance(self.lidar_south_pulse())
-        lidar[5] = 0
-        lidar[6] = 0
-        lidar[7] = 0
-
-        self.lidar_end_points = [self.lidar_north_pulse(), self.lidar_north_east_pulse(), self.lidar_east_pulse(), self.lidar_south_east_pulse(), self.lidar_south_pulse(), Point(0,0),Point(0,0),Point(0,0),]
-
-
-        return lidar
-
-
-    def __down_lidar(self):
-        """ 
-        Gets the Snake's 5 point lidar distances when it is facing down.
-
-        Parameters:
-            None
-
-        Returns:
-            lidar - A 1D numpy array with 5 entries, one for each lidar distance.
-        """
-        lidar = np.zeros((8), dtype=np.float32)
-        snake_x, snake_y = self.snake.head.pos()[0], self.snake.head.pos()[1]
-        snake_pos = Point(snake_x, snake_y)
-
-        lidar[0] = 0
-        lidar[1] = 0
-        lidar[2] = snake_pos.distance(self.lidar_east_pulse())
-        lidar[3] = snake_pos.distance(self.lidar_south_east_pulse())
-        lidar[4] = snake_pos.distance(self.lidar_south_pulse())
-        lidar[5] = snake_pos.distance(self.lidar_south_west_pulse())
-        lidar[6] = snake_pos.distance(self.lidar_west_pulse())
-        lidar[7] = 0
-
-        self.lidar_end_points = [Point(0,0),Point(0,0), self.lidar_east_pulse(), self.lidar_south_east_pulse(), self.lidar_south_pulse(), self.lidar_south_west_pulse(), self.lidar_west_pulse(), Point(0,0)]
-
-        return lidar
-
-
-    def __left_lidar(self):
-        """ 
-        Gets the Snake's 5 point lidar distances when it is facing left.
-
-        Parameters:
-            None
-
-        Returns:
-            lidar - A 1D numpy array with 5 entries, one for each lidar distance.
-        """
-        lidar = np.zeros((8), dtype=np.float32)
-        snake_x, snake_y = self.snake.head.pos()[0], self.snake.head.pos()[1]
-        snake_pos = Point(snake_x, snake_y)
-
-        lidar[0] = snake_pos.distance(self.lidar_north_pulse())
-        lidar[1] = 0
-        lidar[2] = 0
-        lidar[3] = 0
-        lidar[4] = snake_pos.distance(self.lidar_south_pulse())
-        lidar[5] = snake_pos.distance(self.lidar_south_west_pulse())
-        lidar[6] = snake_pos.distance(self.lidar_west_pulse())
-        lidar[7] = snake_pos.distance(self.lidar_north_west_pulse())
-
-
-        self.lidar_end_points = [self.lidar_north_pulse(), Point(0,0),Point(0,0),Point(0,0), self.lidar_south_pulse(), self.lidar_south_west_pulse(), self.lidar_west_pulse(), self.lidar_north_west_pulse()]
-
-
-        return lidar
-
-    def __stop_lidar(self):
-        """
-        Gets the snakes 8 point lidar in it's starting position.
-        :return:
-        """
-        lidar = np.zeros((8), dtype=np.float32)
-        snake_x, snake_y = self.snake.head.pos()[0], self.snake.head.pos()[1]
-        snake_pos = Point(snake_x, snake_y)
-
-        lidar[0] = snake_pos.distance(self.lidar_north_pulse())
-        lidar[1] = snake_pos.distance(self.lidar_north_east_pulse())
-        lidar[2] = snake_pos.distance(self.lidar_east_pulse())
-        lidar[3] = snake_pos.distance(self.lidar_south_east_pulse())
-        lidar[4] = snake_pos.distance(self.lidar_south_pulse())
-        lidar[5] = snake_pos.distance(self.lidar_south_west_pulse())
-        lidar[6] = snake_pos.distance(self.lidar_west_pulse())
-        lidar[7] = snake_pos.distance(self.lidar_north_west_pulse())
-
-        self.lidar_end_points = [self.lidar_north_pulse(), self.lidar_north_east_pulse(), self.lidar_east_pulse(),
-                                 self.lidar_south_east_pulse(), self.lidar_south_pulse(), self.lidar_south_west_pulse(),
-                                 self.lidar_west_pulse(), self.lidar_north_west_pulse()]
-
-        return lidar
-
-    def __get_lidar(self, direction):
-        """
-        Gets the lidar of the Snake.
-
-        Parameters
-            direction - A string indicating the direction the Snake is currently facing.
-
-        Returns:
-            numpy.array - Returns a 1D numpy array with 5 entries, one for each lidar distance.
-        """
-
-
-        if direction == "up":
-            return self.__up_lidar()
-
-        elif direction == "right":
-            return self.__right_lidar()
-
-        elif direction == "down":
-            return self.__down_lidar()
-
-        elif direction == "left":
-            return self.__left_lidar()
-
-        elif direction == "stop":
-            return self.__stop_lidar()
-
-
-
-
-    def lidar_east_pulse(self):
-        """
-        The lidar beam that travels east within the game.
-        :return: a point of where the beam either hit a wall or a part of the environment.
-        """
-        pulse_x, pulse_y = self.snake.head.pos()
-        east_pulse = Point(pulse_x, pulse_y)
-        east_wall = Point(self.screen_width / 2, pulse_y)
-        while (east_pulse.x < east_wall.x and not self.snake.point_is_in_tail(east_pulse)[0]):
-           # print(self.environment.point_is_in_tail(east_pulse))
-            east_pulse.offset(+1, 0)
-
-        #print("Returning east")
-        return east_pulse
-
-
-    def lidar_south_pulse(self):
-        """
-        The lidar beam that travels south within the game.
-        :return: a point of where the beam either hit a wall or a part of the environment.
-        """
-        pulse_x, pulse_y = self.snake.head.pos()
-        south_pulse = Point(pulse_x, pulse_y)
-        south_wall = Point(pulse_x, (-1) * (self.screen_height / 2))
-        while (south_pulse.y > south_wall.y and not self.snake.point_is_in_tail(south_pulse)[0]):
-            #print(self.environment.point_is_in_tail(south_pulse))
-            south_pulse.offset(0, -1)
-
-        #print("Returning south")
-        return south_pulse
-
-    def lidar_west_pulse(self):
-        """
-        The lidar beam that travels west within the game.
-        :return: a point of where the beam either hit a wall or a part of the environment.
-        """
-        pulse_x, pulse_y = self.snake.head.pos()
-        west_pulse = Point(pulse_x, pulse_y)
-        west_wall = Point((-1) * (self.screen_width / 2), pulse_y)
-        while (west_pulse.x > west_wall.x and not self.snake.point_is_in_tail(west_pulse)[0]):
-            #print("West pulse", self.environment.point_is_in_tail(west_pulse))
-            west_pulse.offset(-1, 0)
-
-        #print("Returning west")
-        return west_pulse
-
-    def lidar_north_pulse(self):
-        """
-        The lidar beam that travels north within the game.
-        :return: a point of where the beam either hit a wall or a part of the environment.
-        """
-        pulse_x, pulse_y = self.snake.head.pos()
-        north_pulse = Point(pulse_x, pulse_y)
-        north_wall = Point(pulse_x, self.screen_height / 2)
-        while (north_pulse.y < north_wall.y and not self.snake.point_is_in_tail(north_pulse)[0]):
-            #print(self.environment.point_is_in_tail(north_pulse))
-            north_pulse.offset(0, 1)
-       #print("Returning north")
-        return north_pulse
-
-    def lidar_north_east_pulse(self):
-        """
-        The lidar beam that travels north east within the game.
-        :return: a point of where the beam either hit a wall or a part of the environment.
-        """
-        pulse_x, pulse_y = self.snake.head.pos()
-        north_east_pulse = Point(pulse_x, pulse_y)
-        north_wall = Point(pulse_x, self.screen_height / 2)
-        east_wall = Point(self.screen_width / 2, pulse_y)
-
-        while (north_east_pulse.y < north_wall.y and north_east_pulse.x < east_wall.x and not self.snake.point_is_in_tail(north_east_pulse)[0]):
-            #print("Is in tail", self.environment.point_is_in_tail(north_east_pulse))
-            #print("Bool", north_east_pulse.y < north_wall.y, north_east_pulse.x < east_wall.x)
-            north_east_pulse.offset(1, 1)
-
-       # print("Returning north east")
-        return north_east_pulse
-
-    def lidar_north_west_pulse(self):
-        """
-        The lidar beam that travels north west within the game.
-        :return: a point of where the beam either hit a wall or a part of the environment.
-        """
-        pulse_x, pulse_y = self.snake.head.pos()
-        north_west_pulse = Point(pulse_x, pulse_y)
-        north_wall = Point(pulse_x, self.screen_height / 2)
-        west_wall = Point(((-1) * self.screen_width) / 2, pulse_y)
-
-        while (north_west_pulse.y < north_wall.y and north_west_pulse.x > west_wall.x and not self.snake.point_is_in_tail(north_west_pulse)[0]):
-            #print("Is in tail", self.environment.point_is_in_tail(north_east_pulse))
-            #print("Bool", north_east_pulse.y < north_wall.y, north_east_pulse.x < east_wall.x)
-            north_west_pulse.offset(-1, 1)
-
-        #print("Returning north west")
-        return north_west_pulse
-
-    def lidar_south_east_pulse(self):
-        """
-        The lidar beam that travels south east within the game.
-        :return: a point of where the beam either hit a wall or a part of the environment.
-        """
-        pulse_x, pulse_y = self.snake.head.pos()
-        south_east_pulse = Point(pulse_x, pulse_y)
-        south_wall = Point(pulse_x, (-1) * (self.screen_height / 2))
-        east_wall = Point(self.screen_width / 2, pulse_y)
-
-        while (south_east_pulse.y > south_wall.y and south_east_pulse.x < east_wall.x and not self.snake.point_is_in_tail(south_east_pulse)[0]):
-            south_east_pulse.offset(1, -1)
-
-        #print("Returning south east")
-        return south_east_pulse
-
-    def lidar_south_west_pulse(self):
-        """
-        The lidar beam that travels south west within the game.
-        :return: a point of where the beam either hit a wall or a part of the environment.
-        """
-        pulse_x, pulse_y = self.snake.head.pos()
-        south_west_pulse = Point(pulse_x, pulse_y)
-        south_wall = Point(pulse_x, (-1) * (self.screen_height / 2))
-        west_wall = Point((-1) * (self.screen_width / 2), pulse_y)
-
-        while (south_west_pulse.y > south_wall.y and south_west_pulse.x > west_wall.x and not self.snake.point_is_in_tail(south_west_pulse)[0]):
-            south_west_pulse.offset(-1, -1)
-
-        #print("Returning south west")
-        return south_west_pulse
 
     def get_episode_statistic(self):
         """
@@ -561,8 +255,8 @@ class SnakeEnv:
         return None
 
     def draw_lidar(self):
-        for end_point in self.lidar_end_points:
-            if (end_point.x != 0 and end_point.y != 0):
+        for end_point in self.state_representation.lidar_end_points:
+            if (end_point):
                 t = turtle.Turtle()
                 t.penup()
                 t.goto(self.snake.head.xcor(), self.snake.head.ycor())
