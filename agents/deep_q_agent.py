@@ -1,3 +1,5 @@
+import math
+
 from rl.deep_q_network import DeepQNetwork
 from util.replay_memory import ReplayMemory
 import numpy as np
@@ -17,7 +19,7 @@ class DeepQAgent(object):
         self.action_space = [i for i in range(n_actions)]
         self.mem_size = max_mem_size
         self.mem_counter = 0
-        self.Q_eval = DeepQNetwork(learning_rate, input_dims, 256, 256, n_actions)
+        self.Q_eval = DeepQNetwork(learning_rate, input_dims, math.floor(input_dims[0]/2), math.floor(input_dims[0]/2), n_actions)
 
         self.state_memory = np.zeros((self.mem_size, *input_dims), dtype=np.float32)
         self.new_state_memory = np.zeros((self.mem_size, *input_dims), dtype=np.float32)

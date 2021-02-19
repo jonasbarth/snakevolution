@@ -1,16 +1,20 @@
 from agents.deep_q_agent import DeepQAgent
+from agents.genetic_agent import GeneticAgent
 from agents.human_agent import HumanAgent
 from environment.env import SnakeEnv
 from random import randint
 from agents.random_agent import RandomAgent
 import numpy as np
 from torch.utils.tensorboard import SummaryWriter
-from environment.state import LidarAndOneHot
+from environment.state import LidarAndOneHot, LidarAndOneHot2
 import torch
 
 writer = SummaryWriter()
 
-env = SnakeEnv(600, 600, LidarAndOneHot)
+env = SnakeEnv(400, 400, LidarAndOneHot)
+
+ga = GeneticAgent(learning_rate=0.0005, input_dims=[24], n_actions=4, mutation_rate=0.01)
+ga.get_genome()
 
 action_space = np.array([0,1,2,3])
 n_games = 1000
@@ -20,7 +24,7 @@ eps_dec = 1 / (n_games * 0.8)
 
 
 
-agent = DeepQAgent(gamma=0.99, epsilon=1.0, batch_size=64, learn_start=10000, n_actions=4, input_dims=[33], learning_rate=0.0005, eps_dec=eps_dec)
+agent = DeepQAgent(gamma=0.99, epsilon=1.0, batch_size=64, learn_start=10000, n_actions=4, input_dims=[24], learning_rate=0.0005, eps_dec=eps_dec)
 
 
 
