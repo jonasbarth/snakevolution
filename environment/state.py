@@ -19,7 +19,7 @@ class State:
 class LidarAndOneHot2(State):
 
     def __init__(self, snakeEnv):
-        super(LidarAndOneHot, self).__init__(snakeEnv)
+        super(LidarAndOneHot2, self).__init__(snakeEnv)
 
 
     def get_dims(self):
@@ -157,7 +157,7 @@ class LidarAndOneHot2(State):
         Gets the snakes 8 point lidar in it's starting position.
         :return:
         """
-        lidar_pulses = [self.lidar_north_pulse(), self.lidar_north_east_pulse(), self.lidar_east_pulse(), self.lidar_south_east_pulse(), self.lidar_south_pulse(), self.lidar_south_west_pulse(), self.lidar_west_pulse(), self.lidar_north_west_pulse()]
+        lidar_pulses = [self.lidar_west_pulse(), self.lidar_north_west_pulse(), self.lidar_north_pulse(), self.lidar_north_east_pulse(), self.lidar_east_pulse()]
         lidar = np.zeros((len(lidar_pulses)*3), dtype=np.float32)
         snake_x, snake_y = self.snakeEnv.snake.head.pos()[0], self.snakeEnv.snake.head.pos()[1]
         snake_pos = Point(snake_x, snake_y)

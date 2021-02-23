@@ -11,10 +11,8 @@ import torch
 
 writer = SummaryWriter()
 
-env = SnakeEnv(400, 400, LidarAndOneHot)
+env = SnakeEnv(400, 400, LidarAndOneHot2)
 
-ga = GeneticAgent(learning_rate=0.0005, input_dims=[24], n_actions=4, mutation_rate=0.01)
-ga.get_genome()
 
 action_space = np.array([0,1,2,3])
 n_games = 1000

@@ -23,7 +23,7 @@ class GeneticAgent(object):
         fc2_weights = self.neural_network.fc2.weight.data.flatten()
         fc3_weights = self.neural_network.fc3.weight.data.flatten()
 
-        T.concat([fc1_weights, fc2_weights, fc3_weights])
+        return T.concat([fc1_weights, fc2_weights, fc3_weights])
 
     def choose_action(self, observation):
         state = T.tensor([observation]).to(self.neural_network.device)
