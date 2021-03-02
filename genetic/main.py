@@ -9,7 +9,9 @@ from torch.utils.tensorboard import SummaryWriter
 from environment.state import LidarAndOneHot, LidarAndOneHot2
 import torch
 
+from genetic.population import Population, SnakePopulation
 
+"""
 def initialise_population(pop_size):
     population = []
     for n in range(pop_size):
@@ -21,7 +23,7 @@ def simulate(population):
     for solution in population:
         env = SnakeEnv(400, 400, LidarAndOneHot2)
         solution.simulate(env)
-
+        solution.calculate_fitness(None)
     return population
 
 writer = SummaryWriter()
@@ -34,15 +36,20 @@ n_games = 1000
 score = 0
 global_step = 0
 eps_dec = 1 / (n_games * 0.8)
+"""
 
-n_generations = 100
-pop_size = 100
-population = initialise_population(pop_size)
+n_generations = 1
+pop_size = 10
+#population = initialise_population(pop_size)
+pop = SnakePopulation(pop_size=pop_size, mutation_rate=0.001, crossover_rate=0.5)
+pop.initialise_population()
 
 for generation in range(n_generations):
-    population = simulate(population)
-    population = calculate_fitness(population)
-    selection = select_candidates(population)
+    print("Generation", generation)
+    pop.simulate()
+    pop.calculate_fitness()
+    #population.calculate_fitness(population)
+    #selection = select_candidates(population)
 
 
 

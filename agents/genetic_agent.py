@@ -10,12 +10,15 @@ import math
 
 class GeneticAgent(object):
 
+    fitness = 0
+    rewards = 0
+    eps_moves = 0
+    food_eaten = 0
+    time_alive = 0
+
     def __init__(self, learning_rate, input_dims, n_actions, mutation_rate):
         self.neural_network = DeepQNetwork(learning_rate, input_dims, math.floor(input_dims[0]/2), math.floor(input_dims[0]/2), n_actions)
         self.mutation_rate = mutation_rate
-        self.rewards = 0
-        self.eps_moves = 0
-        self.food_eaten = 0
 
 
     def get_genome(self):
@@ -35,13 +38,13 @@ class GeneticAgent(object):
     def mutate(self):
         pass
 
-    def fitness(self, fitness):
+    def calculate_fitness(self, fitness):
         """
         Calculates the fitness based on the length of the snake and the number of moves per episode
         :param fitness: a function that calculates the fitness of this snake
         :return:
         """
-        pass
+        self.fitness = ((self.food_eaten*2)**2) * (self.time_alive**1.5)
 
     def simulate(self, env):
         state, reward, done = env.reset()
@@ -50,6 +53,7 @@ class GeneticAgent(object):
             action = self.choose_action(state)
             state_, reward, done = env.step(action)
             self.food_eaten += env.points
+            self.time_alive += 1
 
 
 
