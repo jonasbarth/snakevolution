@@ -44,7 +44,9 @@ class GeneticAgent(object):
         :param fitness: a function that calculates the fitness of this snake
         :return:
         """
-        self.fitness = ((self.food_eaten*2)**2) * (self.time_alive**1.5)
+        #self.fitness = ((self.food_eaten*2)**2) * (self.time_alive**1.5)
+        self.fitness = self.time_alive
+        print("Food eaten: %s - Time alive: %s - Fitness: %s", self.food_eaten, self.time_alive, self.fitness)
 
     def simulate(self, env):
         state, reward, done = env.reset()
@@ -52,8 +54,10 @@ class GeneticAgent(object):
         while not done:
             action = self.choose_action(state)
             state_, reward, done = env.step(action)
-            self.food_eaten += env.points
             self.time_alive += 1
+            state = state_
+
+        self.food_eaten += env.points
 
 
 

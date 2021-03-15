@@ -40,7 +40,6 @@ eps_dec = 1 / (n_games * 0.8)
 
 n_generations = 1
 pop_size = 10
-#population = initialise_population(pop_size)
 pop = SnakePopulation(pop_size=pop_size, mutation_rate=0.001, crossover_rate=0.5)
 pop.initialise_population()
 
@@ -48,6 +47,7 @@ for generation in range(n_generations):
     print("Generation", generation)
     pop.simulate()
     pop.calculate_fitness()
+    pop.candidate_selection()
     #population.calculate_fitness(population)
     #selection = select_candidates(population)
 

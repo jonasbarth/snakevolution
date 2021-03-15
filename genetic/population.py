@@ -2,6 +2,7 @@ from agents.genetic_agent import GeneticAgent
 from environment.env import SnakeEnv
 from environment.snake import Snake
 from environment.state import LidarAndOneHot2
+from genetic.selection import roulette_wheel
 
 
 class Population:
@@ -47,17 +48,21 @@ class SnakePopulation(Population):
 
     def simulate(self):
         env = SnakeEnv(400, 400, LidarAndOneHot2)
-        for snake in self.population:
-            snake.simulate(env)
+        for solution in self.population:
+            solution.simulate(env)
             print("simulating...")
 
     def calculate_fitness(self):
-        [snake.calculate_fitness(None) for snake in self.population]
+        for solution in self.population:
+            solution.calculate_fitness(None)
+
         self.population = sorted(self.population, key=lambda solution: solution.fitness)
         print("Calculated fitness")
 
 
     def candidate_selection(self):
+        selection = roulette_wheel(self.population)
+        print("")
         pass
 
     def crossover(self):
