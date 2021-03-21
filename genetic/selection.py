@@ -79,7 +79,7 @@ def rank_based_selection(population, n_parents=1, bias=1):
         probability = rank**bias / rank_sum
         probability_population[solution] = probability
 
-    sorted_probability_population = dict(sorted(probability_population.items(), key=lambda item: item[1]))
+    sorted_probability_population = dict(sorted(probability_population.items(), key=lambda item: item[1], reverse=True))
 
     parents = []
     for n in range(n_parents):

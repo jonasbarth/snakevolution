@@ -19,6 +19,7 @@ class GeneticAgent(object):
     def __init__(self, learning_rate, input_dims, n_actions, mutation_rate):
         self.neural_network = DeepQNetwork(learning_rate, input_dims, math.floor(input_dims[0]/2), math.floor(input_dims[0]/2), n_actions)
         self.mutation_rate = mutation_rate
+        self.n_weights = len(self.get_genome())
 
 
     def get_genome(self):
@@ -26,7 +27,10 @@ class GeneticAgent(object):
         fc2_weights = self.neural_network.fc2.weight.data.flatten()
         fc3_weights = self.neural_network.fc3.weight.data.flatten()
 
-        return T.concat([fc1_weights, fc2_weights, fc3_weights])
+        return T.cat([fc1_weights, fc2_weights, fc3_weights])
+
+    def set_genome(self, weights):
+        pass
 
     def choose_action(self, observation):
         state = T.tensor([observation]).to(self.neural_network.device)
