@@ -49,6 +49,7 @@ for generation in range(n_generations):
     pop.calculate_fitness()
     pop.candidate_selection()
     pop.crossover()
+    pop.mutate_children()
     pop.replace()
     #population.calculate_fitness(population)
     #selection = select_candidates(population)

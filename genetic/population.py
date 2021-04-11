@@ -80,45 +80,20 @@ class SnakePopulation(Population):
         parents = []
         for selected_individual in self.selected_population:
             # do crossover for two parents at a time
+            parents.append(selected_individual)
+
             if len(parents) == 2:
                 # get genomes
                 parent_1_genome = parents[0].get_genome()
                 parent_2_genome = parents[1].get_genome()
 
-                # get the crossover indexes
-                crossover_indexes = [random.randint(0, len(parent_1_genome)) for i in range(n_crossover_points)]
-                crossover_indexes.append(len(parent_1_genome)) # append final index of list so that we can get the final slice
+                child_1_genome, child_2_genome = self._make_children(parent_1_genome, parent_2_genome, n_crossover_points)
 
-                # prepare the child genomes
-                child_1_genome = T.tensor([])
-                child_2_genome = T.tensor([])
+                self.children_genomes.append(child_1_genome)
+                self.children_genomes.append(child_2_genome)
 
-                start_index = 0
-                for i in range(len(crossover_indexes)):
-                    index = crossover_indexes[i]
-
-                    # slice parents
-                    parent_1_partition = parent_1_genome[start_index:index]
-                    parent_2_partition = parent_2_genome[start_index:index]
-
-                    # this is to ensure that only ever other index is actually swapped
-                    if i % 2 == 0:
-                        child_1_genome = T.cat([child_1_genome, parent_2_partition])
-                        child_2_genome = T.cat([child_2_genome, parent_1_partition])
-                    else:
-                        child_1_genome = T.cat([child_1_genome, parent_1_partition])
-                        child_2_genome = T.cat([child_2_genome, parent_2_partition])
-
-                    start_index = index
-
-                self.children_genomes.append([child_1_genome, child_2_genome])
-                    # assign the new genome
-                # create genetic agent
-                    # add slice to children.
                 parents = []
 
-
-            parents.append(selected_individual)
         # take two parents
         # get their genome
         # choose k (number of crossovers)
@@ -126,12 +101,52 @@ class SnakePopulation(Population):
         # make k crossovers at the specified indeces
 
 
-    def mutate(self):
+    def _make_children(self, parent_1_genome, parent_2_genome, n_crossover_points):
+        crossover_indexes = self._get_crossover_indeces(n_crossover_points, parent_1_genome)
+        crossover_indexes.append(len(parent_1_genome)) # append final index of list so that we can get the final slice
+
+        # prepare the child genomes
+        child_1_genome = T.tensor([])
+        child_2_genome = T.tensor([])
+
+        start_index = 0
+        for i in range(len(crossover_indexes)):
+            index: int = crossover_indexes[i]
+
+            # slice parents
+            parent_1_partition = parent_1_genome[start_index:index]
+            parent_2_partition = parent_2_genome[start_index:index]
+
+            # this is to ensure that only ever other index is actually swapped
+            if i % 2 == 0:
+                child_1_genome = T.cat([child_1_genome, parent_2_partition])
+                child_2_genome = T.cat([child_2_genome, parent_1_partition])
+            else:
+                child_1_genome = T.cat([child_1_genome, parent_1_partition])
+                child_2_genome = T.cat([child_2_genome, parent_2_partition])
+
+            start_index = index
+
+        return child_1_genome, child_2_genome
+
+
+    def _get_crossover_indeces(self, n_crossover_points, parent_genome):
+        return [random.randint(0, len(parent_genome)) for i in range(n_crossover_points)]
+
+
+    def mutate_children(self):
         """
 
         :return:
         """
-        pass
+        # use mutation rate to mutate each entry with a given probability
+        def mutate(value):
+            if self.mutation_rate > random.random():
+                return random.random() * 2 - 1
+            return value
+
+        for child_genome in self.children_genomes:
+            child_genome.apply_(lambda x: mutate(x))
 
     def replace(self):
         """
