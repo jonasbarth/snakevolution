@@ -21,7 +21,7 @@ class Snake:
             y - an integer for the y position of the Snake
         """
         self.head = turtle.Turtle()
-        self.head.speed(0)
+        self.head.speed(10)
         turtle.delay(0)
         self.head.shape("square")
         self.head.color(colour)

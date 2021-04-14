@@ -29,8 +29,27 @@ class GeneticAgent(object):
 
         return T.cat([fc1_weights, fc2_weights, fc3_weights])
 
-    def set_genome(self, weights):
-        pass
+    def set_genome(self, genome):
+        fc1_size = self.neural_network.fc1.weight.data.size()
+        fc1_index = self._calc_genome_index(fc1_size)
+        fc1 = genome[: fc1_index].reshape(fc1_size)
+
+        fc2_size = self.neural_network.fc2.weight.data.size()
+        fc2_index = self._calc_genome_index(fc2_size) + fc1_index
+        fc2 = genome[fc1_index: fc2_index].reshape(fc2_size)
+
+        fc3_size = self.neural_network.fc3.weight.data.size()
+        fc3_index = self._calc_genome_index(fc3_size)
+        fc3 = genome[fc2_index:].reshape(fc3_size)
+
+        self.neural_network.fc1.weight.data = fc1
+        self.neural_network.fc2.weight.data = fc2
+        self.neural_network.fc3.weight.data = fc3
+
+    def _calc_genome_index(self, size):
+        w, h = size
+        return w * h
+
 
     def choose_action(self, observation):
         state = T.tensor([observation]).to(self.neural_network.device)
@@ -50,7 +69,7 @@ class GeneticAgent(object):
         """
         #self.fitness = ((self.food_eaten*2)**2) * (self.time_alive**1.5)
         self.fitness = self.time_alive
-        print("Food eaten: %s - Time alive: %s - Fitness: %s", self.food_eaten, self.time_alive, self.fitness)
+        print("Food eaten: %d - Time alive: %d - Fitness: %d" % (self.food_eaten, self.time_alive, self.fitness))
 
     def simulate(self, env):
         state, reward, done = env.reset()
@@ -62,6 +81,13 @@ class GeneticAgent(object):
             state = state_
 
         self.food_eaten += env.points
+
+    def reset(self):
+        self.fitness = 0
+        self.rewards = 0
+        self.eps_moves = 0
+        self.food_eaten = 0
+        self.time_alive = 0
 
 
 

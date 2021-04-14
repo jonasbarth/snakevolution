@@ -64,7 +64,6 @@ class SnakePopulation(Population):
         self.population = sorted(self.population, key=lambda solution: solution.fitness)
         print("Calculated fitness")
 
-
     def candidate_selection(self):
         self.selected_population = rank_based_selection(population=self.population, n_parents=len(self.population))
         print("")
@@ -76,7 +75,7 @@ class SnakePopulation(Population):
         :param n_crossover_points:
         :return:
         """
-        #TODO refactor this method
+        # TODO refactor this method
         parents = []
         for selected_individual in self.selected_population:
             # do crossover for two parents at a time
@@ -87,7 +86,8 @@ class SnakePopulation(Population):
                 parent_1_genome = parents[0].get_genome()
                 parent_2_genome = parents[1].get_genome()
 
-                child_1_genome, child_2_genome = self._make_children(parent_1_genome, parent_2_genome, n_crossover_points)
+                child_1_genome, child_2_genome = self._make_children(parent_1_genome, parent_2_genome,
+                                                                     n_crossover_points)
 
                 self.children_genomes.append(child_1_genome)
                 self.children_genomes.append(child_2_genome)
@@ -100,10 +100,9 @@ class SnakePopulation(Population):
         # pick k random indeces
         # make k crossovers at the specified indeces
 
-
     def _make_children(self, parent_1_genome, parent_2_genome, n_crossover_points):
         crossover_indexes = self._get_crossover_indeces(n_crossover_points, parent_1_genome)
-        crossover_indexes.append(len(parent_1_genome)) # append final index of list so that we can get the final slice
+        crossover_indexes.append(len(parent_1_genome))  # append final index of list so that we can get the final slice
 
         # prepare the child genomes
         child_1_genome = T.tensor([])
@@ -129,17 +128,14 @@ class SnakePopulation(Population):
 
         return child_1_genome, child_2_genome
 
-
     def _get_crossover_indeces(self, n_crossover_points, parent_genome):
         return [random.randint(0, len(parent_genome)) for i in range(n_crossover_points)]
-
 
     def mutate_children(self):
         """
 
         :return:
         """
-        # use mutation rate to mutate each entry with a given probability
         def mutate(value):
             if self.mutation_rate > random.random():
                 return random.random() * 2 - 1
@@ -154,7 +150,11 @@ class SnakePopulation(Population):
         :return:
         """
         # loop over the genomes of children
-            # create a new Genetic Agent for each genome
-            # replace agent in population
+        # create a new Genetic Agent for each genome
+        # replace agent in population
+        for solution, child in zip(self.population, self.children_genomes):
+            solution.set_genome(child)
 
-        pass
+    def reset(self):
+        for solution in self.population:
+            solution.reset()

@@ -1,3 +1,5 @@
+import functools
+
 from agents.deep_q_agent import DeepQAgent
 from agents.genetic_agent import GeneticAgent
 from agents.human_agent import HumanAgent
@@ -8,8 +10,9 @@ import numpy as np
 from torch.utils.tensorboard import SummaryWriter
 from environment.state import LidarAndOneHot, LidarAndOneHot2
 import torch
-
+from torch.utils.tensorboard import SummaryWriter
 from genetic.population import Population, SnakePopulation
+writer = SummaryWriter()
 
 """
 def initialise_population(pop_size):
@@ -38,7 +41,7 @@ global_step = 0
 eps_dec = 1 / (n_games * 0.8)
 """
 
-n_generations = 1
+n_generations = 100
 pop_size = 10
 pop = SnakePopulation(pop_size=pop_size, mutation_rate=0.001, crossover_rate=0.5)
 pop.initialise_population()
@@ -51,6 +54,11 @@ for generation in range(n_generations):
     pop.crossover()
     pop.mutate_children()
     pop.replace()
+
+    total_fitness = functools.reduce(lambda x, y: x + y, map(lambda solution: solution.fitness, pop.population))
+    avg_fitness = total_fitness / pop_size
+    print("Avg Fitness", avg_fitness)
+    writer.add_scalar("Average Fitness", avg_fitness, global_step=generation)
     #population.calculate_fitness(population)
     #selection = select_candidates(population)
 
