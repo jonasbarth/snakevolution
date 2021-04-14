@@ -1,50 +1,32 @@
 import functools
-
-from agents.deep_q_agent import DeepQAgent
-from agents.genetic_agent import GeneticAgent
-from agents.human_agent import HumanAgent
-from environment.env import SnakeEnv
-from random import randint
-from agents.random_agent import RandomAgent
-import numpy as np
-from torch.utils.tensorboard import SummaryWriter
-from environment.state import LidarAndOneHot, LidarAndOneHot2
-import torch
 from torch.utils.tensorboard import SummaryWriter
 from genetic.population import Population, SnakePopulation
+import argparse
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument("-g", "--generations", nargs='?', type=int, const=1, help="number of generations to run the genetic algorithm for")
+parser.add_argument("-p", "--population_size", nargs='?', type=int, const=10, help="size of the population")
+parser.add_argument("-m", "--mutation_rate", nargs='?', type=float, const=0.0001, help="the mutation rate")
+parser.add_argument("-c", "--crossover_rate", nargs='?', type=float, const=0.9, help="the percentage of offspring that will be created by crossover")
+parser.add_argument("-f", "--fitness_function", nargs='?', type=str, help="the fitness function")
+parser.add_argument("-cp", "--crossover_points", nargs='?', type=int, const=2, help="number of crossover points")
+parser.add_argument("-s", "--selection_function", nargs='?', type=str, help="the selection function")
+parser.add_argument("-t", "--type", nargs='?', type=str, help="the type of genetic algorithm, either generational or steady state")
+parser.add_argument("-r", "--replacement_function", nargs='?', type=str, help="the type of replacement function")
+
+args = parser.parse_args()
+
+
+print(args)
+
 writer = SummaryWriter()
-
-"""
-def initialise_population(pop_size):
-    population = []
-    for n in range(pop_size):
-        population.append(GeneticAgent(learning_rate=0.0001, input_dims=[24], n_actions=4, mutation_rate=0.01))
-
-    return population
-
-def simulate(population):
-    for solution in population:
-        env = SnakeEnv(400, 400, LidarAndOneHot2)
-        solution.simulate(env)
-        solution.calculate_fitness(None)
-    return population
-
-writer = SummaryWriter()
-
-env = SnakeEnv(400, 400, LidarAndOneHot2)
-
-
-action_space = np.array([0,1,2,3])
-n_games = 1000
-score = 0
-global_step = 0
-eps_dec = 1 / (n_games * 0.8)
-"""
-
-n_generations = 100
+n_generations = args.generations
 pop_size = 10
 pop = SnakePopulation(pop_size=pop_size, mutation_rate=0.001, crossover_rate=0.5)
 pop.initialise_population()
+
+print(n_generations)
 
 for generation in range(n_generations):
     print("Generation", generation)
