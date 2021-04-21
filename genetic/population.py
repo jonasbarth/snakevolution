@@ -10,11 +10,12 @@ from genetic.selection import roulette_wheel, rank_based_selection
 
 class Population:
 
-    def __init__(self, pop_size, mutation_rate, crossover_rate, fitness_func):
+    def __init__(self, pop_size: int, mutation_rate: float, crossover_rate: float, fitness_func, selection_func):
         self.pop_size = pop_size
         self.mutation_rate = mutation_rate
         self.crossover_rate = crossover_rate
         self.fitness_func = fitness_func
+        self.selection_func = selection_func
         pass
 
     def initialise_population(self):
@@ -41,8 +42,8 @@ class Population:
 
 class SnakePopulation(Population):
 
-    def __init__(self, pop_size, mutation_rate, crossover_rate, fitness_func):
-        Population.__init__(self, pop_size=pop_size, mutation_rate=mutation_rate, crossover_rate=crossover_rate, fitness_func=fitness_func)
+    def __init__(self, pop_size, mutation_rate, crossover_rate, fitness_func, selection_func):
+        Population.__init__(self, pop_size=pop_size, mutation_rate=mutation_rate, crossover_rate=crossover_rate, fitness_func=fitness_func, selection_func=selection_func)
 
     def initialise_population(self):
         self.selected_population = []
@@ -66,7 +67,7 @@ class SnakePopulation(Population):
         print("Calculated fitness")
 
     def candidate_selection(self):
-        self.selected_population = rank_based_selection(population=self.population, n_parents=len(self.population))
+        self.selected_population = self.selection_func(self.population, len(self.population)) #rank_based_selection(population=self.population, n_parents=len(self.population))
         print("")
         pass
 

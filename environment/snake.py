@@ -26,15 +26,17 @@ class Snake:
         self.head.shape("square")
         self.head.color(colour)
         self.head.penup()
-        self.head.goto(x,y)
+        self.head.goto(x, y)
         self.head.direction = "stop"
         self.previous_direction = "stop"
         self.final_tail_section = "stop"
         self.moves = {"up": self.__up, "right": self.__right, "down": self.__down, "left": self.__left}
-        self.one_hot = {"up": [1,0,0,0], "right": [0,1,0,0], "down": [0,0,1,0], "left": [0,0,0,1], "stop": [0,0,0,0]}
-        self.legal_direction = {"up": ["up", "left", "right"], "right": ["right", "up", "down"], "down": ["down", "right", "left"], "left": ["left", "up", "down"], "stop": ["left", "right", "up", "down"]}
+        self.one_hot = {"up": [1, 0, 0, 0], "right": [0, 1, 0, 0], "down": [0, 0, 1, 0], "left": [0, 0, 0, 1],
+                        "stop": [0, 0, 0, 0]}
+        self.legal_direction = {"up": ["up", "left", "right"], "right": ["right", "up", "down"],
+                                "down": ["down", "right", "left"], "left": ["left", "up", "down"],
+                                "stop": ["left", "right", "up", "down"]}
         self.tail = [self]
-
 
     def set_direction(self, direction):
         """ 
@@ -52,8 +54,6 @@ class Snake:
             self.previous_direction = self.head.direction
             self.head.direction = direction
 
-
-
     def move(self, direction):
         """
         Moves the Snake in the given direction.
@@ -67,7 +67,6 @@ class Snake:
         if (self.__direction_is_legal(direction)):
             self.set_direction(direction)
             self.moves[direction]()
-
 
     def __down(self):
         """
@@ -86,13 +85,11 @@ class Snake:
             for i in range(len(self.tail) - 1, 0, -1):
                 x = self.tail[i - 1].head.xcor()
                 y = self.tail[i - 1].head.ycor()
-                self.tail[i].head.direction = self.tail[i-1].previous_direction
+                self.tail[i].head.direction = self.tail[i - 1].previous_direction
                 self.tail[i].head.goto(x, y)
-
 
             self.head.sety(self.head.ycor() - 20)
 
-        
     def __up(self):
         """
         Move the Snake upwards if the head is facing up.
@@ -108,13 +105,10 @@ class Snake:
             for i in range(len(self.tail) - 1, 0, -1):
                 x = self.tail[i - 1].head.xcor()
                 y = self.tail[i - 1].head.ycor()
-                self.tail[i].head.direction = self.tail[i-1].previous_direction
+                self.tail[i].head.direction = self.tail[i - 1].previous_direction
                 self.tail[i].head.goto(x, y)
 
-
             self.head.sety(self.head.ycor() + 20)
-
-
 
     def __left(self):
         """
@@ -131,7 +125,7 @@ class Snake:
             for i in range(len(self.tail) - 1, 0, -1):
                 x = self.tail[i - 1].head.xcor()
                 y = self.tail[i - 1].head.ycor()
-                self.tail[i].head.direction = self.tail[i-1].previous_direction
+                self.tail[i].head.direction = self.tail[i - 1].previous_direction
                 self.tail[i].head.goto(x, y)
 
             self.head.setx(self.head.xcor() - 20)
@@ -146,21 +140,17 @@ class Snake:
         Returns:
             None
         """
-        #TODO set the direction of each element to the direction of t
+        # TODO set the direction of each element to the direction of t
         if self.head.direction == "right":
             ## Move the head
 
-
             for i in range(len(self.tail) - 1, 0, -1):
-                x = self.tail[i-1].head.xcor()
-                y = self.tail[i-1].head.ycor()
-                self.tail[i].head.direction = self.tail[i-1].previous_direction
+                x = self.tail[i - 1].head.xcor()
+                y = self.tail[i - 1].head.ycor()
+                self.tail[i].head.direction = self.tail[i - 1].previous_direction
                 self.tail[i].head.goto(x, y)
 
-
             self.head.setx(self.head.xcor() + 20)
-
-
 
     def food_distance(self, food, metric=distance.cityblock):
         """
@@ -173,12 +163,11 @@ class Snake:
         Returns:
             float - The distance between the food and the environment head
         """
-       
+
         snake_cor = np.array([self.head.pos()[0], self.head.pos()[1]], dtype=np.float32)
         food_cor = np.array([food.head.pos()[0], food.head.pos()[1]], dtype=np.float32)
-       
+
         return metric(snake_cor, food_cor)
-        
 
     def add_tail(self):
         """
@@ -189,14 +178,12 @@ class Snake:
 
         Returns:
             None
-        """ 
+        """
         x = int(self.tail[-1].head.pos()[0])
         y = int(self.tail[-1].head.pos()[1])
         new_part = Snake(colour="gray", x=x, y=y)
         new_part.set_direction(self.tail[-1].previous_direction)
         self.tail.append(new_part)
-
-
 
     def point_is_in_tail(self, point):
         """
@@ -217,7 +204,6 @@ class Snake:
 
         return (False, (0, 0))
 
-
     def reset(self):
         """
         Resets the environment to the starting position (0, 0), sets the direction to stop and remove all the tail elements.
@@ -231,7 +217,6 @@ class Snake:
         self.head.goto(0, 0)
         self.head.direction = "stop"
         self.previous_direction = "stop"
-
 
     def __direction_is_legal(self, direction):
         """
@@ -254,14 +239,8 @@ class Snake:
     def get_tail_one_hot_direction(self):
         return self.one_hot[self.tail[-1].head.direction]
 
-
     def get_tail_length(self):
         return len(self.tail)
 
     def get_current_location(self):
         return Point(self.head.xcor(), self.head.ycor())
-
-
-
-    
- 

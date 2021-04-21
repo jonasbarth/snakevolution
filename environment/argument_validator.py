@@ -1,4 +1,5 @@
 import genetic.fitness as fitness
+import genetic.selection as selection
 
 
 class ArgumentValidator:
@@ -14,12 +15,21 @@ class GeneticArgumentValidator:
 
     def __init__(self):
         self.fitness_validator = FitnessFunctionValidator()
+        self.selection_validator = SelectionFunctionValidator()
 
     def validate_fitness_func(self, arg):
         return self.fitness_validator.validate(arg)
 
     def get_fitness_func(self, arg):
         return self.fitness_validator.get(arg)
+
+    def validate_selection_func(self, arg):
+        return self.selection_validator.validate(arg)
+
+    def get_selection_func(self, arg):
+        return self.selection_validator.get(arg)
+
+
 
 
 class FitnessFunctionValidator(ArgumentValidator):
@@ -37,3 +47,21 @@ class FitnessFunctionValidator(ArgumentValidator):
             return self.fitness_func_mapping[arg]
 
         raise Exception("%s is not recognised as a correct argument for %s" % (arg, "Fitness Function"))
+
+
+
+class SelectionFunctionValidator(ArgumentValidator):
+
+    def __init__(self):
+        self.selection_func_mapping = dict()
+        self.selection_func_mapping["ROULETTE"] = selection.roulette_wheel
+        self.selection_func_mapping["RANK"] = selection.rank_based_selection
+
+    def validate(self, arg: str) -> bool:
+        return arg in self.selection_func_mapping.keys()
+
+    def get(self, arg):
+        if (self.validate(arg)):
+            return self.selection_func_mapping[arg]
+
+        raise Exception("%s is not recognised as a correct argument for %s" % (arg, "Selection Function"))
