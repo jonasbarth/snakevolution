@@ -10,10 +10,11 @@ from genetic.selection import roulette_wheel, rank_based_selection
 
 class Population:
 
-    def __init__(self, pop_size, mutation_rate, crossover_rate):
+    def __init__(self, pop_size, mutation_rate, crossover_rate, fitness_func):
         self.pop_size = pop_size
         self.mutation_rate = mutation_rate
         self.crossover_rate = crossover_rate
+        self.fitness_func = fitness_func
         pass
 
     def initialise_population(self):
@@ -40,8 +41,8 @@ class Population:
 
 class SnakePopulation(Population):
 
-    def __init__(self, pop_size, mutation_rate, crossover_rate):
-        Population.__init__(self, pop_size=pop_size, mutation_rate=mutation_rate, crossover_rate=crossover_rate)
+    def __init__(self, pop_size, mutation_rate, crossover_rate, fitness_func):
+        Population.__init__(self, pop_size=pop_size, mutation_rate=mutation_rate, crossover_rate=crossover_rate, fitness_func=fitness_func)
 
     def initialise_population(self):
         self.selected_population = []
@@ -59,7 +60,7 @@ class SnakePopulation(Population):
 
     def calculate_fitness(self):
         for solution in self.population:
-            solution.calculate_fitness(None)
+            solution.calculate_fitness(self.fitness_func)
 
         self.population = sorted(self.population, key=lambda solution: solution.fitness)
         print("Calculated fitness")

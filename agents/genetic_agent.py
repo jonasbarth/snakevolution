@@ -36,7 +36,6 @@ class GeneticAgent(object):
         fc2 = genome[fc1_index: fc2_index].reshape(fc2_size)
 
         fc3_size = self.neural_network.fc3.weight.data.size()
-        fc3_index = self._calc_genome_index(fc3_size)
         fc3 = genome[fc2_index:].reshape(fc3_size)
 
         self.neural_network.fc1.weight.data = fc1
@@ -63,7 +62,8 @@ class GeneticAgent(object):
         :return:
         """
         # self.fitness = ((self.food_eaten*2)**2) * (self.time_alive**1.5)
-        self.fitness = self.time_alive
+        # self.fitness = self.time_alive
+        self.fitness = fitness(self.env)
         print("Food eaten: %d - Time alive: %d - Fitness: %d" % (self.food_eaten, self.time_alive, self.fitness))
 
     def simulate(self):

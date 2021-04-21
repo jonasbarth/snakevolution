@@ -1,5 +1,7 @@
 import functools
 from torch.utils.tensorboard import SummaryWriter
+
+from environment.argument_validator import FitnessFunctionValidator, GeneticArgumentValidator
 from genetic.population import Population, SnakePopulation
 import argparse
 
@@ -20,10 +22,14 @@ args = parser.parse_args()
 
 print(args)
 
+arg_validator = GeneticArgumentValidator()
+fitness_func = arg_validator.get_fitness_func(args.fitness_function)
+
+
 writer = SummaryWriter()
 n_generations = args.generations
 pop_size = 10
-pop = SnakePopulation(pop_size=pop_size, mutation_rate=0.001, crossover_rate=0.5)
+pop = SnakePopulation(pop_size=pop_size, mutation_rate=0.001, crossover_rate=0.5, fitness_func=fitness_func)
 pop.initialise_population()
 
 print(n_generations)
