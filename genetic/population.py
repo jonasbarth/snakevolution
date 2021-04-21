@@ -2,7 +2,7 @@ import random
 import torch as T
 
 from agents.genetic_agent import GeneticAgent
-from environment.env import SnakeEnv
+from environment.env import SnakeEnv, Env
 from environment.snake import Snake
 from environment.state import LidarAndOneHot2
 from genetic.selection import roulette_wheel, rank_based_selection
@@ -48,13 +48,13 @@ class SnakePopulation(Population):
         self.children_genomes = []
         self.population = []
         for n in range(self.pop_size):
-            self.population.append(GeneticAgent(learning_rate=0, input_dims=[24], n_actions=4, mutation_rate=0.001))
+            env: Env = SnakeEnv(400, 400, LidarAndOneHot2)
+            self.population.append(GeneticAgent(env=env, learning_rate=0, input_dims=[24], n_actions=4, mutation_rate=0.001))
             print("initialising...")
 
     def simulate(self):
-        env = SnakeEnv(400, 400, LidarAndOneHot2)
         for solution in self.population:
-            solution.simulate(env)
+            solution.simulate()
             print("simulating...")
 
     def calculate_fitness(self):

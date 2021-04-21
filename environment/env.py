@@ -11,10 +11,25 @@ from environment.point import Point
 from environment.state import LidarAndOneHot
 
 
-class SnakeEnv:
+class Env:
+
+    def reset(self) -> (np.array, int, bool):
+        pass
+
+    def step(self, action: int) -> (np.array, int, bool):
+        pass
+
+    def total_points(self) -> int:
+        pass
+
+    def total_steps(self) -> int:
+        pass
+
+
+class SnakeEnv(Env):
 
     def __init__(self, screen_width, screen_height, state_representation):
-        self.wn = turtle.Screen() 
+        self.wn = turtle.Screen()
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.max_distance = distance.cityblock(np.array([0, 0]), np.array([screen_width, screen_height]))
@@ -46,9 +61,6 @@ class SnakeEnv:
 
         return (state, reward, done)
 
-
-
-      
     def step(self, action):
         """
         Take a step in the Snake environment and return the next state, reward and whether the game is over.
@@ -76,7 +88,6 @@ class SnakeEnv:
 
         state = self.state_representation.get_state()
 
-
         ## If the environment touches a wall or itself, the episode is over
         if self.touch_wall() or self.touch_snake() or self.n_moves > self.max_moves_without_food:
             reward = -100
@@ -93,8 +104,6 @@ class SnakeEnv:
         self.wn.update()
 
         return (state, reward, done)
-
-
 
     def __generate_food(self):
         """
@@ -125,7 +134,6 @@ class SnakeEnv:
         else:
             self.current_food = Food(x_rand, y_rand)
 
-
     def touch_food(self):
         """
         Checks if the environment is currently touching the piece of food in the environment. Touching
@@ -141,7 +149,6 @@ class SnakeEnv:
         if self.snake.food_distance(self.current_food) < 20.0:
             return True
         return False
-
 
     def food_distance(self, dist_metric=distance.cityblock):
         """
@@ -161,7 +168,6 @@ class SnakeEnv:
 
         return -1
 
-    
     def touch_wall(self):
         """
         Checks if the environment head is currently touching a wall.
@@ -214,9 +220,6 @@ class SnakeEnv:
 
         return False
 
-
-
-
     def get_episode_statistic(self):
         """
         Gets statistics about the current episode.
@@ -244,7 +247,6 @@ class SnakeEnv:
         def normalise(x):
             return 1 - (x / self.max_distance)
 
-
         food_x = self.current_food.head.xcor()
         food_y = self.current_food.head.ycor()
         food_point = Point(food_x, food_y)
@@ -256,13 +258,12 @@ class SnakeEnv:
 
     def draw_lidar(self):
         for end_point in self.state_representation.lidar_end_points:
-            if (end_point):
+            if end_point:
                 t = turtle.Turtle()
                 t.penup()
                 t.goto(self.snake.head.xcor(), self.snake.head.ycor())
                 t.pendown()
                 t.goto(end_point.x, end_point.y)
-
 
     def grid_positions(self):
         rows = (self.screen_width / 20) - 1
@@ -277,3 +278,9 @@ class SnakeEnv:
 
     def available_points(self):
         return None
+
+    def total_points(self) -> int:
+        return self.points
+
+    def total_steps(self) -> int:
+        return self.n_moves
