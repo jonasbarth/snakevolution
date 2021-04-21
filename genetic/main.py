@@ -23,13 +23,18 @@ args = parser.parse_args()
 print(args)
 
 arg_validator = GeneticArgumentValidator()
+n_generations = arg_validator.validate_n_generations(args.generations)
+pop_size = arg_validator.validate_population_size(args.population_size)
+mutation_rate = arg_validator.validate_mutation_rate(args.mutation_rate)
+crossover_rate = arg_validator.validate_crossover_rate(args.crossover_rate)
+crossover_points = arg_validator.validate_n_crossover_points(args.crossover_points)
 fitness_func = arg_validator.get_fitness_func(args.fitness_function)
 selection_func = arg_validator.get_selection_func(args.selection_function)
 
+
 writer = SummaryWriter()
-n_generations = args.generations
-pop_size = 10
-pop = SnakePopulation(pop_size=pop_size, mutation_rate=0.001, crossover_rate=0.5, fitness_func=fitness_func, selection_func=selection_func)
+
+pop = SnakePopulation(pop_size=pop_size, mutation_rate=mutation_rate, crossover_rate=crossover_rate, fitness_func=fitness_func, selection_func=selection_func)
 pop.initialise_population()
 
 print(n_generations)
@@ -47,9 +52,3 @@ for generation in range(n_generations):
     avg_fitness = total_fitness / pop_size
     print("Avg Fitness", avg_fitness)
     writer.add_scalar("Average Fitness", avg_fitness, global_step=generation)
-    #population.calculate_fitness(population)
-    #selection = select_candidates(population)
-
-
-
-

@@ -89,7 +89,7 @@ class SnakeEnv(Env):
         state = self.state_representation.get_state()
 
         ## If the environment touches a wall or itself, the episode is over
-        if self.touch_wall() or self.touch_snake() or self.n_moves > self.max_moves_without_food:
+        if self.touch_wall() or self.touch_snake() or self.n_moves >= self.max_moves_without_food:
             reward = -100
             done = True
 
