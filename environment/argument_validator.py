@@ -45,19 +45,31 @@ class GeneticArgumentValidator:
         if 0 <= arg <= 1:
             return arg
 
-        raise Exception("%s is not recognised as a correct argument for %s. It must be >= 0." % (arg, "Mutation Rate"))
+        raise Exception("%s is not recognised as a correct argument for %s. It must be in the interval [0, 1]." % (arg, "Mutation Rate"))
 
     def validate_crossover_rate(self, arg: int):
         if 0 <= arg <= 1:
             return arg
 
-        raise Exception("%s is not recognised as a correct argument for %s. It must be >= 0." % (arg, "Crossover Rate"))
+        raise Exception("%s is not recognised as a correct argument for %s. It must be in the interval [0, 1]." % (arg, "Crossover Rate"))
 
     def validate_n_crossover_points(self, arg: int):
         if arg >= 0:
             return arg
 
         raise Exception("%s is not recognised as a correct argument for %s. It must be >= 0." % (arg, "Crossover Points"))
+
+    def validate_algorithm_type(self, arg: str):
+        if arg in ["STEADY_STATE", "GENERATIONAL"]:
+            return arg
+
+        raise Exception("%s is not recognised as a correct argument for %s. It must be in ." % (arg, "Algorithm Type"))
+
+    def validate_elitism(self, arg: float):
+        if 0.0 <= arg <= 1:
+            return arg
+
+        raise Exception("%s is not recognised as a correct argument for %s. It must be in the interval [0, 1]." % (arg, "Elitism"))
 
 
 

@@ -14,13 +14,12 @@ parser.add_argument("-c", "--crossover_rate", nargs='?', type=float, const=0.9, 
 parser.add_argument("-f", "--fitness_function", nargs='?', type=str, help="the fitness function")
 parser.add_argument("-cp", "--crossover_points", nargs='?', type=int, const=2, help="number of crossover points")
 parser.add_argument("-s", "--selection_function", nargs='?', type=str, help="the selection function")
-parser.add_argument("-t", "--type", nargs='?', type=str, help="the type of genetic algorithm, either generational or steady state")
-parser.add_argument("-r", "--replacement_function", nargs='?', type=str, help="the type of replacement function")
+parser.add_argument("-t", "--type", nargs='?', type=str, const="generational", help="the type of genetic algorithm, either generational or steady state. Generational replaces the entire population after each generation, Steady state keeps evolving the same population.")
+parser.add_argument("-r", "--replacement_function", nargs='?', type=str, help="the type of replacement function. Only necessary for steady state algorithms")
+parser.add_argument("-e", "--elitism", nargs='?', type=float, const=0.0, help="percentage of parents that will be copied to the next generation unchanged")
 
 args = parser.parse_args()
 
-
-print(args)
 
 arg_validator = GeneticArgumentValidator()
 n_generations = arg_validator.validate_n_generations(args.generations)
@@ -30,6 +29,8 @@ crossover_rate = arg_validator.validate_crossover_rate(args.crossover_rate)
 crossover_points = arg_validator.validate_n_crossover_points(args.crossover_points)
 fitness_func = arg_validator.get_fitness_func(args.fitness_function)
 selection_func = arg_validator.get_selection_func(args.selection_function)
+algorithm_type = arg_validator.validate_algorithm_type(args.type)
+elitism = arg_validator.validate_elitism(args.elitism)
 
 
 writer = SummaryWriter()
