@@ -16,6 +16,7 @@ class Population:
         self.crossover_rate = crossover_rate
         self.fitness_func = fitness_func
         self.selection_func = selection_func
+        self.population = []
         pass
 
     def initialise_population(self):
@@ -39,6 +40,9 @@ class Population:
     def replace(self):
         pass
 
+    def mutate_children(self):
+        pass
+
 
 class SnakePopulation(Population):
 
@@ -48,7 +52,6 @@ class SnakePopulation(Population):
     def initialise_population(self):
         self.selected_population = []
         self.children_genomes = []
-        self.population = []
         for n in range(self.pop_size):
             env: Env = SnakeEnv(400, 400, LidarAndOneHot2)
             self.population.append(GeneticAgent(env=env, learning_rate=0, input_dims=[24], n_actions=4, mutation_rate=0.001))
@@ -84,23 +87,20 @@ class SnakePopulation(Population):
             parents.append(selected_individual)
 
             if len(parents) == 2:
-                # get genomes
-                parent_1_genome = parents[0].get_genome()
-                parent_2_genome = parents[1].get_genome()
+                # do a crossover with the probability of the crossover rate
+                if random.random() <= self.crossover_rate:
+                    # get genomes
+                    parent_1_genome = parents[0].get_genome()
+                    parent_2_genome = parents[1].get_genome()
 
-                child_1_genome, child_2_genome = self._make_children(parent_1_genome, parent_2_genome,
-                                                                     n_crossover_points)
+                    child_1_genome, child_2_genome = self._make_children(parent_1_genome, parent_2_genome,
+                                                                         n_crossover_points)
 
-                self.children_genomes.append(child_1_genome)
-                self.children_genomes.append(child_2_genome)
+                    self.children_genomes.append(child_1_genome)
+                    self.children_genomes.append(child_2_genome)
 
                 parents = []
 
-        # take two parents
-        # get their genome
-        # choose k (number of crossovers)
-        # pick k random indeces
-        # make k crossovers at the specified indeces
 
     def _make_children(self, parent_1_genome, parent_2_genome, n_crossover_points):
         crossover_indexes = self._get_crossover_indeces(n_crossover_points, parent_1_genome)
