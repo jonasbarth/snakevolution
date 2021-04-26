@@ -29,44 +29,44 @@ class GeneticArgumentValidator:
     def get_selection_func(self, arg):
         return self.selection_validator.get(arg)
 
-    def validate_n_generations(self, arg: int):
+    def validate_n_generations(self, arg: int) -> int:
         if arg >= 0:
             return arg
 
         raise Exception("%s is not recognised as a correct argument for %s. It must be >= 0." % (arg, "Number of Generations"))
 
-    def validate_population_size(self, arg: int):
+    def validate_population_size(self, arg: int) -> int:
         if arg >= 0:
             return arg
 
         raise Exception("%s is not recognised as a correct argument for %s. It must be >= 0." % (arg, "Population Size"))
 
-    def validate_mutation_rate(self, arg: int):
-        if 0 <= arg <= 1:
+    def validate_mutation_rate(self, arg: float) -> float:
+        if 0.0 <= arg <= 1.0:
             return arg
 
         raise Exception("%s is not recognised as a correct argument for %s. It must be in the interval [0, 1]." % (arg, "Mutation Rate"))
 
-    def validate_crossover_rate(self, arg: int):
-        if 0 <= arg <= 1:
+    def validate_crossover_rate(self, arg: float) -> float:
+        if 0.0 <= arg <= 1.0:
             return arg
 
         raise Exception("%s is not recognised as a correct argument for %s. It must be in the interval [0, 1]." % (arg, "Crossover Rate"))
 
-    def validate_n_crossover_points(self, arg: int):
+    def validate_n_crossover_points(self, arg: int) -> int:
         if arg >= 0:
             return arg
 
         raise Exception("%s is not recognised as a correct argument for %s. It must be >= 0." % (arg, "Crossover Points"))
 
-    def validate_algorithm_type(self, arg: str):
+    def validate_algorithm_type(self, arg: str) -> str:
         if arg in ["STEADY_STATE", "GENERATIONAL"]:
             return arg
 
-        raise Exception("%s is not recognised as a correct argument for %s. It must be in ." % (arg, "Algorithm Type"))
+        raise Exception("%s is not recognised as a correct argument for %s. It must be in [\"STEADY_STATE\", \"GENERATIONAL\"]." % (arg, "Algorithm Type"))
 
-    def validate_elitism(self, arg: float):
-        if 0.0 <= arg <= 1:
+    def validate_elitism(self, arg: float) -> float:
+        if 0.0 <= arg <= 1.0:
             return arg
 
         raise Exception("%s is not recognised as a correct argument for %s. It must be in the interval [0, 1]." % (arg, "Elitism"))

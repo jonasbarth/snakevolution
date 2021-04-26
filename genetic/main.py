@@ -14,7 +14,7 @@ parser.add_argument("-m", "--mutation_rate", nargs='?', type=float, default=0.00
 parser.add_argument("-c", "--crossover_rate", nargs='?', type=float, default=0.9, help="the percentage of offspring that will be created by crossover")
 parser.add_argument("-f", "--fitness_function", nargs='?', type=str, help="the fitness function")
 parser.add_argument("-cp", "--crossover_points", nargs='?', type=int, default=2, help="number of crossover points")
-parser.add_argument("-s", "--selection_function", nargs='?', type=str, default="the selection function")
+parser.add_argument("-s", "--selection_function", nargs='?', type=str, default="", help="the selection function")
 parser.add_argument("-t", "--type", nargs='?', type=str, const="GENERATIONAL", help="the type of genetic algorithm, either generational or steady state. Generational replaces the entire population after each generation, Steady state keeps evolving the same population.")
 parser.add_argument("-r", "--replacement_function", nargs='?', type=str, help="the type of replacement function. Only necessary for steady state algorithms")
 parser.add_argument("-e", "--elitism", nargs='?', type=float, default=0.0, help="percentage of parents that will be copied to the next generation unchanged")
@@ -36,7 +36,7 @@ elitism = arg_validator.validate_elitism(args.elitism)
 pop = SnakePopulation(pop_size=pop_size, mutation_rate=mutation_rate, crossover_rate=crossover_rate, fitness_func=fitness_func, selection_func=selection_func)
 
 if algorithm_type == "GENERATIONAL":
-    algorithm = Generational(n_generations, pop)
-    algorithm.run()
+    algorithm = Generational(pop)
+    algorithm.run(n_generations=n_generations)
 
 
