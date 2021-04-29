@@ -8,6 +8,8 @@ from genetic.population import SnakePopulation
 
 parser = argparse.ArgumentParser()
 
+
+
 parser.add_argument("-g", "--generations", nargs='?', type=int, default=1, help="number of generations to run the genetic algorithm for")
 parser.add_argument("-p", "--population_size", nargs='?', type=int, default=10, help="size of the population")
 parser.add_argument("-m", "--mutation_rate", nargs='?', type=float, default=0.0001, help="the mutation rate")

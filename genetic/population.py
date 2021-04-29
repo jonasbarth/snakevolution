@@ -93,14 +93,21 @@ class SnakePopulation(Population):
                 # do a crossover with the probability of the crossover rate
                 if random.random() <= self.crossover_rate:
                     # get genomes
-                    parent_1_genome = parents[0].get_genome()
-                    parent_2_genome = parents[1].get_genome()
+                    parent_1_genomes = parents[0].get_genome()
+                    parent_2_genomes = parents[1].get_genome()
 
-                    child_1_genome, child_2_genome = self._make_children(parent_1_genome, parent_2_genome,
-                                                                         n_crossover_points)
+                    child_1_genomes = []
+                    child_2_genomes = []
 
-                    self.children_genomes.append(child_1_genome)
-                    self.children_genomes.append(child_2_genome)
+                    for parent_1_genome, parent_2_genome in zip(parent_1_genomes, parent_2_genomes):
+                        child_1_genome, child_2_genome = self._make_children(parent_1_genome, parent_2_genome,
+                                                                            n_crossover_points)
+
+                        child_1_genomes.append(child_1_genome)
+                        child_2_genomes.append(child_2_genome)
+
+                    self.children_genomes.append(child_1_genomes)
+                    self.children_genomes.append(child_2_genomes)
 
                 parents = []
 
@@ -147,7 +154,8 @@ class SnakePopulation(Population):
             return value
 
         for child_genome in self.children_genomes:
-            child_genome.apply_(lambda x: mutate(x))
+            for layer_genome in child_genome:
+                layer_genome.apply_(lambda x: mutate(x))
 
     def replace(self):
         """

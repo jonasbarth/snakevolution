@@ -24,19 +24,17 @@ class GeneticAgent(object):
         fc2_weights = self.neural_network.fc2.weight.data.flatten()
         fc3_weights = self.neural_network.fc3.weight.data.flatten()
 
-        return T.cat([fc1_weights, fc2_weights, fc3_weights])
+        return [fc1_weights, fc2_weights, fc3_weights]
 
     def set_genome(self, genome):
         fc1_size = self.neural_network.fc1.weight.data.size()
-        fc1_index = self._calc_genome_index(fc1_size)
-        fc1 = genome[: fc1_index].reshape(fc1_size)
+        fc1 = genome[0].reshape(fc1_size)
 
         fc2_size = self.neural_network.fc2.weight.data.size()
-        fc2_index = self._calc_genome_index(fc2_size) + fc1_index
-        fc2 = genome[fc1_index: fc2_index].reshape(fc2_size)
+        fc2 = genome[1].reshape(fc2_size)
 
         fc3_size = self.neural_network.fc3.weight.data.size()
-        fc3 = genome[fc2_index:].reshape(fc3_size)
+        fc3 = genome[2].reshape(fc3_size)
 
         self.neural_network.fc1.weight.data = fc1
         self.neural_network.fc2.weight.data = fc2
