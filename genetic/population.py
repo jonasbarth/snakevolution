@@ -3,7 +3,7 @@ import torch as T
 
 from agents.genetic_agent import GeneticAgent
 from environment.env import SnakeEnv, Env
-from environment.snake import Snake
+from environment.snake import TurtleSnake
 from environment.state import LidarAndOneHot2
 from genetic.selection import roulette_wheel, rank_based_selection
 
