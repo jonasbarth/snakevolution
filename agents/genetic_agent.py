@@ -1,6 +1,6 @@
 import torch as T
 
-from environment.env import SnakeEnv, Env
+from environment.env import Env
 from rl.deep_q_network import DeepQNetwork
 import math
 

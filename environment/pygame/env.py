@@ -25,6 +25,9 @@ class PyGameSnake(Snake):
 
 class PyGameEnv(Env):
 
+    def __init__(self):
+        pass
+
     def reset(self) -> (np.array, int, bool):
         pass
 
