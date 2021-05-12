@@ -34,6 +34,6 @@ def distance_to_apple_percentage_tail_length_multiplier(env: SnakeEnv):
     food_y = env.current_food.head.ycor()
     food_point = Point(food_x, food_y)
     current_location = Point(env.snake.head.xcor(), env.snake.head.ycor())
-    multiplier = len(env.snake.tail) if len(env.snake.tail) > 2 else 1
+    multiplier = len(env.snake.segments) if len(env.snake.segments) > 2 else 1
     return normalise(current_location.distance(food_point)) * multiplier
 

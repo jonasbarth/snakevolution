@@ -12,6 +12,17 @@ import scipy.spatial.distance as distance
 
 class Env:
 
+    def __init__(self, screen_width: int, screen_height: int):
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.current_food = None
+        self.snake = None
+        self.actions = {0: "up", 1: "right", 2: "down", 3: "left"}
+        self.points = 0
+        self.n_moves = 0
+        self.max_moves_without_food = 1000
+        self.theta = 45
+
     def reset(self) -> (np.array, int, bool):
         pass
 

@@ -3,6 +3,7 @@ import torch as T
 
 from agents.genetic_agent import GeneticAgent
 from environment.turtle.env import SnakeEnv
+from environment.pygame.env import PyGameEnv
 from environment.env import Env
 from environment.turtle.env import TurtleSnake
 from environment.state import LidarAndOneHot2
@@ -57,7 +58,7 @@ class SnakePopulation(Population):
         self.selected_individuals = []
         self.children_genomes = []
         for n in range(self.pop_size):
-            env: Env = SnakeEnv(400, 400, LidarAndOneHot2)
+            env: Env = PyGameEnv(400, 400)
             self.individuals.append(GeneticAgent(env=env, learning_rate=0, input_dims=[24], n_actions=4, mutation_rate=self.mutation_rate))
             print("initialising...")
 

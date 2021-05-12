@@ -67,11 +67,11 @@ class GeneticAgent(object):
     def simulate(self):
         state, reward, done = self.env.reset()
 
-        while not done:
-            action = self.choose_action(state)
-            state_, reward, done = self.env.step(action)
-            self.time_alive += 1
-            state = state_
+        #while not done:
+            #action = self.choose_action(state)
+            #state_, reward, done = self.env.step(action)
+            #self.time_alive += 1
+            #state = state_
 
         self.food_eaten += self.env.total_points()
 

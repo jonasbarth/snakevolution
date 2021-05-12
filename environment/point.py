@@ -12,14 +12,17 @@ class Point:
         self.x = x
         self.y = y
 
-    def offset(self, x_offset, y_offset):
+    def offset(self, x_offset, y_offset) -> None:
         self.x += x_offset
         self.y += y_offset
 
-    def as_numpy(self):
+    def as_numpy(self) -> np.array:
         return np.array([self.x, self.y])
 
-    def distance(self, point, metric=distance.cityblock):
+    def from_numpy(self, coordinates: np.array):
+        return Point(coordinates[0], coordinates[1])
+
+    def distance(self, point, metric=distance.cityblock) -> float:
         p1_array = self.as_numpy()
         p2_array = point.as_numpy()
 

@@ -194,7 +194,7 @@ class SnakeEnv(Env):
         head_y = self.snake.head.ycor()
 
         ## Look through the tail section to see if the head touches any of them
-        for tail in self.snake.tail[1:]:
+        for tail in self.snake.segments[1:]:
             tail_x = tail.head.xcor()
             tail_y = tail.head.ycor()
 
@@ -233,7 +233,7 @@ class SnakeEnv(Env):
         food_x = self.current_food.head.xcor()
         food_y = self.current_food.head.ycor()
         food_point = Point(food_x, food_y)
-        multiplier = len(self.snake.tail) if len(self.snake.tail) > 2 else 1
+        multiplier = len(self.snake.segments) if len(self.snake.segments) > 2 else 1
         return normalise(current_location.distance(food_point)) * multiplier
 
     def get_lidar_origin_points(self):
@@ -254,7 +254,7 @@ class SnakeEnv(Env):
         self.grid = np.zeros((rows, columns))
 
     def update_grid(self):
-        for segment in self.snake.tail:
+        for segment in self.snake.segments:
             segment_row = segment.head.xcor() / 20
             segment_column = segment.head.ycor() / 20
             self.grid[segment_row][segment_column] = 1
@@ -692,7 +692,7 @@ class SnakeEnv(Env):
         head_y = self.snake.head.ycor()
 
         ## Look through the tail section to see if the head touches any of them
-        for tail in self.snake.tail[1:]:
+        for tail in self.snake.segments[1:]:
             tail_x = tail.head.xcor()
             tail_y = tail.head.ycor()
 
@@ -731,7 +731,7 @@ class SnakeEnv(Env):
         food_x = self.current_food.head.xcor()
         food_y = self.current_food.head.ycor()
         food_point = Point(food_x, food_y)
-        multiplier = len(self.snake.tail) if len(self.snake.tail) > 2 else 1
+        multiplier = len(self.snake.segments) if len(self.snake.segments) > 2 else 1
         return normalise(current_location.distance(food_point)) * multiplier
 
     def get_lidar_origin_points(self):
@@ -752,7 +752,7 @@ class SnakeEnv(Env):
         self.grid = np.zeros((rows, columns))
 
     def update_grid(self):
-        for segment in self.snake.tail:
+        for segment in self.snake.segments:
             segment_row = segment.head.xcor() / 20
             segment_column = segment.head.ycor() / 20
             self.grid[segment_row][segment_column] = 1
