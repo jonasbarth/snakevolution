@@ -19,7 +19,8 @@ class Point:
     def as_numpy(self) -> np.array:
         return np.array([self.x, self.y])
 
-    def from_numpy(self, coordinates: np.array):
+    @staticmethod
+    def from_numpy(coordinates: np.array):
         return Point(coordinates[0], coordinates[1])
 
     def distance(self, point, metric=distance.cityblock) -> float:
@@ -27,3 +28,12 @@ class Point:
         p2_array = point.as_numpy()
 
         return metric(p1_array, p2_array)
+
+    def __eq__(self, other):
+        if not isinstance(other, Point):
+            # don't attempt to compare against unrelated types
+            return NotImplemented
+
+        return self.x == other.x and self.y == other.y
+
+

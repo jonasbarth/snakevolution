@@ -33,7 +33,7 @@ class PyGameEnv(Env):
 
     def reset(self) -> (np.array, int, bool):
         self.current_food = None
-#        self.__generate_food()
+        self.__generate_food()
         self.snake = PyGameSnake()
         self.points = 0
         self.n_moves = 0
