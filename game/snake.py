@@ -9,6 +9,8 @@ from environment.point import Point
 
 import numpy as np
 
+from game import colour
+
 
 class SnakeGame(object):
 
@@ -16,12 +18,7 @@ class SnakeGame(object):
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.snake_size = snake_size
-        self.black = pygame.Color(0, 0, 0)
-        self.white = pygame.Color(255, 255, 255)
-        self.red = pygame.Color(255, 0, 0)
-        self.green = pygame.Color(0, 255, 0)
-        self.blue = pygame.Color(0, 0, 255)
-        self.direction = None
+        self._direction = Direction.UP
         self._game_over = False
         self.running = False
         self.ate_food = False
@@ -33,7 +30,7 @@ class SnakeGame(object):
     def start(self) -> None:
         self.running = True
 
-    def move(self, direction: Direction) -> Point:
+    def move(self, direction: Direction) -> (Point, bool, bool):
         pass
 
     def game_over(self) -> None:
@@ -42,11 +39,20 @@ class SnakeGame(object):
     def is_game_over(self) -> bool:
         return self._game_over
 
-    def snake_position(self) -> Point:
+    def snake_head(self) -> Point:
         pass
+
+    def snake_position(self) -> np.array:
+        pass
+
+    def direction(self) -> Direction:
+        return self._direction
 
     def food_position(self) -> Point:
         pass
+
+    def dimensions(self) -> (int, int):
+        return self.screen_width, self.screen_height
 
     def start_position(self) -> Point:
         start_x = self.screen_width / 2
@@ -58,21 +64,21 @@ class PyGameSnakeGame(SnakeGame):
 
     def __init__(self, screen_width: int, screen_height: int, snake_size: int):
         super().__init__(screen_width, screen_height, snake_size)
-        self.snake_rect = pygame.Rect(self.snake.head()[0], self.snake.head()[0], snake_size, snake_size)
 
 
     def start(self) -> None:
         super().start()
+        self.snake_rect = pygame.Rect(self.snake.head()[0], self.snake.head()[0], self.snake_size, self.snake_size)
         self.window = pygame.display.set_mode((self.screen_width, self.screen_height))
         # 0,0 is in the top left corner
         #
 
-        pygame.draw.rect(self.window, self.red, self.snake_rect)
+        pygame.draw.rect(self.window, colour.red, self.snake_rect)
         pygame.display.flip()
 
         self.__random_food()
 
-    def move(self, direction: Direction) -> Point:
+    def move(self, direction: Direction) -> (Point, bool, bool):
 
         # check if the snake would touch food in the next move
 
@@ -81,7 +87,7 @@ class PyGameSnakeGame(SnakeGame):
 
         if self.snake.touches_tail() or self.__is_touching_wall():
             self.game_over()
-            return Point.from_numpy(snake_head)
+            return Point.from_numpy(snake_head), self.ate_food, self.is_game_over()
 
         # check if the snake touches food
         if self.__is_touching_food():
@@ -94,10 +100,13 @@ class PyGameSnakeGame(SnakeGame):
         self.__draw_snake()
         self.__draw_food()
 
-        return Point.from_numpy(snake_head)
+        return Point.from_numpy(snake_head), self.ate_food, self.is_game_over()
 
-    def snake_position(self) -> Point:
+    def snake_head(self) -> Point:
         return Point.from_numpy(self.snake.head())
+
+    def snake_position(self) -> np.array:
+        return self.snake.position()
 
     def food_position(self) -> Point:
         return Point(self.food.x, self.food.y)
@@ -144,22 +153,22 @@ class PyGameSnakeGame(SnakeGame):
         return head_x < 0 or head_x >= self.screen_width or head_y < 0 or head_y >= self.screen_height
 
     def __draw_food(self):
-        pygame.draw.rect(self.window, self.green, self.food)
+        pygame.draw.rect(self.window, colour.green, self.food)
         pygame.display.flip()
 
     def __draw_snake(self):
-        self.window.fill(self.black)
+        self.window.fill(colour.black)
         snake_segments = self.snake.position()
         index = 0
         for segment in snake_segments:
-            colour = self.blue
+            segment_colour = colour.blue
             # the head of the snake is a different colour than the rest
             if index == 0:
-                colour = self.red
+                segment_colour = colour.red
             index += 1
 
             rect = pygame.Rect(segment[0], segment[1], self.snake_size, self.snake_size)
-            pygame.draw.rect(self.window, colour, rect)
+            pygame.draw.rect(self.window, segment_colour, rect)
             pygame.display.flip()
 
 

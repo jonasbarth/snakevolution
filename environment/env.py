@@ -67,3 +67,12 @@ class Direction(Enum):
     RIGHT = "right"
     DOWN = "down"
     LEFT = "left"
+
+    @staticmethod
+    def one_hot(direction) -> np.array:
+        as_list = list(Direction)
+        one_hot = np.zeros(4)
+        index = as_list.index(direction)
+        one_hot[index] = 1
+        return one_hot
+

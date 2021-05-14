@@ -31,7 +31,7 @@ class LidarAndOneHot2(State):
         Gets the current state of the the MDP.
         :return: A numpy array of dimension (1, 6) where the first 5 entries are the lidar and the final entry is the distance to the food
         """
-        lidar = self.__get_lidar(self.snakeEnv.snake.head.direction)
+        lidar = self.__get_lidar(self.snakeEnv.snake.head._direction)
         head_direction = np.array(self.snakeEnv.snake.get_current_one_hot_direction())
         tail_direction = np.array(self.snakeEnv.snake.get_tail_one_hot_direction())
         food_dist = np.array([self.snakeEnv.food_distance()])
@@ -519,7 +519,7 @@ class LidarAndOneHot(State):
         Gets the current state of the the MDP.
         :return: A numpy array of dimension (1, 6) where the first 5 entries are the lidar and the final entry is the distance to the food
         """
-        lidar = self.__get_lidar(self.snakeEnv.snake.head.direction)
+        lidar = self.__get_lidar(self.snakeEnv.snake.head._direction)
         head_direction = np.array(self.snakeEnv.snake.get_current_one_hot_direction())
         tail_direction = np.array(self.snakeEnv.snake.get_tail_one_hot_direction())
         food_dist = np.array([self.snakeEnv.food_distance()])
