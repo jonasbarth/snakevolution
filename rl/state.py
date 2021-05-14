@@ -9,6 +9,9 @@ class State(object):
     def get_state(self) -> np.array:
         pass
 
+    def dims(self) -> (int, int):
+        pass
+
 
 class SnakeState(State):
 
@@ -18,12 +21,16 @@ class SnakeState(State):
     def get_state(self) -> np.array:
         pass
 
+    def dims(self) -> (int, int):
+        pass
+
 
 class SnakeState1(SnakeState):
 
     def __init__(self, game: SnakeGame):
         super().__init__(game)
         self.game = game
+        self._dims = None
 
     def get_state(self) -> np.array:
         food = self.game.food_position()
@@ -36,6 +43,12 @@ class SnakeState1(SnakeState):
 
         state = np.concatenate((Direction.one_hot(direction), wall_distances, food_distance))
         return state
+
+    def dims(self) -> (int, int):
+        if self._dims == None:
+            self._dims = self.get_state().shape
+
+        return self._dims
 
     def __wall_distances(self, snake_head: Point, direction: Direction) -> np.array:
         north_wall = Point(snake_head.x, 0)

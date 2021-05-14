@@ -5,6 +5,7 @@ import pygame
 
 from environment.env import Direction
 from game.snake import PyGameSnakeGame
+from rl.mpd import MDP
 from rl.snake import SnakeMDP
 from rl.state import SnakeState1
 
@@ -30,7 +31,7 @@ blue = pygame.Color(0, 0, 255)
 # direction = 'RIGHT'
 # change_to = direction
 
-mdp = SnakeMDP()
+mdp: MDP = SnakeMDP()
 state, game_over, reward = mdp.reset()
 
 while not game_over:
