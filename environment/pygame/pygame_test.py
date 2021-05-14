@@ -1,3 +1,4 @@
+import random
 import time
 
 import pygame
@@ -29,28 +30,17 @@ blue = pygame.Color(0, 0, 255)
 
 game = PyGameSnakeGame(width, height, snake_size)
 game.start()
-game.move(direction=Direction.UP)
-time.sleep(1)
-game.move(direction=Direction.UP)
-time.sleep(1)
-game.move(direction=Direction.LEFT)
-time.sleep(1)
-game.move(direction=Direction.LEFT)
-time.sleep(1)
-game.move(direction=Direction.DOWN)
-time.sleep(1)
-game.move(direction=Direction.DOWN)
-time.sleep(1)
-game.move(direction=Direction.DOWN)
-time.sleep(1)
-game.move(direction=Direction.DOWN)
 
+while not game.is_game_over():
+    direction = random.choice(list(Direction))
+    game.move(direction=direction)
+    time.sleep(1)
 
 running = True
 while running:
-  for event in pygame.event.get():
-    if event.type == pygame.QUIT:
-      running = False
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
 
 # while running:
 #   for event in pygame.event.get():

@@ -36,4 +36,7 @@ class Point:
 
         return self.x == other.x and self.y == other.y
 
+    def __str__(self):
+        return f"x: {self.x}. y: {self.y}"
+
 

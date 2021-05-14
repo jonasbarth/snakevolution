@@ -22,6 +22,7 @@ class SnakeGame(object):
         self.green = pygame.Color(0, 255, 0)
         self.blue = pygame.Color(0, 0, 255)
         self.direction = None
+        self._game_over = False
         self.running = False
         self.ate_food = False
         self.food = None
@@ -36,10 +37,10 @@ class SnakeGame(object):
         pass
 
     def game_over(self) -> None:
-        pass
+        self._game_over = True
 
     def is_game_over(self) -> bool:
-        pass
+        return self._game_over
 
     def snake_position(self) -> Point:
         pass
@@ -57,7 +58,7 @@ class PyGameSnakeGame(SnakeGame):
 
     def __init__(self, screen_width: int, screen_height: int, snake_size: int):
         super().__init__(screen_width, screen_height, snake_size)
-        self.snake_rect = pygame.Rect(self.snake.get_head_position()[0], self.snake.get_head_position()[0], snake_size, snake_size)
+        self.snake_rect = pygame.Rect(self.snake.head()[0], self.snake.head()[0], snake_size, snake_size)
 
 
     def start(self) -> None:
@@ -78,9 +79,14 @@ class PyGameSnakeGame(SnakeGame):
         # move the snake in a new direction
         snake_head = self.snake.move(direction, self.ate_food)
 
+        if self.snake.touches_tail() or self.__is_touching_wall():
+            self.game_over()
+            return Point.from_numpy(snake_head)
+
         # check if the snake touches food
         if self.__is_touching_food():
             self.ate_food = True
+            print("Ate food")
             self.__random_food()
         else:
             self.ate_food = False
@@ -88,20 +94,13 @@ class PyGameSnakeGame(SnakeGame):
         self.__draw_snake()
         self.__draw_food()
 
-
         return Point.from_numpy(snake_head)
 
-    def game_over(self) -> None:
-        pass
-
-    def is_game_over(self) -> bool:
-        pass
-
     def snake_position(self) -> Point:
-        return Point.from_numpy(self.snake.get_head_position())
+        return Point.from_numpy(self.snake.head())
 
     def food_position(self) -> Point:
-        return Point(190, 150)
+        return Point(self.food.x, self.food.y)
 
     def __random_food(self) -> Point:
         available_slots = self.__available_food_positions()
@@ -136,7 +135,13 @@ class PyGameSnakeGame(SnakeGame):
         return all_slots - snake_grid_slots
 
     def __is_touching_food(self) -> bool:
-        return Point.from_numpy(self.snake.get_head_position()) == self.food_position()
+        return Point.from_numpy(self.snake.head()) == self.food_position()
+
+    def __is_touching_wall(self) -> bool:
+        # get the head of the snake. If x >= screen_width or x <= 0. If y >= screen_height or y <= 0
+        head_x, head_y = self.snake.head()[0], self.snake.head()[1]
+
+        return head_x < 0 or head_x >= self.screen_width or head_y < 0 or head_y >= self.screen_height
 
     def __draw_food(self):
         pygame.draw.rect(self.window, self.green, self.food)
@@ -168,7 +173,7 @@ class Snake(object):
         self.tail_index = 1
         self.direction = direction
 
-    def get_head_position(self) -> np.array:
+    def head(self) -> np.array:
         return self.segments[0]
 
     def move(self, direction: Direction, add_tail: bool = False) -> np.array:
@@ -223,6 +228,15 @@ class Snake(object):
         else:
             self.direction = direction
 
+    def touches_tail(self):
+        # how do I know if the snake touches its own tail?
+        # if I have duplicates in the matrix
+        # unique is the sorted unique segments
+        # counts is the number of times each of the unique values comes up in the segments matrix
+        unique, counts = np.unique(self.segments[:self.tail_index], return_counts=True, axis=0)
+
+        # if the count is greater than 1, it means we have duplicates and the snake touches its tail
+        return len(unique[counts > 1]) > 0
 
 class Food(object):
 
@@ -235,35 +249,3 @@ class Food(object):
     def random_move(self, points: np.array):
         index = np.random.randint(points.size, size=1)
         self.point = points[index]
-
-
-class PyGameSnake(Snake):
-
-    def __init__(self, start_position: Point, snake_size: int):
-        super().__init__(start_position, snake_size)
-        head = pygame.Rect(start_position.x, start_position.y, snake_size, snake_size)
-        super().segments.append(head)
-
-    def move(self, direction: Direction):
-        self.__set_direction(direction=direction)
-
-        if direction == Direction.UP:
-            self.snake.move_ip(0, -self.snake_size)
-        elif direction == Direction.DOWN:
-            self.snake.move_ip(0, self.snake_size)
-        elif direction == Direction.LEFT:
-            self.snake.move_ip(-self.snake_size, 0)
-        elif direction == Direction.RIGHT:
-            self.snake.move_ip(self.snake_size, 0)
-
-    def __set_direction(self, direction: Direction):
-        if direction == Direction.UP and self.direction != Direction.DOWN:
-            self.direction = Direction.UP
-        elif direction == Direction.DOWN and direction != Direction.UP:
-            self.direction = Direction.DOWN
-        elif direction == Direction.LEFT and direction != Direction.RIGHT:
-            self.direction = Direction.LEFT
-        elif direction == Direction.RIGHT and direction != Direction.LEFT:
-            self.direction = Direction.RIGHT
-        else:
-            self.direction = direction
