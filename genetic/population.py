@@ -8,6 +8,8 @@ from environment.env import Env
 from environment.turtle.env import TurtleSnake
 from environment.state import LidarAndOneHot2
 from genetic.selection import roulette_wheel, rank_based_selection
+from rl.mpd import MDP
+from rl.snake import SnakeMDP
 
 
 class Population:
@@ -58,8 +60,9 @@ class SnakePopulation(Population):
         self.selected_individuals = []
         self.children_genomes = []
         for n in range(self.pop_size):
-            env: Env = PyGameEnv(400, 400)
-            self.individuals.append(GeneticAgent(env=env, learning_rate=0, input_dims=[24], n_actions=4, mutation_rate=self.mutation_rate))
+            mdp = SnakeMDP()
+            self.individuals.append(
+                GeneticAgent(mdp=mdp, learning_rate=0, input_dims=[mdp.state_dims()[0]], n_actions=4, mutation_rate=self.mutation_rate))
             print("initialising...")
 
     def simulate(self):

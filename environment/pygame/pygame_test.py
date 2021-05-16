@@ -5,8 +5,8 @@ import pygame
 
 from environment.env import Direction
 from game.snake import PyGameSnakeGame
-from rl.mpd import MDP
-from rl.snake import SnakeMDP
+from rl.mpd import MDP, MDPAction
+from rl.snake import SnakeMDP, SnakeAction
 from rl.state import SnakeState1
 
 width = 400
@@ -36,7 +36,7 @@ state, game_over, reward = mdp.reset()
 
 while not game_over:
     direction = random.choice(list(Direction))
-    state, game_over, reward = mdp.step(direction)
+    state, game_over, reward = mdp.step(SnakeAction(direction))
 
 
 running = True

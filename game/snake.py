@@ -23,12 +23,16 @@ class SnakeGame(object):
         self.running = False
         self.ate_food = False
         self.food = None
-
+        self._n_steps = 0
+        self._n_food_eaten = 0
+        self._n_steps_without_food = 0
         self.grid_slots = int((screen_width / snake_size) * (screen_height / snake_size))
-        self.snake = Snake(start_position=self.start_position(), direction=Direction.UP, snake_size=snake_size, grid_slots=self.grid_slots)
 
     def start(self) -> None:
         self.running = True
+        self._n_steps = 0
+        self._n_food_eaten = 0
+        self._n_steps_without_food = 0
 
     def move(self, direction: Direction) -> (Point, bool, bool):
         pass
@@ -59,6 +63,17 @@ class SnakeGame(object):
         start_y = self.screen_height / 2
         return Point(start_x, start_y)
 
+    def n_steps(self):
+        return self._n_steps
+
+    def n_food_eaten(self):
+        return self._n_food_eaten
+
+    def score(self):
+        return self.n_food_eaten()
+
+    def n_steps_without_food(self):
+        return self._n_steps_without_food
 
 class PyGameSnakeGame(SnakeGame):
 
@@ -68,22 +83,22 @@ class PyGameSnakeGame(SnakeGame):
 
     def start(self) -> None:
         super().start()
-        self.snake_rect = pygame.Rect(self.snake.head()[0], self.snake.head()[0], self.snake_size, self.snake_size)
+        self.snake = Snake(start_position=self.start_position(), direction=Direction.UP, snake_size=self.snake_size,
+                           grid_slots=self.grid_slots)
         self.window = pygame.display.set_mode((self.screen_width, self.screen_height))
         # 0,0 is in the top left corner
-        #
-
-        pygame.draw.rect(self.window, colour.red, self.snake_rect)
-        pygame.display.flip()
 
         self.__random_food()
 
-    def move(self, direction: Direction) -> (Point, bool, bool):
+        self.__draw_snake()
+        self.__draw_food()
 
-        # check if the snake would touch food in the next move
+    def move(self, direction: Direction) -> (Point, bool, bool):
 
         # move the snake in a new direction
         snake_head = self.snake.move(direction, self.ate_food)
+
+        self._n_steps += 1
 
         if self.snake.touches_tail() or self.__is_touching_wall():
             self.game_over()
@@ -92,10 +107,17 @@ class PyGameSnakeGame(SnakeGame):
         # check if the snake touches food
         if self.__is_touching_food():
             self.ate_food = True
+            self._n_food_eaten += 1
+            self._n_steps_without_food = 0
             print("Ate food")
             self.__random_food()
         else:
             self.ate_food = False
+            self._n_steps_without_food += 1
+
+        if self._n_steps_without_food > 1000:
+            self.game_over()
+            return Point.from_numpy(snake_head), self.ate_food, self.is_game_over()
 
         self.__draw_snake()
         self.__draw_food()

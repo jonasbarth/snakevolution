@@ -45,10 +45,10 @@ class SnakeState1(SnakeState):
         return state
 
     def dims(self) -> (int, int):
-        if self._dims == None:
-            self._dims = self.get_state().shape
+        #if self._dims == None:
+            #self._dims = self.get_state().shape
 
-        return self._dims
+        return (8, 1)
 
     def __wall_distances(self, snake_head: Point, direction: Direction) -> np.array:
         north_wall = Point(snake_head.x, 0)

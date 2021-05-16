@@ -1,8 +1,12 @@
+import time
+
 import torch as T
 
 from environment.env import Env
 from rl.deep_q_network import DeepQNetwork
 import math
+
+from rl.mpd import MDP
 
 
 class GeneticAgent(object):
@@ -12,8 +16,8 @@ class GeneticAgent(object):
     food_eaten = 0
     time_alive = 0
 
-    def __init__(self, env: Env, learning_rate: float, input_dims, n_actions: int, mutation_rate: float):
-        self.env = env
+    def __init__(self, mdp: MDP, learning_rate: float, input_dims, n_actions: int, mutation_rate: float):
+        self.mdp = mdp
         self.neural_network = DeepQNetwork(learning_rate, input_dims, math.floor(input_dims[0] / 2),
                                            math.floor(input_dims[0] / 2), n_actions)
         self.mutation_rate = mutation_rate
@@ -61,19 +65,20 @@ class GeneticAgent(object):
         """
         # self.fitness = ((self.food_eaten*2)**2) * (self.time_alive**1.5)
         # self.fitness = self.time_alive
-        self.fitness = fitness(self.env)
+        self.fitness = fitness(self.mdp)
         print("Food eaten: %d - Time alive: %d - Fitness: %d" % (self.food_eaten, self.time_alive, self.fitness))
 
     def simulate(self):
-        state, reward, done = self.env.reset()
+        state, reward, done = self.mdp.reset()
 
-        #while not done:
-            #action = self.choose_action(state)
-            #state_, reward, done = self.env.step(action)
-            #self.time_alive += 1
-            #state = state_
+        while not done:
+            action = self.choose_action(state)
+            state_, reward, done = self.mdp.step(action=action)
+            self.time_alive += 1
+            state = state_
+            #time.sleep(0.5)
 
-        self.food_eaten += self.env.total_points()
+        self.food_eaten += self.mdp.env_score()
 
     def reset(self):
         self.fitness = 0
@@ -81,3 +86,4 @@ class GeneticAgent(object):
         self.eps_moves = 0
         self.food_eaten = 0
         self.time_alive = 0
+        self.mdp.reset()
