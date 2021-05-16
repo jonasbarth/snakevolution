@@ -1,5 +1,5 @@
 from environment.env import Direction
-from game.snake import PyGameSnakeGame
+from game.snake import PyGameSnakeGame, SnakeGame
 from rl.mpd import MDP, MDPAction
 import numpy as np
 
@@ -10,12 +10,10 @@ class SnakeMDP(MDP):
 
     def __init__(self):
         super().__init__()
-        self.environment = PyGameSnakeGame(screen_width=400, screen_height=400, snake_size=20)
+        self.environment = SnakeGame(screen_width=800, screen_height=800, snake_size=20)
         self.state_representation = SnakeState1(self.environment)
 
     def reset(self) -> (np.array, float, bool):
-        self.environment = PyGameSnakeGame(screen_width=400, screen_height=400, snake_size=20)
-        self.state_representation = SnakeState1(self.environment)
         self.environment.start()
         self._reward_sum = 0
         self._n_steps = 0

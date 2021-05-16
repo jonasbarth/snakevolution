@@ -47,8 +47,6 @@ def roulette_wheel(population: List[GeneticAgent], n_parents=1):
     for n in range(n_parents):
         parents.append(roulette_wheel_select(sorted_probability_map))
 
-    print("Parents", parents)
-
     return parents
 
     # generate random number n

@@ -10,6 +10,7 @@ from environment.point import Point
 import numpy as np
 
 from game import colour
+from game.core.grid import Snake, Grid, Food
 
 
 class SnakeGame(object):
@@ -22,38 +23,65 @@ class SnakeGame(object):
         self._game_over = False
         self.running = False
         self.ate_food = False
-        self.food = None
+
         self._n_steps = 0
         self._n_food_eaten = 0
         self._n_steps_without_food = 0
         self.grid_slots = int((screen_width / snake_size) * (screen_height / snake_size))
 
+        self.grid = Grid(int(screen_width / snake_size), int(screen_height / snake_size))
+
     def start(self) -> None:
+        self._game_over = False
         self.running = True
         self._n_steps = 0
         self._n_food_eaten = 0
         self._n_steps_without_food = 0
+        #self.grid.reset()
+        self.grid = Grid(int(self.screen_width / self.snake_size), int(self.screen_height / self.snake_size))
 
     def move(self, direction: Direction) -> (Point, bool, bool):
-        pass
+        snake_head = self.grid.move_snake(direction, self.ate_food)
+        self._n_steps += 1
+
+        if self.grid.snake().touches_tail() or self.grid.snake_is_touching_wall():
+            self.game_over()
+            return Point.from_numpy(snake_head), self.ate_food, self.is_game_over()
+
+        # check if the snake touches food
+        if self.grid.snake_is_touching_food():
+            self.ate_food = True
+            self._n_food_eaten += 1
+            self._n_steps_without_food = 0
+            print("Ate food")
+            self.grid.random_food()
+        else:
+            self.ate_food = False
+            self._n_steps_without_food += 1
+
+        if self._n_steps_without_food > 1000:
+            self.game_over()
+
+        return Point.from_numpy(snake_head), self.ate_food, self.is_game_over()
 
     def game_over(self) -> None:
+        print("Game Over")
         self._game_over = True
 
     def is_game_over(self) -> bool:
         return self._game_over
 
     def snake_head(self) -> Point:
-        pass
+        return Point.from_numpy(self.grid.snake().head())
 
     def snake_position(self) -> np.array:
-        pass
+        return self.grid.snake().segments
 
     def direction(self) -> Direction:
         return self._direction
 
     def food_position(self) -> Point:
-        pass
+        return Point.from_numpy(self.grid.food().position())
 
     def dimensions(self) -> (int, int):
         return self.screen_width, self.screen_height
@@ -75,11 +103,11 @@ class SnakeGame(object):
     def n_steps_without_food(self):
         return self._n_steps_without_food
 
+
 class PyGameSnakeGame(SnakeGame):
 
     def __init__(self, screen_width: int, screen_height: int, snake_size: int):
         super().__init__(screen_width, screen_height, snake_size)
-
 
     def start(self) -> None:
         super().start()
@@ -124,15 +152,6 @@ class PyGameSnakeGame(SnakeGame):
 
         return Point.from_numpy(snake_head), self.ate_food, self.is_game_over()
 
-    def snake_head(self) -> Point:
-        return Point.from_numpy(self.snake.head())
-
-    def snake_position(self) -> np.array:
-        return self.snake.position()
-
-    def food_position(self) -> Point:
-        return Point(self.food.x, self.food.y)
-
     def __random_food(self) -> Point:
         available_slots = self.__available_food_positions()
 
@@ -144,7 +163,7 @@ class PyGameSnakeGame(SnakeGame):
 
         food_x = slot_x * self.snake_size
         food_y = slot_y * self.snake_size
-        self.food = pygame.Rect(food_x, food_y, self.snake_size, self.snake_size)
+       # self.food = pygame.Rect(food_x, food_y, self.snake_size, self.snake_size)
         return Point(food_x, food_y)
 
     def __available_food_positions(self) -> set:
@@ -156,8 +175,8 @@ class PyGameSnakeGame(SnakeGame):
 
         # convert snake positions into grid slots
         for segment in snake_segments:
-            column = segment[0] / self.snake_size # the column
-            row = segment[1] / self.snake_size # the row
+            column = segment[0] / self.snake_size  # the column
+            row = segment[1] / self.snake_size  # the row
             slot = column * (row + 1)
 
             snake_grid_slots.add(slot)
@@ -195,88 +214,4 @@ class PyGameSnakeGame(SnakeGame):
 
 
 
-class Snake(object):
 
-    def __init__(self, start_position: Point, direction: Direction, snake_size: int, grid_slots: int):
-        self.snake_size = snake_size
-        self.segments = np.zeros((grid_slots, 2))
-        self.segments[0] = start_position.as_numpy()
-        self.tail_index = 1
-        self.direction = direction
-
-    def head(self) -> np.array:
-        return self.segments[0]
-
-    def move(self, direction: Direction, add_tail: bool = False) -> np.array:
-        self.__set_direction(direction=direction)
-
-        # remove last value, shift all values down by one, insert new value at top
-        # copy the segments matrix
-        new_segments = np.copy(self.segments)
-
-        # remove last value of tail if we don't add a new segment and if the snake is longer than 1
-        if not add_tail:
-            if self.tail_index != 1:
-                new_segments[self.tail_index - 1] = np.array([0, 0])
-        else:
-            self.tail_index += 1
-
-        # shift values down by one
-        new_segments = np.roll(new_segments, 1, axis=0)
-
-        # copy the head back to the first row so that it can be moved
-        new_segments[0] = new_segments[1]
-
-        # insert new value at top
-        if direction == Direction.UP:
-            new_segments[0][1] -= self.snake_size
-        elif direction == Direction.DOWN:
-            new_segments[0][1] += self.snake_size
-        elif direction == Direction.LEFT:
-            new_segments[0][0] -= self.snake_size
-        elif direction == Direction.RIGHT:
-            new_segments[0][0] += self.snake_size
-
-        self.segments = new_segments
-
-        return self.segments[0]
-
-    def length(self) -> int:
-        return self.tail_index
-
-    def position(self):
-        return self.segments[:self.tail_index]
-
-    def __set_direction(self, direction: Direction):
-        if direction == Direction.UP and self.direction != Direction.DOWN:
-            self.direction = Direction.UP
-        elif direction == Direction.DOWN and direction != Direction.UP:
-            self.direction = Direction.DOWN
-        elif direction == Direction.LEFT and direction != Direction.RIGHT:
-            self.direction = Direction.LEFT
-        elif direction == Direction.RIGHT and direction != Direction.LEFT:
-            self.direction = Direction.RIGHT
-        else:
-            self.direction = direction
-
-    def touches_tail(self):
-        # how do I know if the snake touches its own tail?
-        # if I have duplicates in the matrix
-        # unique is the sorted unique segments
-        # counts is the number of times each of the unique values comes up in the segments matrix
-        unique, counts = np.unique(self.segments[:self.tail_index], return_counts=True, axis=0)
-
-        # if the count is greater than 1, it means we have duplicates and the snake touches its tail
-        return len(unique[counts > 1]) > 0
-
-class Food(object):
-
-    def __init__(self):
-        self.point = None
-
-    def move(self, point: np.array):
-        self.point = point
-
-    def random_move(self, points: np.array):
-        index = np.random.randint(points.size, size=1)
-        self.point = points[index]
