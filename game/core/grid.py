@@ -144,7 +144,7 @@ class Grid(object):
     def set_food_in_grid(self):
         food_x = int(self._food.position()[0])
         food_y = int(self._food.position()[1])
-        self.grid[food_x][food_y] = 1
+        self.grid[food_x][food_y] = 2
 
     def food(self) -> Food:
         return self._food

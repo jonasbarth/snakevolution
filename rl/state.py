@@ -38,6 +38,9 @@ class SnakeState1(SnakeState):
         direction = self.game.direction()
 
         # distance from snakehead to all 4 walls
+        # TODO add diagonal distances as well
+        # TODO compute distance as being the closest obstacle, which is either the wall or the snake
+        # how can I compute the distance to the wall diagonally?
         wall_distances = self.__wall_distances(snake_head=snake_head, direction=direction)
         food_distance = np.array([snake_head.distance(food)])
 
@@ -72,3 +75,18 @@ class SnakeState1(SnakeState):
 
         if direction == Direction.LEFT:
             return np.array([snake_south_wall_dist, snake_west_wall_dist, snake_north_wall_dist])
+
+
+class SnakeState2(SnakeState):
+    """
+    A class where the state is the entire grid as a matrix
+    """
+    pass
+
+
+class SnakeState3(SnakeState):
+    """
+    Use a model that does not use distances but boolean values to say whether there is a danger (left, right, up, down),
+    which direction we are going in (left, right, up, down), and which direction the food is in (left, right, up, down)
+    https://www.youtube.com/watch?v=PJl4iabBEz0
+    """
