@@ -53,7 +53,6 @@ class SnakeGame(object):
             self.ate_food = True
             self._n_food_eaten += 1
             self._n_steps_without_food = 0
-            print("Ate food")
             self.grid.random_food()
         else:
             self.ate_food = False
@@ -65,7 +64,6 @@ class SnakeGame(object):
         return Point.from_numpy(snake_head), self.ate_food, self.is_game_over()
 
     def game_over(self) -> None:
-        print("Game Over")
         self._game_over = True
 
     def is_game_over(self) -> bool:

@@ -66,7 +66,7 @@ class GeneticAgent(object):
         # self.fitness = ((self.food_eaten*2)**2) * (self.time_alive**1.5)
         # self.fitness = self.time_alive
         self.fitness = fitness(self.mdp)
-        print("Food eaten: %d - Time alive: %d - Fitness: %d" % (self.food_eaten, self.time_alive, self.fitness))
+        #print("Food eaten: %d - Time alive: %d - Fitness: %d" % (self.food_eaten, self.time_alive, self.fitness))
 
     def simulate(self):
         state, reward, done = self.mdp.reset()

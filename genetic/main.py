@@ -35,7 +35,9 @@ selection_func = arg_validator.get_selection_func(args.selection_function)
 algorithm_type = arg_validator.validate_algorithm_type(args.type)
 elitism = arg_validator.validate_elitism(args.elitism)
 
-pop = SnakePopulation(pop_size=pop_size, mutation_rate=mutation_rate, crossover_rate=crossover_rate, fitness_func=fitness_func, selection_func=selection_func)
+pop = SnakePopulation(pop_size=pop_size, mutation_rate=mutation_rate, crossover_rate=crossover_rate, elitism=elitism, fitness_func=fitness_func, selection_func=selection_func)
+
+print(f'Generations: {n_generations}; Population Size: {pop_size}; Mutation Rate: {mutation_rate}; Crossover Rate: {crossover_rate}; Crossover Points: {crossover_points}; Elitism: {elitism};')
 
 if algorithm_type == "GENERATIONAL":
     algorithm = Generational(pop)

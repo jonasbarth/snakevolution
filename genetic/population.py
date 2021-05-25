@@ -1,4 +1,6 @@
 import random
+import sys
+
 import torch as T
 
 from agents.genetic_agent import GeneticAgent
@@ -14,13 +16,16 @@ from rl.snake import SnakeMDP
 
 class Population:
 
-    def __init__(self, pop_size: int, mutation_rate: float, crossover_rate: float, fitness_func, selection_func):
+    def __init__(self, pop_size: int, mutation_rate: float, crossover_rate: float, elitism: float, fitness_func, selection_func):
         self.pop_size = pop_size
         self.mutation_rate = mutation_rate
         self.crossover_rate = crossover_rate
+        self.elitism = elitism
         self.fitness_func = fitness_func
         self.selection_func = selection_func
         self.individuals = []
+        self.selected_individuals = []
+        self.elites = []
         pass
 
     def initialise_population(self):
@@ -53,34 +58,51 @@ class Population:
 
 class SnakePopulation(Population):
 
-    def __init__(self, pop_size, mutation_rate, crossover_rate, fitness_func, selection_func):
-        Population.__init__(self, pop_size=pop_size, mutation_rate=mutation_rate, crossover_rate=crossover_rate, fitness_func=fitness_func, selection_func=selection_func)
+    def __init__(self, pop_size, mutation_rate, crossover_rate, elitism, fitness_func, selection_func):
+        Population.__init__(self, pop_size=pop_size, mutation_rate=mutation_rate, elitism=elitism, crossover_rate=crossover_rate, fitness_func=fitness_func, selection_func=selection_func)
 
     def initialise_population(self):
         self.selected_individuals = []
         self.children_genomes = []
         for n in range(self.pop_size):
+            sys.stdout.write('\r' + f'Initialising population ({n + 1}/{self.pop_size})')
+            sys.stdout.flush()
             mdp = SnakeMDP()
             self.individuals.append(
                 GeneticAgent(mdp=mdp, learning_rate=0, input_dims=[mdp.state_dims()[0]], n_actions=4, mutation_rate=self.mutation_rate))
-            print("initialising...")
 
     def simulate(self):
         for solution in self.individuals:
+
+            sys.stdout.write('\r' + f'Simulating ({self.individuals.index(solution) + 1}/{len(self.individuals)})')
+            sys.stdout.flush()
             solution.simulate()
-            print("simulating...")
 
     def calculate_fitness(self):
+        highest_fitness = 0
         for solution in self.individuals:
+            sys.stdout.write('\r' + f'Calculating fitness ({self.individuals.index(solution) + 1}/{len(self.individuals)})')
+            sys.stdout.flush()
             solution.calculate_fitness(self.fitness_func)
+            if solution.fitness >= highest_fitness:
+                highest_fitness = solution.fitness
 
+
+        print(f'Highest fitness: {highest_fitness}')
         self.individuals = sorted(self.individuals, key=lambda solution: solution.fitness)
-        print("Calculated fitness")
 
     def candidate_selection(self):
-        self.selected_individuals = self.selection_func(self.individuals, len(self.individuals)) #rank_based_selection(population=self.population, n_parents=len(self.population))
-        print("")
-        pass
+        # self.elitism of len of self.individuals
+        index = len(self.individuals) - int(self.elitism * len(self.individuals))
+        elites = self.individuals[index:]
+        for elite in elites:
+            sys.stdout.write('\r' + f'Copying over ({elites.index(elite) + 1}/{len(elites)}) elites into the next generation')
+            sys.stdout.flush()
+            self.elites.append(elite.get_genome())
+
+        print(f'\nSelecting {index} individuals from the population')
+        selected = self.selection_func(self.individuals[:index], len(self.individuals[:index]))
+        self.selected_individuals.extend(selected) #rank_based_selection(population=self.population, n_parents=len(self.population))
 
     def crossover(self, n_crossover_points=1):
         """
@@ -88,36 +110,30 @@ class SnakePopulation(Population):
         :param n_crossover_points:
         :return:
         """
-        # TODO refactor this method
-        parents = []
-        for selected_individual in self.selected_individuals:
-            # do crossover for two parents at a time
-            parents.append(selected_individual)
 
-            if len(parents) == 2:
-                # do a crossover with the probability of the crossover rate
-                if random.random() <= self.crossover_rate:
-                    # get genomes
-                    parent_1_genomes = parents[0].get_genome()
-                    parent_2_genomes = parents[1].get_genome()
+        middle = int(len(self.selected_individuals) / 2)
 
-                    child_1_genomes = []
-                    child_2_genomes = []
+        for parent_1, parent_2 in zip(self.selected_individuals[:middle], self.selected_individuals[middle:]):
+            if random.random() <= self.crossover_rate:
+                # get genomes
+                parent_1_genomes = parent_1.get_genome()
+                parent_2_genomes = parent_2.get_genome()
 
-                    for parent_1_genome, parent_2_genome in zip(parent_1_genomes, parent_2_genomes):
-                        child_1_genome, child_2_genome = self._make_children(parent_1_genome, parent_2_genome,
-                                                                            n_crossover_points)
+                child_1_genomes = []
+                child_2_genomes = []
 
-                        child_1_genomes.append(child_1_genome)
-                        child_2_genomes.append(child_2_genome)
+                for parent_1_genome, parent_2_genome in zip(parent_1_genomes, parent_2_genomes):
+                    child_1_genome, child_2_genome = self._make_children(parent_1_genome, parent_2_genome,
+                                                                         n_crossover_points)
 
-                    self.children_genomes.append(child_1_genomes)
-                    self.children_genomes.append(child_2_genomes)
+                    child_1_genomes.append(child_1_genome)
+                    child_2_genomes.append(child_2_genome)
 
-                parents = []
+                self.children_genomes.append(child_1_genomes)
+                self.children_genomes.append(child_2_genomes)
 
 
-    def _make_children(self, parent_1_genome, parent_2_genome, n_crossover_points):
+    def _make_children(self, parent_1_genome, parent_2_genome, n_crossover_points: int):
         crossover_indexes = self._get_crossover_indeces(n_crossover_points, parent_1_genome)
         crossover_indexes.append(len(parent_1_genome))  # append final index of list so that we can get the final slice
 
@@ -170,9 +186,15 @@ class SnakePopulation(Population):
         # loop over the genomes of children
         # create a new Genetic Agent for each genome
         # replace agent in population
+        self.children_genomes.extend(self.elites)
         for solution, child in zip(self.individuals, self.children_genomes):
             solution.set_genome(child)
+
 
     def reset(self):
         for solution in self.individuals:
             solution.reset()
+
+        self.selected_individuals = []
+        self.children_genomes = []
+        self.elites = []

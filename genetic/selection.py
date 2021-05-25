@@ -22,7 +22,7 @@ def roulette_wheel_select(probabilities):
         probability_sum += item[1]
 
 
-def roulette_wheel(population: List[GeneticAgent], n_parents=1):
+def roulette_wheel(population: List[GeneticAgent], n_parents=1) -> List:
     """
     Performs a roulette wheel selection on the population fitness. For each entry in the fitness array, the probability
     of it being chosen is proportional to its fitness.
@@ -54,7 +54,7 @@ def roulette_wheel(population: List[GeneticAgent], n_parents=1):
     # loop over list of sorted probabilities and choose the first that is greater than n
 
 
-def rank_based_selection(population: List[GeneticAgent], n_parents: int = 1, bias: int = 1):
+def rank_based_selection(population: List[GeneticAgent], n_parents: int = 1, bias: int = 1) -> List:
     """
     Performs a rank based selection
     :param n_parents:

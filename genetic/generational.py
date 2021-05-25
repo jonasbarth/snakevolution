@@ -33,7 +33,7 @@ class Generational:
             total_fitness = functools.reduce(lambda x, y: x + y,
                                             map(lambda solution: solution.fitness, self.population.individuals))
             avg_fitness = total_fitness / self.population.pop_size
-            print("Avg Fitness", avg_fitness)
+            print("\nAvg Fitness", avg_fitness)
             self.writer.add_scalar("Average Fitness", avg_fitness, global_step=generation)
             #
             self.population.reset()
