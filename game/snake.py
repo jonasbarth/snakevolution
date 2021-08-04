@@ -14,8 +14,17 @@ from game.core.grid import Snake, Grid, Food
 
 
 class SnakeGame(object):
+    """
+    Class for holding the game mechanics for the game of snake.
+    """
 
     def __init__(self, screen_width: int, screen_height: int, snake_size: int):
+        """
+        Constructor for the SnakeGame class.
+        :param screen_width: The width of the screen the snake game
+        :param screen_height: The height of the screen of the snake game
+        :param snake_size: The size of a single snake element.
+        """
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.snake_size = snake_size
@@ -32,6 +41,10 @@ class SnakeGame(object):
         self.grid = Grid(int(screen_width / snake_size), int(screen_height / snake_size))
 
     def start(self) -> None:
+        """
+        Starts the game of snake.
+        :return: None
+        """
         self._game_over = False
         self.running = True
         self._n_steps = 0
@@ -41,6 +54,13 @@ class SnakeGame(object):
         self.grid = Grid(int(self.screen_width / self.snake_size), int(self.screen_height / self.snake_size))
 
     def move(self, direction: Direction) -> (Point, bool, bool):
+        """
+        Moves the snake in the specified direction by one grid slot.
+        :param direction: The direction the snake will be moved in. The new direction cannot be the opposite of the current
+        direction of the snake. In this case, the old direction will be kept.
+        :return: A triplet containing the new location of the snake's head, whether the snake ate food, and whether the game
+        is over.
+        """
         snake_head = self.grid.move_snake(direction, self.ate_food)
         self._n_steps += 1
 
@@ -64,42 +84,91 @@ class SnakeGame(object):
         return Point.from_numpy(snake_head), self.ate_food, self.is_game_over()
 
     def game_over(self) -> None:
+        """
+        Sets the game to game over.
+        :return: None
+        """
         self._game_over = True
 
     def is_game_over(self) -> bool:
+        """
+        Returns whether the game is over or not. The game is over
+        :return: True if the game is over, false if it is not.
+        """
         return self._game_over
 
     def snake_head(self) -> Point:
+        """
+        Gets the position of the snake's head.
+        :return: The location of the snake's head as a 2D point.
+        """
         return Point.from_numpy(self.grid.snake().head())
 
     def snake_position(self) -> np.array:
-        return self.grid.snake().segments
+        """
+        Gets the position of the entire snake.
+        :return: A numpy array containing the position of all elements of the snake.
+        """
+        return self.grid.snake().position()
 
     def direction(self) -> Direction:
+        """
+        Gets the current direction of the snake.
+        :return: The current direction of the snake.
+        """
         return self._direction
 
     def food_position(self) -> Point:
+        """
+        Gets the current position of the food.
+        :return: The current position of the food as a 2D point.
+        """
         return Point.from_numpy(self.grid.food().position())
 
     def dimensions(self) -> (int, int):
+        """
+        Gets the dimensions of the snake game as a tuple.
+        :return: An int tuple (width, height) of the game's dimensions.
+        """
         return self.screen_width, self.screen_height
 
     def start_position(self) -> Point:
+        """
+        Gets the starting position of the snake.
+        :return: The starting position of the snake as a 2D point.
+        """
         start_x = self.screen_width / 2
         start_y = self.screen_height / 2
         return Point(start_x, start_y)
 
-    def n_steps(self):
+    def n_steps(self) -> int:
+        """
+        Gets the number of steps the snake has taken in the game so far.
+        :return: An int for the number of steps taken by the snake in the game up until now.
+        """
         return self._n_steps
 
     def n_food_eaten(self):
+        """
+        Gets the number of food eaten by the snake in the game so far
+        :return: An int for the number of food eaten by the snake in the game up until now.
+        """
         return self._n_food_eaten
 
     def score(self):
+        """
+        Gets the current score of the game.
+        :return: The current score of the game.
+        """
         return self.n_food_eaten()
 
     def n_steps_without_food(self):
+        """
+        The number of steps since the last food was eaten by the snake.
+        :return: An int for the number of steps the snake has taken since it last ate food.
+        """
         return self._n_steps_without_food
+
 
 
 class PyGameSnakeGame(SnakeGame):

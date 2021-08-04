@@ -3,7 +3,7 @@ from game.snake import PyGameSnakeGame, SnakeGame
 from rl.mpd import MDP, MDPAction
 import numpy as np
 
-from rl.state import SnakeState1
+from rl.state import SnakeState1, SnakeState3
 
 
 class SnakeMDP(MDP):
@@ -11,7 +11,7 @@ class SnakeMDP(MDP):
     def __init__(self):
         super().__init__()
         self.environment = SnakeGame(screen_width=400, screen_height=400, snake_size=20)
-        self.state_representation = SnakeState1(self.environment)
+        self.state_representation = SnakeState3(self.environment)
 
     def reset(self) -> (np.array, float, bool):
         self.environment.start()
