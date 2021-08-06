@@ -229,7 +229,7 @@ class Grid(object):
             if new_x < 0 or new_x >= self.width or new_y < 0 or new_y >= self.height:
                 self._touched_wall = True
             else:
-                self.grid[new_x][new_y] = 1
+                self.grid[new_y][new_x] = 1
                 self._touched_wall = False
 
     def set_food_in_grid(self):
@@ -239,7 +239,7 @@ class Grid(object):
         """
         food_x = int(self._food.position()[0])
         food_y = int(self._food.position()[1])
-        self.grid[food_x][food_y] = 2
+        self.grid[food_y][food_x] = 2 # invert y and x because the x axis is the columns and the y axis is the rows
 
     def food(self) -> Food:
         """
@@ -295,8 +295,6 @@ class Grid(object):
         """
         start_x = self.width / 2
         start_y = self.height / 2
-        start_x = 0
-        start_y = self.height - 1
         return np.array([start_x, start_y])
 
     @staticmethod

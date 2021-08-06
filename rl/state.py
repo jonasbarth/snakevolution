@@ -218,15 +218,36 @@ class SnakeState3(SnakeState):
         # if snake.y == max(y), then danger straight if direction down, danger left if direction left, danger right if direction right
 
         # if snake.y == max(y),
+        food = self.game.food_position()
+        food_left = 0
+        food_right = 0
+        food_up = 0
+        food_down = 0
 
+        if food.x > snake_head.x:
+            food_right = 1
+
+        if food.x < snake_head.x:
+            food_left = 1
+
+        if food.y > snake_head.y:
+            food_down = 1
+
+        if food.y < snake_head.y:
+            food_up = 1
+
+        else:
+            food_left = 1
+            food_right = 1
+            food_up = 1
+            food_down = 1
         # get the food position
         # if x > snake x, food is right, else left
         # if y > snake y, food is below, else above
-
-        return 0
+        return np.array([danger_straight, danger_left, danger_right, food_up, food_down, food_left, food_right])
 
     def dims(self) -> (int, int):
-        return (8, 1)
+        return (7, 1)
 
     def is_danger(self, distance: float) -> int:
         if distance <= 1:
