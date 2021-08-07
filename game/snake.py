@@ -28,7 +28,7 @@ class SnakeGame(object):
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.snake_size = snake_size
-        self._direction = Direction.UP
+        self._direction = Direction.STRAIGHT
         self._game_over = False
         self.running = False
         self.ate_food = False
@@ -103,6 +103,12 @@ class SnakeGame(object):
         :return: The location of the snake's head as a 2D point.
         """
         return Point.from_numpy(self.grid.snake().head())
+
+    def snake_head_vicinity(self) -> np.array:
+        return self.grid.snake_head_vicinity()
+
+    def is_outside(self, coordinates: np.array) -> bool:
+        return self.grid.is_outside_grid(coordinates)
 
     def snake_position(self) -> np.array:
         """

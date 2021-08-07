@@ -6,7 +6,7 @@ import torch as T
 from agents.genetic_agent import GeneticAgent
 from environment.turtle.env import SnakeEnv
 from environment.pygame.env import PyGameEnv
-from environment.env import Env
+from environment.env import Env, Direction
 from environment.turtle.env import TurtleSnake
 from environment.state import LidarAndOneHot2
 from genetic.selection import roulette_wheel, rank_based_selection
@@ -69,7 +69,7 @@ class SnakePopulation(Population):
             sys.stdout.flush()
             mdp = SnakeMDP()
             self.individuals.append(
-                GeneticAgent(mdp=mdp, learning_rate=0, input_dims=[mdp.state_dims()[0]], n_actions=4, mutation_rate=self.mutation_rate))
+                GeneticAgent(mdp=mdp, learning_rate=0, input_dims=[mdp.state_dims()[0]], n_actions=Direction.n_actions(), mutation_rate=self.mutation_rate))
 
     def simulate(self):
         for solution in self.individuals:

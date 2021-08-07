@@ -54,6 +54,11 @@ class Snake(object):
         self.segments[0] = start_position
         self.tail_index = 1
         self.direction = direction
+        self.previous_delta = np.array([0, -1])
+        self.head_vicinity = np.zeros((3, 2))
+        self.head_straight = start_position + self.previous_delta
+        self.head_left = start_position + self.__rotate_90_deg(self.previous_delta, False)
+        self.head_right = start_position + self.__rotate_90_deg(self.previous_delta, True)
 
     def head(self) -> np.array:
         """
@@ -81,16 +86,27 @@ class Snake(object):
         # copy the head back to the first row so that it can be moved
         new_segments[0] = new_segments[1]
 
+        # how can I know which direction to move in? save the previous move and use it as a reference
+        # if straight, repeat the previous move (add the delta to the snake's head)
+        # if left, repeat the previous move (add the delta but rotate it 90° to the left)
+        # if right, repeat
         # insert new value at top
-        if direction == Direction.UP:
-            new_segments[0][1] -= self.snake_size
-        elif direction == Direction.DOWN:
-            new_segments[0][1] += self.snake_size
+        if direction == Direction.STRAIGHT:
+            new_segments[0] += self.previous_delta
         elif direction == Direction.LEFT:
-            new_segments[0][0] -= self.snake_size
+            new_delta = self.__rotate_90_deg(self.previous_delta, False)
+            new_segments[0] += new_delta
+            self.previous_delta = new_delta
         elif direction == Direction.RIGHT:
-            new_segments[0][0] += self.snake_size
+            new_delta = self.__rotate_90_deg(self.previous_delta, True)
+            new_segments[0] += new_delta
+            self.previous_delta = new_delta
 
+        self.head_straight = new_segments[0] + self.previous_delta
+        self.head_left = new_segments[0] + self.__rotate_90_deg(self.previous_delta, False)
+        self.head_right = new_segments[0] + self.__rotate_90_deg(self.previous_delta, True)
+        # compute the vicinity
+        # how do I know
         if add_tail:
             self.tail_index += 1
         else:
@@ -114,6 +130,13 @@ class Snake(object):
         """
         return self.segments[:self.tail_index]
 
+    def vicinity(self) -> np.array:
+        """
+        Gets the coordinates of the slot that is straight ahead, to the left, and to the right of the head of the snake.
+        :return: a numpy array of shape (3, 2) where the indeces are [straight, left, right]
+        """
+        return np.array([self.head_straight, self.head_left, self.head_right])
+
     def __set_direction(self, direction: Direction):
         """
         Sets the direction of the snake. The new direction cannot be the opposite of the current direction, e.g.
@@ -122,16 +145,25 @@ class Snake(object):
         :param direction: The new direction of the snake.
         :return: None
         """
-        if direction == Direction.UP and self.direction != Direction.DOWN:
-            self.direction = Direction.UP
-        elif direction == Direction.DOWN and direction != Direction.UP:
-            self.direction = Direction.DOWN
-        elif direction == Direction.LEFT and direction != Direction.RIGHT:
+
+        if direction == Direction.LEFT and direction != Direction.RIGHT:
             self.direction = Direction.LEFT
         elif direction == Direction.RIGHT and direction != Direction.LEFT:
             self.direction = Direction.RIGHT
         else:
             self.direction = direction
+
+    def __rotate_90_deg(self, position: np.array, clockwise: bool) -> np.array:
+        """
+        Rotates a given vector 90 degrees clockwise or anti-clockwise
+        :param position: the 2D vector that will be rotated by 90 degrees
+        :param clockwise: true if the vector is to be rotated clockwise, false if not
+        :return: a new vector which is the old vector rotated by 90 degrees
+        """
+        if clockwise:
+            return np.array([-position[1], position[0]])
+        return np.array([position[1], -position[0]])
+
 
     def touches_tail(self) -> bool:
         """
@@ -163,11 +195,12 @@ class Grid(object):
         self.width = width
         self.height = height
         self.grid = np.zeros((width, height))
-        self._snake = Snake(start_position=self.start_position(), direction=Direction.UP, snake_size=1, grid_slots=self.grid.size)
+        self._snake = Snake(start_position=self.start_position(), direction=Direction.STRAIGHT, snake_size=1, grid_slots=self.grid.size)
         self.set_snake_in_grid()
         self._food = Food(screen_width=width, screen_height=height, position=self.random_food())
         self.set_food_in_grid()
         self._touched_wall = False
+        self.legal_coordinates = self.compute_legal_coordinates(width, height).tolist()
 
     def reset(self):
         """
@@ -255,6 +288,13 @@ class Grid(object):
         """
         return self._snake
 
+    def snake_head_vicinity(self) -> np.array:
+        """
+        Getter method for the vicinity radar of the snake
+        :return: a numpy array
+        """
+        return self._snake.vicinity()
+
     def available_slots(self) -> np.array:
         """
         Calculates the coordinates of all available slots in the grid and returns them as a numpy array. An available
@@ -296,6 +336,32 @@ class Grid(object):
         start_x = self.width / 2
         start_y = self.height / 2
         return np.array([start_x, start_y])
+
+    def is_outside_grid(self, coordinates: np.array) -> bool:
+        """
+        Checks whether a single x-y coordinate is inside the grid
+        :param coordinates: a numpy array of shape (1, 2)
+        :return: true if the x-y coordinate is in the grid, false if not
+        """
+        return coordinates.tolist() not in self.legal_coordinates
+
+
+    def compute_legal_coordinates(self, width: int, height: int) -> np.array:
+        """
+        Computes the set of legal coordinates within the grid
+        :param width: the width of the grid
+        :param height: the height of the grid
+        :return: a numpy array of shape (width * height, 2) with the legal coordinates of the grid
+        """
+        legal_coordinates = np.zeros((width * height, 2), dtype=np.int)
+        index = 0
+        for row in range(width):
+            for col in range(height):
+                legal_coordinates[index] = np.array([row, col])
+                index += 1
+
+        return legal_coordinates
+
 
     @staticmethod
     def scale(coordinates: np.array, slot_size: int) -> np.array:

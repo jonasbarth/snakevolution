@@ -63,16 +63,19 @@ class Snake:
 
 
 class Direction(Enum):
-    UP = "up"
+    STRAIGHT = "straight"
     RIGHT = "right"
-    DOWN = "down"
     LEFT = "left"
 
     @staticmethod
     def one_hot(direction) -> np.array:
         as_list = list(Direction)
-        one_hot = np.zeros(4)
+        one_hot = np.zeros(3)
         index = as_list.index(direction)
         one_hot[index] = 1
         return one_hot
+
+    @staticmethod
+    def n_actions():
+        return len(list(Direction))
 

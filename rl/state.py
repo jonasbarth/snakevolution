@@ -101,123 +101,26 @@ class SnakeState3(SnakeState):
         snake_head = self.game.snake_head()
         snake_body = self.game.snake_position()[1:, :]
 
-        north_wall = Point(snake_head.x, 0)
-        west_wall = Point(0, snake_head.y)
-        south_wall = Point(snake_head.x, self.game.dimensions()[1] / self.game.snake_size - 1)
-        east_wall = Point(self.game.dimensions()[0] / self.game.snake_size - 1, snake_head.y)
-
-        max_x = east_wall.x
-        min_x = west_wall.x
-        max_y = south_wall.y
-        min_y = north_wall.y
-
         danger_straight = 0
         danger_left = 0
         danger_right = 0
-        # get the snake head
-        # check the 4 squares around the snake head
-        # if the square contains a 1 or is outside the grid, make it danger
-
-        # use the max and min values for x,y positions and compare them to the snake's head for the walls
-        # if snake.x == max(x), then danger right if direction up, danger straight if direction right, danger left if direction down
-        if snake_head.x == max_x:
-            if direction == Direction.UP:
-                danger_right = 1
-
-            if direction == Direction.RIGHT:
-                danger_straight = 1
-
-            if direction == Direction.DOWN:
-                danger_left = 1
-
-
-            # if direction up -> danger right
-            # if direction right -> danger straight
-            # if direction down -> danger left
-
-        # if snake.x == min(x), then danger left if direction up, danger straight if direction left, danger right if direction down
-        if snake_head.x == min_x:
-            if direction == Direction.UP:
-                danger_left = 1
-
-            if direction == Direction.LEFT:
-                danger_straight = 1
-
-            if direction == Direction.DOWN:
-                danger_right = 1
-            # if direction up -> danger left
-            # if direction left -> danger straight
-            # if direction down -> danger right
-
-        if snake_head.y == max_y:
-            if direction == Direction.DOWN:
-                danger_straight = 1
-
-            if direction == Direction.LEFT:
-                danger_right = 1
-
-            if direction == Direction.RIGHT:
-                danger_left = 1
-            # if direction down -> danger straight
-            # if direction right -> danger right
-            # if direction left -> danger left
-
-        if snake_head.y == min_y:
-            if direction == Direction.UP:
-                danger_straight = 1
-
-            if direction == Direction.LEFT:
-                danger_right = 1
-
-            if direction == Direction.RIGHT:
-                danger_left = 1
-            # if direction up -> danger straight
-            # if direction left -> danger right
-            # if direction right -> danger left
 
         straight = []
         left = []
         right = []
         # is there a danger because of the snake's body
         # get the three squares around the snakes head (left, right, straight) and check if they're in the snake's body
-        if direction == Direction.UP:
-            straight = [snake_head.x, snake_head.y - 1]
-            left = [snake_head.x - 1, snake_head.y]
-            right = [snake_head.x + 1, snake_head.y]
+        #
+        vicinity = self.game.snake_head_vicinity()
 
-            # get squares snake_head.y - 1, snake_head.x -1, snake_x + 1
-
-        if direction == Direction.LEFT:
-            straight = [snake_head.x - 1, snake_head.y]
-            left = [snake_head.x, snake_head.y + 1]
-            right = [snake_head.x, snake_head.y - 1]
-            # get squares snake_head.x - 1, snake_head.y - 1, snake_head.y + 1
-
-        if direction == Direction.RIGHT:
-            straight = [snake_head.x + 1, snake_head.y]
-            left = [snake_head.x, snake_head.y - 1]
-            right = [snake_head.x, snake_head.y + 1]
-            # get squares snake_head.x + 1, snake_head.y - 1, snake_head.y + 1
-
-        if direction == Direction.DOWN:
-            straight = [snake_head.x, snake_head.y + 1]
-            left = [snake_head.x + 1, snake_head.y]
-            right = [snake_head.x - 1, snake_head.y]
-            # get squares snake_head.y + 1, snake_head.x - 1, snake_head.x + 1
-
-        if straight in snake_body:
+        if self.game.is_outside(vicinity[0]) or vicinity[0] in snake_body:
             danger_straight = 1
-
-        if left in snake_body:
+        if self.game.is_outside(vicinity[1]) or vicinity[1] in snake_body:
             danger_left = 1
-
-        if right in snake_body:
+        if self.game.is_outside(vicinity[2]) or vicinity[2] in snake_body:
             danger_right = 1
 
-        # if snake.y == min(y), then danger straight if direction up, danger right if direction left, danger left if direction right
-        # if snake.y == max(y), then danger straight if direction down, danger left if direction left, danger right if direction right
 
-        # if snake.y == max(y),
         food = self.game.food_position()
         food_left = 0
         food_right = 0
