@@ -1,4 +1,5 @@
 import argparse
+import distutils
 
 from torch.utils.tensorboard import SummaryWriter
 
@@ -20,6 +21,9 @@ parser.add_argument("-s", "--selection_function", nargs='?', type=str, default="
 parser.add_argument("-t", "--type", nargs='?', type=str, const="GENERATIONAL", help="the type of genetic algorithm, either generational or steady state. Generational replaces the entire population after each generation, Steady state keeps evolving the same population.")
 parser.add_argument("-r", "--replacement_function", nargs='?', type=str, help="the type of replacement function. Only necessary for steady state algorithms")
 parser.add_argument("-e", "--elitism", nargs='?', type=float, default=0.0, help="percentage of parents that will be copied to the next generation unchanged")
+parser.add_argument("--graphics", dest='graphics', action='store_true', help="use this option if you want show the game on the screen")
+parser.add_argument("--no-graphics", dest='graphics', action='store_false', help="use this option if you do not want show the game on the screen")
+
 
 args = parser.parse_args()
 
@@ -34,8 +38,9 @@ fitness_func = arg_validator.get_fitness_func(args.fitness_function)
 selection_func = arg_validator.get_selection_func(args.selection_function)
 algorithm_type = arg_validator.validate_algorithm_type(args.type)
 elitism = arg_validator.validate_elitism(args.elitism)
+graphics = args.graphics
 
-pop = SnakePopulation(pop_size=pop_size, mutation_rate=mutation_rate, crossover_rate=crossover_rate, elitism=elitism, fitness_func=fitness_func, selection_func=selection_func)
+pop = SnakePopulation(pop_size=pop_size, mutation_rate=mutation_rate, crossover_rate=crossover_rate, elitism=elitism, fitness_func=fitness_func, selection_func=selection_func, show_game=graphics)
 
 print(f'Generations: {n_generations}; Population Size: {pop_size}; Mutation Rate: {mutation_rate}; Crossover Rate: {crossover_rate}; Crossover Points: {crossover_points}; Elitism: {elitism};')
 

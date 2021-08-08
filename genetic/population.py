@@ -16,7 +16,7 @@ from rl.snake import SnakeMDP
 
 class Population:
 
-    def __init__(self, pop_size: int, mutation_rate: float, crossover_rate: float, elitism: float, fitness_func, selection_func):
+    def __init__(self, pop_size: int, mutation_rate: float, crossover_rate: float, elitism: float, fitness_func, selection_func, show_game):
         self.pop_size = pop_size
         self.mutation_rate = mutation_rate
         self.crossover_rate = crossover_rate
@@ -26,6 +26,7 @@ class Population:
         self.individuals = []
         self.selected_individuals = []
         self.elites = []
+        self.show_game = show_game
         pass
 
     def initialise_population(self):
@@ -58,8 +59,8 @@ class Population:
 
 class SnakePopulation(Population):
 
-    def __init__(self, pop_size, mutation_rate, crossover_rate, elitism, fitness_func, selection_func):
-        Population.__init__(self, pop_size=pop_size, mutation_rate=mutation_rate, elitism=elitism, crossover_rate=crossover_rate, fitness_func=fitness_func, selection_func=selection_func)
+    def __init__(self, pop_size, mutation_rate, crossover_rate, elitism, fitness_func, selection_func, show_game):
+        Population.__init__(self, pop_size=pop_size, mutation_rate=mutation_rate, elitism=elitism, crossover_rate=crossover_rate, fitness_func=fitness_func, selection_func=selection_func, show_game=show_game)
 
     def initialise_population(self):
         self.selected_individuals = []
@@ -67,7 +68,7 @@ class SnakePopulation(Population):
         for n in range(self.pop_size):
             sys.stdout.write('\r' + f'Initialising population ({n + 1}/{self.pop_size})')
             sys.stdout.flush()
-            mdp = SnakeMDP()
+            mdp = SnakeMDP(self.show_game)
             self.individuals.append(
                 GeneticAgent(mdp=mdp, learning_rate=0, input_dims=[mdp.state_dims()[0]], n_actions=Direction.n_actions(), mutation_rate=self.mutation_rate))
 
