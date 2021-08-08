@@ -10,7 +10,7 @@ class SnakeMDP(MDP):
 
     def __init__(self):
         super().__init__()
-        self.environment = SnakeGame(screen_width=400, screen_height=400, snake_size=20)
+        self.environment = PyGameSnakeGame(screen_width=400, screen_height=400, snake_size=20)
         self.state_representation = SnakeState3(self.environment)
 
     def reset(self) -> (np.array, float, bool):

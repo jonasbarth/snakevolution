@@ -362,7 +362,6 @@ class Grid(object):
 
         return legal_coordinates
 
-
     @staticmethod
     def scale(coordinates: np.array, slot_size: int) -> np.array:
         return coordinates * slot_size

@@ -184,97 +184,35 @@ class PyGameSnakeGame(SnakeGame):
 
     def start(self) -> None:
         super().start()
-        self.snake = Snake(start_position=self.start_position(), direction=Direction.UP, snake_size=self.snake_size,
-                           grid_slots=self.grid_slots)
+
         self.window = pygame.display.set_mode((self.screen_width, self.screen_height))
         # 0,0 is in the top left corner
-
-        self.__random_food()
 
         self.__draw_snake()
         self.__draw_food()
 
     def move(self, direction: Direction) -> (Point, bool, bool):
 
-        # move the snake in a new direction
-        snake_head = self.snake.move(direction, self.ate_food)
-
-        self._n_steps += 1
-
-        if self.snake.touches_tail() or self.__is_touching_wall():
-            self.game_over()
-            return Point.from_numpy(snake_head), self.ate_food, self.is_game_over()
-
-        # check if the snake touches food
-        if self.__is_touching_food():
-            self.ate_food = True
-            self._n_food_eaten += 1
-            self._n_steps_without_food = 0
-            print("Ate food")
-            self.__random_food()
-        else:
-            self.ate_food = False
-            self._n_steps_without_food += 1
-
-        if self._n_steps_without_food > 1000:
-            self.game_over()
-            return Point.from_numpy(snake_head), self.ate_food, self.is_game_over()
+        snake_head, ate_food, game_over = super().move(direction)
 
         self.__draw_snake()
         self.__draw_food()
 
-        return Point.from_numpy(snake_head), self.ate_food, self.is_game_over()
+        return snake_head, ate_food, game_over
 
-    def __random_food(self) -> Point:
-        available_slots = self.__available_food_positions()
-
-        grid_slot = random.choice(tuple(available_slots))
-        n_columns = self.screen_width / self.snake_size
-        n_rows = self.screen_height / self.snake_size
-        slot_x = grid_slot % n_columns
-        slot_y = math.floor(grid_slot / n_rows)
-
-        food_x = slot_x * self.snake_size
-        food_y = slot_y * self.snake_size
-       # self.food = pygame.Rect(food_x, food_y, self.snake_size, self.snake_size)
-        return Point(food_x, food_y)
-
-    def __available_food_positions(self) -> set:
-        # get the snake positions
-        snake_segments = self.snake.position()
-
-        snake_grid_slots = set()
-        all_slots = set(x for x in range(self.grid_slots))
-
-        # convert snake positions into grid slots
-        for segment in snake_segments:
-            column = segment[0] / self.snake_size  # the column
-            row = segment[1] / self.snake_size  # the row
-            slot = column * (row + 1)
-
-            snake_grid_slots.add(slot)
-
-        # get all available slots
-        return all_slots - snake_grid_slots
-
-    def __is_touching_food(self) -> bool:
-        return Point.from_numpy(self.snake.head()) == self.food_position()
-
-    def __is_touching_wall(self) -> bool:
-        # get the head of the snake. If x >= screen_width or x <= 0. If y >= screen_height or y <= 0
-        head_x, head_y = self.snake.head()[0], self.snake.head()[1]
-
-        return head_x < 0 or head_x >= self.screen_width or head_y < 0 or head_y >= self.screen_height
 
     def __draw_food(self):
-        pygame.draw.rect(self.window, colour.green, self.food)
+        food_coords = Grid.scale(self.grid.food().position(), self.snake_size)
+        food_rect = pygame.Rect(food_coords[0], food_coords[1], self.snake_size, self.snake_size)
+        pygame.draw.rect(self.window, colour.green, food_rect)
         pygame.display.flip()
 
     def __draw_snake(self):
         self.window.fill(colour.black)
-        snake_segments = self.snake.position()
+        snake_segments = self.grid.snake().position()
         index = 0
         for segment in snake_segments:
+            segment = Grid.scale(segment, self.snake_size)
             segment_colour = colour.blue
             # the head of the snake is a different colour than the rest
             if index == 0:

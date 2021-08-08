@@ -76,7 +76,6 @@ class GeneticAgent(object):
             state_, reward, done = self.mdp.step(action=action)
             self.time_alive += 1
             state = state_
-            #time.sleep(0.5)
 
         self.food_eaten += self.mdp.env_score()
 
