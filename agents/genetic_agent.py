@@ -1,11 +1,8 @@
-import time
+import math
 
 import torch as T
 
-from environment.env import Env
 from rl.deep_q_network import DeepQNetwork
-import math
-
 from rl.mpd import MDP
 
 
@@ -44,6 +41,9 @@ class GeneticAgent(object):
         self.neural_network.fc2.weight.data = fc2
         self.neural_network.fc3.weight.data = fc3
 
+    def set_model(self, state_dict):
+        self.neural_network.load_state_dict(state_dict)
+
     def _calc_genome_index(self, size):
         w, h = size
         return w * h
@@ -78,6 +78,7 @@ class GeneticAgent(object):
             state = state_
 
         self.food_eaten += self.mdp.env_score()
+        return self
 
     def reset(self):
         self.fitness = 0

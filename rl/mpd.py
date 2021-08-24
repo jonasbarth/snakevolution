@@ -34,3 +34,5 @@ class MDP(object):
     def state_dims(self) -> (int, int):
         pass
 
+    def n_actions(self) -> int:
+        pass

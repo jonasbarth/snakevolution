@@ -24,6 +24,7 @@ class Population:
         self.fitness_func = fitness_func
         self.selection_func = selection_func
         self.individuals = []
+        self.best_individual = None
         self.selected_individuals = []
         self.elites = []
         self.show_game = show_game
@@ -54,6 +55,9 @@ class Population:
         pass
 
     def reset(self):
+        pass
+
+    def is_finished(self):
         pass
 
 
@@ -87,7 +91,7 @@ class SnakePopulation(Population):
             solution.calculate_fitness(self.fitness_func)
             if solution.fitness >= highest_fitness:
                 highest_fitness = solution.fitness
-
+                self.best_individual = solution
 
         print(f'Highest fitness: {highest_fitness}')
         self.individuals = sorted(self.individuals, key=lambda solution: solution.fitness)
@@ -199,3 +203,7 @@ class SnakePopulation(Population):
         self.selected_individuals = []
         self.children_genomes = []
         self.elites = []
+
+    def is_finished(self):
+        # here return the max value that we expect
+        pass

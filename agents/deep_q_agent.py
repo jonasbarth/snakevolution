@@ -19,7 +19,9 @@ class DeepQAgent(object):
         self.action_space = [i for i in range(n_actions)]
         self.mem_size = max_mem_size
         self.mem_counter = 0
-        self.Q_eval = DeepQNetwork(learning_rate, input_dims, math.floor(input_dims[0]/2), math.floor(input_dims[0]/2), n_actions)
+        self.policy_net = DeepQNetwork(learning_rate, input_dims, math.floor(input_dims[0] / 2), math.floor(input_dims[0] / 2), n_actions)
+        self.target_net = DeepQNetwork(learning_rate, input_dims, math.floor(input_dims[0] / 2), math.floor(input_dims[0] / 2), n_actions)
+        self.target_net.load_state_dict(self.target_net.state_dict())
 
         self.state_memory = np.zeros((self.mem_size, *input_dims), dtype=np.float32)
         self.new_state_memory = np.zeros((self.mem_size, *input_dims), dtype=np.float32)
@@ -42,34 +44,37 @@ class DeepQAgent(object):
         if rand < self.epsilon:
             action = np.random.choice(self.action_space)
         else:
-            state = T.tensor([observation]).to(self.Q_eval.device)
-            actions = self.Q_eval.forward(state.float())
+            state = T.tensor([observation]).to(self.policy_net.device)
+            actions = self.policy_net.forward(state.float())
             action = T.argmax(actions).item()
         return action
 
+    def update_target_net(self):
+        self.target_net.load_state_dict(self.policy_net.state_dict())
+
     def learn(self):
         if self.mem_counter > self.learn_start:
-            self.Q_eval.optimiser.zero_grad()
+            self.policy_net.optimiser.zero_grad()
 
             max_mem = min(self.mem_counter, self.mem_size)
             batch = np.random.choice(max_mem, self.batch_size, replace=False)
 
             batch_index = np.arange(self.batch_size, dtype=np.int32)
-            state_batch = T.tensor(self.state_memory[batch]).to(self.Q_eval.device)
-            new_state_batch = T.tensor(self.new_state_memory[batch]).to(self.Q_eval.device)
-            reward_batch = T.tensor(self.reward_memory[batch]).to(self.Q_eval.device)
-            terminal_batch = T.tensor(self.terminal_memory[batch]).to(self.Q_eval.device)
+            state_batch = T.tensor(self.state_memory[batch]).to(self.policy_net.device)
+            new_state_batch = T.tensor(self.new_state_memory[batch]).to(self.policy_net.device)
+            reward_batch = T.tensor(self.reward_memory[batch]).to(self.policy_net.device)
+            terminal_batch = T.tensor(self.terminal_memory[batch]).to(self.policy_net.device)
             action_batch = self.action_memory[batch]
 
-            q_eval = self.Q_eval.forward(state_batch)[batch_index, action_batch]
-            q_next = self.Q_eval.forward(new_state_batch)
+            q_eval = self.policy_net.forward(state_batch)[batch_index, action_batch]
+            q_next = self.policy_net.forward(new_state_batch)
             q_next[terminal_batch] = 0.0
 
             q_target = reward_batch + self.gamma * T.max(q_next, dim=1)[0]
 
-            loss = self.Q_eval.loss(q_target, q_eval).to(self.Q_eval.device)
+            loss = self.policy_net.loss(q_target, q_eval).to(self.policy_net.device)
             loss.backward()
-            self.Q_eval.optimiser.step()
+            self.policy_net.optimiser.step()
 
 
 
@@ -78,5 +83,6 @@ class DeepQAgent(object):
         return None
 
     def decay_epsilon(self):
-        self.epsilon = self.epsilon - self.eps_dec if self.epsilon > self.eps_min \
-            else self.eps_min
+        if self.mem_counter > self.learn_start:
+            self.epsilon = self.epsilon - self.eps_dec if self.epsilon > self.eps_min \
+                else self.eps_min

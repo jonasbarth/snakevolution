@@ -11,9 +11,9 @@ class SnakeMDP(MDP):
     def __init__(self, show_game: bool):
         super().__init__()
         if show_game:
-            self.environment = PyGameSnakeGame(screen_width=400, screen_height=400, snake_size=20)
+            self.environment = PyGameSnakeGame(screen_width=200, screen_height=200, snake_size=20)
         else:
-            self.environment = SnakeGame(screen_width=400, screen_height=400, snake_size=20)
+            self.environment = SnakeGame(screen_width=200, screen_height=200, snake_size=20)
         self.state_representation = SnakeState3(self.environment)
 
     def reset(self) -> (np.array, float, bool):
@@ -24,7 +24,7 @@ class SnakeMDP(MDP):
 
     def step(self, action: int) -> (np.array, float, bool):
         snake_action = list(Direction)[action]
-        reward = 0
+        reward = 1
 
         _, ate_food, is_game_over = self.environment.move(snake_action)
 
@@ -41,6 +41,9 @@ class SnakeMDP(MDP):
 
     def state_dims(self) -> (int, int):
         return self.state_representation.dims()
+
+    def n_actions(self):
+        return 3
 
 
 

@@ -1,28 +1,23 @@
 from agents.deep_q_agent import DeepQAgent
-from agents.genetic_agent import GeneticAgent
-from agents.human_agent import HumanAgent
-from environment.env import SnakeEnv
-from random import randint
-from agents.random_agent import RandomAgent
 import numpy as np
 from torch.utils.tensorboard import SummaryWriter
-from environment.state import LidarAndOneHot, LidarAndOneHot2
-import torch
+
+from rl.snake import SnakeMDP
 
 writer = SummaryWriter()
 
-env = SnakeEnv(400, 400, LidarAndOneHot2)
+env = SnakeMDP(False)
 
 
-action_space = np.array([0,1,2,3])
-n_games = 1000
+action_space = np.array([0,1,2])
+n_games = 10000
 score = 0
 global_step = 0
 eps_dec = 1 / (n_games * 0.8)
+target_update = 10
 
 
-
-agent = DeepQAgent(gamma=0.99, epsilon=1.0, batch_size=64, learn_start=10000, n_actions=4, input_dims=[24], learning_rate=0.0005, eps_dec=eps_dec)
+agent = DeepQAgent(gamma=0.99, epsilon=1.0, batch_size=64, learn_start=10000, n_actions=3, input_dims=[7], learning_rate=0.0005, eps_dec=eps_dec)
 
 
 
@@ -44,9 +39,11 @@ for i in range(n_games):
         writer.add_scalar("Reward", reward, global_step=global_step)
         global_step += 1
 
+    if i % target_update == 0:
+        agent.update_target_net()
+
+
     agent.decay_epsilon()
     writer.add_scalar("Episode score", score, global_step=i)
-    writer.add_scalar("Moves per episode", env.n_moves, global_step=i)
+    writer.add_scalar("Moves per episode", env.n_steps(), global_step=i)
 
-
-env.wn.mainloop()
