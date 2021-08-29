@@ -130,14 +130,22 @@ class SnakeState3(SnakeState):
         if food.x > snake_head.x:
             food_right = 1
 
-        if food.x < snake_head.x:
+        elif food.x < snake_head.x:
             food_left = 1
+
+        elif food.x == snake_head.x:
+            food_left = 0
+            food_right = 0
 
         if food.y > snake_head.y:
             food_down = 1
 
-        if food.y < snake_head.y:
+        elif food.y < snake_head.y:
             food_up = 1
+
+        elif food.y == snake_head.y:
+            food_up = 0
+            food_down = 0
 
         else:
             food_left = 1

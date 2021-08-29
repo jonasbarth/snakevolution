@@ -26,7 +26,7 @@ class Generational:
         self.population.initialise_population()
 
         for generation in range(n_generations):
-            print("Generation", generation)
+            print(f"------------- Generation {generation} -------------")
             self.population.simulate()
             self.population.calculate_fitness()
             self.best_individuals.append(self.population.best_individual)
@@ -38,7 +38,7 @@ class Generational:
             total_fitness = functools.reduce(lambda x, y: x + y,
                                             map(lambda solution: solution.fitness, self.population.individuals))
             avg_fitness = total_fitness / self.population.pop_size
-            print("\nAvg Fitness", avg_fitness)
+            print(f"Avg Fitness {avg_fitness}\n")
             self.writer.add_scalar("Average Fitness", avg_fitness, global_step=generation)
             #
             self.population.reset()

@@ -93,8 +93,9 @@ class SnakePopulation(Population):
                 highest_fitness = solution.fitness
                 self.best_individual = solution
 
-        print(f'Highest fitness: {highest_fitness}')
         self.individuals = sorted(self.individuals, key=lambda solution: solution.fitness)
+        #print(f'\nHighest fitness: {highest_fitness}')
+        print(f'\nTop 5 fitness: {[individual.fitness for individual in self.individuals[-5:]]}')
 
     def candidate_selection(self):
         # self.elitism of len of self.individuals
@@ -105,7 +106,9 @@ class SnakePopulation(Population):
             sys.stdout.flush()
             self.elites.append(elite.get_genome())
 
-        print(f'\nSelecting {index} individuals from the population')
+        print(f'\nElite fitness:{[individual.fitness for individual in self.individuals[index:]]}')
+
+        print(f'Selecting {index} individuals from the population')
         selected = self.selection_func(self.individuals[:index], len(self.individuals[:index]))
         self.selected_individuals.extend(selected) #rank_based_selection(population=self.population, n_parents=len(self.population))
 

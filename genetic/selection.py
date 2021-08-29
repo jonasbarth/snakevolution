@@ -85,6 +85,6 @@ def rank_based_selection(population: List[GeneticAgent], n_parents: int = 1, bia
     for n in range(n_parents):
         parents.append(roulette_wheel_select(sorted_probability_population))
 
-    print("Parents", parents)
+    #print("Parents", parents)
 
     return parents
