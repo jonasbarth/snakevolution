@@ -44,14 +44,12 @@ class SnakeGame(object):
         self._n_steps = 0
         self._n_food_eaten = 0
         self._n_steps_without_food = 0
-        #self.grid.reset()
         self.grid = Grid(int(self.screen_width / self.snake_size), int(self.screen_height / self.snake_size))
 
     def move(self, direction: np.array) -> (Point, bool, bool):
         """
         Moves the snake in the specified direction by one grid slot.
-        :param direction: The direction the snake will be moved in. The new direction cannot be the opposite of the current
-        direction of the snake. In this case, the old direction will be kept.
+        :param direction: The direction the snake will be moved in.
         :return: A triplet containing the new location of the snake's head, whether the snake ate food, and whether the game
         is over.
         """
@@ -99,13 +97,28 @@ class SnakeGame(object):
         return Point.from_numpy(self.grid.snake().head())
 
     def snake_head_vicinity(self) -> np.array:
+        """
+        Gets the grid positions in the immediate vicinity of the snake's head. Immediate vicinity means the square to the
+        left, straight, right of the snake's head.
+        :return: a numpy array of shape (3, 2)
+        """
         return self.grid.snake_head_vicinity()
 
     def is_outside(self, coordinates: np.array) -> bool:
+        """
+        Checks whether a single x-y coordinate is inside the grid
+        :param coordinates: a numpy array of shape (1, 2)
+        :return: true if the x-y coordinate is in the grid, false if not
+        """
         return self.grid.is_outside_grid(coordinates)
 
-    def in_snake_body(self, candidate: np.array) -> bool:
-        return any(np.equal(candidate, self.snake_position()).all(1))
+    def in_snake_body(self, coordinates: np.array) -> bool:
+        """
+        Checks whether a single x-y coordinate is inside the snake's body.
+        :param coordinates: a numpy array of shape (1, 2)
+        :return: true if the x-y coordinate is in the snake's body, false if not
+        """
+        return any(np.equal(coordinates, self.snake_position()).all(1))
 
     def snake_position(self) -> np.array:
         """
@@ -126,7 +139,6 @@ class SnakeGame(object):
         Gets the current absolute direction of the snake, left, right, up, or down.
         :return: a numpy array
         """
-
 
     def food_position(self) -> Point:
         """
@@ -182,7 +194,9 @@ class SnakeGame(object):
 
 
 class PyGameSnakeGame(SnakeGame):
-
+    """
+    Subclass of SnakeGame where the game is visible on the screen.
+    """
     def __init__(self, screen_width: int, screen_height: int, snake_size: int):
         super().__init__(screen_width, screen_height, snake_size)
         self.clock = pygame.time.Clock()
@@ -227,7 +241,3 @@ class PyGameSnakeGame(SnakeGame):
             rect = pygame.Rect(segment[0], segment[1], self.snake_size, self.snake_size)
             pygame.draw.rect(self.window, segment_colour, rect)
             pygame.display.flip()
-
-
-
-

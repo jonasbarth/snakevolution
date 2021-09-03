@@ -10,6 +10,9 @@ class MDPAction(object):
 
 
 class MDP(object):
+    """
+    A discrete Markov Decision Process (MDP).
+    """
 
     def __init__(self):
         self.environment = None
@@ -17,22 +20,53 @@ class MDP(object):
         self._n_steps = 0
 
     def reset(self) -> (np.array, float, bool):
+        """
+        Resets the MDP to its start state.
+        :return: a triplet containing the start state, initial reward, and whether the state is final.
+        """
         pass
 
-    def step(self, action: int) -> (np.array, float, bool):
+    def step(self, action: np.array) -> (np.array, float, bool):
+        """
+        Takes a discrete step within the MDP.
+        :param action: the action to be taken. The encoding of this is problem dependent
+        :return: a triplet containing the new state resulting from the action, the reward obtained from the action,
+        and whether the new state is final.
+        """
         pass
 
     def reward_sum(self) -> float:
+        """
+        Gets the sum of all rewards of this MDP up until and including the previous action.
+        :return: the sum of all rewards
+        """
         return self._reward_sum
 
     def n_steps(self) -> int:
+        """
+        Gets the number of steps of this MDP up until and including the previous action.
+        :return: an integer >= 0 that is the number of steps
+        """
         return self._n_steps
 
     def env_score(self) -> float:
+        """
+        The score that is being tracked inside the environment, for a game of snake this would be the number of apples
+        eaten for example
+        :return: a float that is the score within the environment
+        """
         return self.environment.score()
 
     def state_dims(self) -> (int, int):
+        """
+        Gets the dimensions of the state as a tuple
+        :return: a tuple of two integers.
+        """
         pass
 
     def n_actions(self) -> int:
+        """
+        Gets the number of actions that the agent can take in each MDP.
+        :return: an int
+        """
         pass

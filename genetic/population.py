@@ -4,13 +4,7 @@ import sys
 import torch as T
 
 from agents.genetic_agent import GeneticAgent
-from environment.turtle.env import SnakeEnv
-from environment.pygame.env import PyGameEnv
-from environment.env import Env, Direction
-from environment.turtle.env import TurtleSnake
-from environment.state import LidarAndOneHot2
-from genetic.selection import roulette_wheel, rank_based_selection
-from rl.mpd import MDP
+from environment.env import Direction
 from rl.snake import SnakeMDP
 
 
@@ -94,7 +88,6 @@ class SnakePopulation(Population):
                 self.best_individual = solution
 
         self.individuals = sorted(self.individuals, key=lambda solution: solution.fitness)
-        #print(f'\nHighest fitness: {highest_fitness}')
         print(f'\nTop 5 fitness: {[individual.fitness for individual in self.individuals[-5:]]}')
 
     def candidate_selection(self):
@@ -110,7 +103,7 @@ class SnakePopulation(Population):
 
         print(f'Selecting {index} individuals from the population')
         selected = self.selection_func(self.individuals[:index], len(self.individuals[:index]))
-        self.selected_individuals.extend(selected) #rank_based_selection(population=self.population, n_parents=len(self.population))
+        self.selected_individuals.extend(selected)
 
     def crossover(self, n_crossover_points=1):
         """
