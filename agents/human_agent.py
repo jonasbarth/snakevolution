@@ -1,23 +1,33 @@
-from environment.env import SnakeEnv
+import pygame
+
+from game.snake import PyGameSnakeGame
+from rl.snake import SnakeMDP
 
 
 class HumanAgent:
 
-    def __init__(self, env: SnakeEnv):
+    def __init__(self, env: SnakeMDP):
         self.env = env
 
 
     def play(self):
         self.env.reset()
-        wn = self.env.wn
+        game = PyGameSnakeGame(200, 200, 20)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                current_direction = game.direction()
+                if event.key == pygame.K_LEFT:
+                    self.direction = ""
+                elif event.key == pygame.K_RIGHT:
+                    self.direction = ""
+                elif event.key == pygame.K_UP:
+                    self.direction = ""
+                elif event.key == pygame.K_DOWN:
+                    self.direction = ""
 
-        wn.onkeypress(self.w, "w")
-        wn.onkeypress(self.d, "d")
-        wn.onkeypress(self.s, "s")
-        wn.onkeypress(self.a, "a")
-
-        wn.listen()
-        wn.mainloop()
 
     def w(self):
         self.env.step(0)

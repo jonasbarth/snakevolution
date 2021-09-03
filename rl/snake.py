@@ -22,16 +22,17 @@ class SnakeMDP(MDP):
         self._n_steps = 0
         return self.state_representation.get_state(), 0, False
 
-    def step(self, action: int) -> (np.array, float, bool):
-        snake_action = list(Direction)[action]
-        reward = 1
+    def step(self, action: np.array) -> (np.array, float, bool):
 
-        _, ate_food, is_game_over = self.environment.move(snake_action)
+        _, ate_food, is_game_over = self.environment.move(action)
+        reward = 0
 
         if ate_food:
+            print("Ate food")
             reward = 10
 
         if is_game_over:
+            print("Game over")
             reward = -10
 
         self._reward_sum += reward

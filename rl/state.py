@@ -1,5 +1,6 @@
 from environment.env import Direction
 from environment.point import Point
+from game.core.grid import Snake
 from game.snake import SnakeGame
 import numpy as np
 
@@ -95,33 +96,48 @@ class SnakeState3(SnakeState):
         super().__init__(game)
         self.game = game
         self._dims = None
+        self.previous_head = Point(game.snake_head().x, game.snake_head().y + 1)
 
     def get_state(self) -> np.array:
-        direction = self.game.direction()
         snake_head = self.game.snake_head()
         snake_body = self.game.snake_position()[1:, :]
+
+        game_direction = self.get_game_direction(snake_head)
+
+        self.previous_head = snake_head
+
+        vicinity = self.game.snake_head_vicinity()
+
+        danger = self.get_danger(vicinity, snake_body)
+
+        food_position = self.get_food_position(self.game.food_position(), snake_head)
+
+        return np.concatenate([game_direction, danger, food_position])
+
+    def dims(self) -> (int, int):
+        return (11, 1)
+
+    def is_danger(self, distance: float) -> int:
+        if distance <= 1:
+            return 1
+        return 0
+
+    def get_danger(self, snake_vicinity: np.array, snake_body: np.array) -> np.array:
 
         danger_straight = 0
         danger_left = 0
         danger_right = 0
 
-        straight = []
-        left = []
-        right = []
-        # is there a danger because of the snake's body
-        # get the three squares around the snakes head (left, right, straight) and check if they're in the snake's body
-        #
-        vicinity = self.game.snake_head_vicinity()
-
-        if self.game.is_outside(vicinity[0]) or vicinity[0] in snake_body:
+        if self.game.is_outside(snake_vicinity[0]) or self.game.in_snake_body(snake_vicinity[0]):
             danger_straight = 1
-        if self.game.is_outside(vicinity[1]) or vicinity[1] in snake_body:
+        if self.game.is_outside(snake_vicinity[1]) or self.game.in_snake_body(snake_vicinity[1]):
             danger_left = 1
-        if self.game.is_outside(vicinity[2]) or vicinity[2] in snake_body:
+        if self.game.is_outside(snake_vicinity[2]) or self.game.in_snake_body(snake_vicinity[2]):
             danger_right = 1
 
+        return np.array([danger_left, danger_straight, danger_right])
 
-        food = self.game.food_position()
+    def get_food_position(self, food: Point, snake_head: Point):
         food_left = 0
         food_right = 0
         food_up = 0
@@ -152,15 +168,36 @@ class SnakeState3(SnakeState):
             food_right = 1
             food_up = 1
             food_down = 1
-        # get the food position
-        # if x > snake x, food is right, else left
-        # if y > snake y, food is below, else above
-        return np.array([danger_straight, danger_left, danger_right, food_up, food_down, food_left, food_right])
 
-    def dims(self) -> (int, int):
-        return (7, 1)
+        return np.array([food_up, food_down, food_left, food_right])
 
-    def is_danger(self, distance: float) -> int:
-        if distance <= 1:
-            return 1
-        return 0
+    def get_game_direction(self, snake_head: Point):
+        direction_left = 0
+        direction_right = 0
+        direction_up = 0
+        direction_down = 0
+
+        if self.previous_head.x > snake_head.x:
+            direction_left = 1
+        elif self.previous_head.x < snake_head.x:
+            direction_right = 1
+
+        if self.previous_head.y > snake_head.y:
+            direction_up = 1
+        elif self.previous_head.y < snake_head.y:
+            direction_down = 1
+
+        if self.previous_head.x > snake_head.x:
+            direction_left = 1
+        elif self.previous_head.x < snake_head.x:
+            direction_right = 1
+
+        if self.previous_head.y > snake_head.y:
+            direction_up = 1
+        elif self.previous_head.y < snake_head.y:
+            direction_down = 1
+
+        return np.array([direction_up, direction_down, direction_left, direction_right])
+
+
+

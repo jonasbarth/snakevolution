@@ -1,7 +1,6 @@
 import numpy as np
 
 from environment.env import Direction
-from environment.point import Point
 
 
 class Food(object):
@@ -67,7 +66,7 @@ class Snake(object):
         """
         return self.segments[0]
 
-    def move(self, direction: Direction, add_tail: bool = False) -> np.array:
+    def move(self, direction: np.array, add_tail: bool = False) -> np.array:
         """
         Moves the snake in the specified direction and returns the new position of the head of the snake.
         :param direction: The direction that the snake will be moved in
@@ -86,18 +85,13 @@ class Snake(object):
         # copy the head back to the first row so that it can be moved
         new_segments[0] = new_segments[1]
 
-        # how can I know which direction to move in? save the previous move and use it as a reference
-        # if straight, repeat the previous move (add the delta to the snake's head)
-        # if left, repeat the previous move (add the delta but rotate it 90° to the left)
-        # if right, repeat
-        # insert new value at top
-        if direction == Direction.STRAIGHT:
+        if Direction.is_straight(direction):
             new_segments[0] += self.previous_delta
-        elif direction == Direction.LEFT:
+        elif Direction.is_left(direction):
             new_delta = self.__rotate_90_deg(self.previous_delta, False)
             new_segments[0] += new_delta
             self.previous_delta = new_delta
-        elif direction == Direction.RIGHT:
+        elif Direction.is_right(direction):
             new_delta = self.__rotate_90_deg(self.previous_delta, True)
             new_segments[0] += new_delta
             self.previous_delta = new_delta
@@ -105,8 +99,7 @@ class Snake(object):
         self.head_straight = new_segments[0] + self.previous_delta
         self.head_left = new_segments[0] + self.__rotate_90_deg(self.previous_delta, False)
         self.head_right = new_segments[0] + self.__rotate_90_deg(self.previous_delta, True)
-        # compute the vicinity
-        # how do I know
+
         if add_tail:
             self.tail_index += 1
         else:
@@ -137,7 +130,7 @@ class Snake(object):
         """
         return np.array([self.head_straight, self.head_left, self.head_right])
 
-    def __set_direction(self, direction: Direction):
+    def __set_direction(self, direction: np.array):
         """
         Sets the direction of the snake. The new direction cannot be the opposite of the current direction, e.g.
         if the snake is moving up right now, you cannot set the direction to down. In this case, the old direction
@@ -146,10 +139,10 @@ class Snake(object):
         :return: None
         """
 
-        if direction == Direction.LEFT and direction != Direction.RIGHT:
-            self.direction = Direction.LEFT
-        elif direction == Direction.RIGHT and direction != Direction.LEFT:
-            self.direction = Direction.RIGHT
+        if Direction.is_left(direction) and not Direction.is_right(self.direction):
+            self.direction = direction
+        elif Direction.is_right(direction) and not Direction.is_left(self.direction):
+            self.direction = direction
         else:
             self.direction = direction
 
@@ -226,7 +219,7 @@ class Grid(object):
         new_food = available_slots[index]
         return new_food[0]
 
-    def move_snake(self, direction: Direction, ate_food: bool) -> np.array:
+    def move_snake(self, direction: np.array, ate_food: bool) -> np.array:
         """
         Moves the snake one grid space in the specified direction and returns the new coordinates of the head.
         :param direction: The direction that the Snake will be moved in

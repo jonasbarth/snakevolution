@@ -80,6 +80,7 @@ class FitnessFunctionValidator(ArgumentValidator):
         self.fitness_func_mapping = dict()
         self.fitness_func_mapping["MAXIMISE_MOVES"] = fitness.maximise_moves
         self.fitness_func_mapping["MAXIMISE_FOOD_EATEN"] = fitness.maximise_food_eaten
+        self.fitness_func_mapping["MAXIMISE_REWARD"] = fitness.maximise_reward
 
     def validate(self, arg: str) -> bool:
         return arg in self.fitness_func_mapping.keys()

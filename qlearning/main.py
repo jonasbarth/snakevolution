@@ -17,7 +17,7 @@ eps_dec = 1 / (n_games * 0.8)
 target_update = 10
 
 
-agent = DeepQAgent(gamma=0.99, epsilon=1.0, batch_size=64, learn_start=10000, n_actions=3, input_dims=[7], learning_rate=0.0005, eps_dec=eps_dec)
+agent = DeepQAgent(gamma=0.99, epsilon=1.0, batch_size=64, learn_start=10000, n_actions=3, input_dims=[11], learning_rate=0.0005, eps_dec=eps_dec)
 
 
 
@@ -46,4 +46,3 @@ for i in range(n_games):
     agent.decay_epsilon()
     writer.add_scalar("Episode score", score, global_step=i)
     writer.add_scalar("Moves per episode", env.n_steps(), global_step=i)
-

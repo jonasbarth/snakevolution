@@ -1,9 +1,10 @@
 import math
 
 import torch as T
-
+import numpy as np
 from rl.deep_q_network import DeepQNetwork
 from rl.mpd import MDP
+from rl.simple_deep_q_network import Linear_QNet
 
 
 class GeneticAgent(object):
@@ -15,8 +16,10 @@ class GeneticAgent(object):
 
     def __init__(self, mdp: MDP, learning_rate: float, input_dims, n_actions: int, mutation_rate: float):
         self.mdp = mdp
-        self.neural_network = DeepQNetwork(learning_rate, input_dims, math.floor(input_dims[0] / 2),
-                                           math.floor(input_dims[0] / 2), n_actions)
+        self.neural_network = DeepQNetwork(learning_rate, input_dims, 256,
+                                           128, n_actions)
+
+        #self.neural_network = Linear_QNet(11, 256, 3)
         self.mutation_rate = mutation_rate
         self.n_weights = len(self.get_genome())
 
@@ -49,9 +52,10 @@ class GeneticAgent(object):
         return w * h
 
     def choose_action(self, observation):
+        action = np.array([0, 0, 0])
         state = T.tensor([observation]).to(self.neural_network.device)
         actions = self.neural_network.forward(state.float())
-        action = T.argmax(actions).item()
+        action[T.argmax(actions).item()] = 1
         return action
 
     def mutate(self):

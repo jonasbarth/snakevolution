@@ -10,6 +10,8 @@ def maximise_moves(env: SnakeGame) -> float:
 def maximise_food_eaten(env: MDP) -> float:
     return env.env_score()
 
+def maximise_reward(env: MDP) -> float:
+    return env.reward_sum()
 
 
 

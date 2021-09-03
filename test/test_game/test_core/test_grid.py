@@ -32,8 +32,8 @@ def test_move_snake_legal_direction(snake):
     assert snake.length() == 1
 
 def test_move_snake_multiple_directions(snake):
-    snake.move(direction=Direction.STRAIGHT)
-    snake.move(direction=Direction.STRAIGHT)
+    snake.move(direction=Direction.STRAIGHT.one_hot())
+    snake.move(direction=Direction.STRAIGHT.one_hot())
     snake.move(direction=Direction.LEFT)
     new_head = snake.move(direction=Direction.STRAIGHT)
     assert (new_head == np.array([8, 8])).all()
@@ -74,3 +74,43 @@ def test_snake_vicinity_after_left_move(snake):
 def test_snake_vicinity_after_right_move(snake):
     snake.move(direction=Direction.RIGHT, add_tail=True)
     assert (snake.vicinity() == np.array([[12, 10], [11, 9], [11, 11]])).all()
+
+
+
+
+@pytest.fixture
+def grid():
+    return Grid(10, 10)
+
+def test_snake_start_position_in_middle(grid):
+    assert (grid.start_position() == np.array([5, 5])).all()
+
+def test_move_snake(grid):
+    assert (grid.move_snake(Direction.STRAIGHT, False) == np.array([5, 4])).all()
+    assert (grid.move_snake(Direction.LEFT, False) == np.array([4, 4])).all()
+    assert (grid.move_snake(Direction.STRAIGHT, False) == np.array([3, 4])).all()
+
+def test_set_snake_in_grid(grid):
+    grid.move_snake(Direction.LEFT, False)
+    grid.set_snake_in_grid()
+    assert(grid.grid[5][4] == 1)
+
+def test_set_food_in_grid(grid):
+    grid.set_food_in_grid()
+    food_x, food_y = grid.food().position()
+    assert(grid.grid[food_y][food_x] == 2)
+
+def test_coordinate_inside_grid(grid):
+    for x in range(10):
+        for y in range(10):
+            coordinates = np.array([x, y])
+            assert(grid.is_outside_grid(coordinates) == False)
+
+def test_coordinate_outside_grid(grid):
+    for x in range(10, 20):
+        for y in range(10, 20):
+            coordinates = np.array([x, y])
+            assert(grid.is_outside_grid(coordinates) == True)
+
+def test_legal_coordinates(grid):
+    assert(grid.compute_legal_coordinates(2, 2) == np.array([[0, 0], [0, 1], [1, 0], [1, 1]])).all()

@@ -54,7 +54,7 @@ def roulette_wheel(population: List[GeneticAgent], n_parents=1) -> List:
     # loop over list of sorted probabilities and choose the first that is greater than n
 
 
-def rank_based_selection(population: List[GeneticAgent], n_parents: int = 1, bias: int = 1) -> List:
+def rank_based_selection(population: List[GeneticAgent], n_parents: int = 1, bias: int = 2) -> List:
     """
     Performs a rank based selection
     :param n_parents:

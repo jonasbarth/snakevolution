@@ -1,16 +1,10 @@
-import math
-import random
-from typing import List
-
+import numpy as np
 import pygame
 
 from environment.env import Direction
 from environment.point import Point
-
-import numpy as np
-
 from game import colour
-from game.core.grid import Snake, Grid, Food
+from game.core.grid import Grid
 
 
 class SnakeGame(object):
@@ -29,6 +23,7 @@ class SnakeGame(object):
         self.screen_height = screen_height
         self.snake_size = snake_size
         self._direction = Direction.STRAIGHT
+        self._absolute_direction = "UP"
         self._game_over = False
         self.running = False
         self.ate_food = False
@@ -36,7 +31,6 @@ class SnakeGame(object):
         self._n_steps = 0
         self._n_food_eaten = 0
         self._n_steps_without_food = 0
-        self.grid_slots = int((screen_width / snake_size) * (screen_height / snake_size))
 
         self.grid = Grid(int(screen_width / snake_size), int(screen_height / snake_size))
 
@@ -53,7 +47,7 @@ class SnakeGame(object):
         #self.grid.reset()
         self.grid = Grid(int(self.screen_width / self.snake_size), int(self.screen_height / self.snake_size))
 
-    def move(self, direction: Direction) -> (Point, bool, bool):
+    def move(self, direction: np.array) -> (Point, bool, bool):
         """
         Moves the snake in the specified direction by one grid slot.
         :param direction: The direction the snake will be moved in. The new direction cannot be the opposite of the current
@@ -110,6 +104,9 @@ class SnakeGame(object):
     def is_outside(self, coordinates: np.array) -> bool:
         return self.grid.is_outside_grid(coordinates)
 
+    def in_snake_body(self, candidate: np.array) -> bool:
+        return any(np.equal(candidate, self.snake_position()).all(1))
+
     def snake_position(self) -> np.array:
         """
         Gets the position of the entire snake.
@@ -117,12 +114,19 @@ class SnakeGame(object):
         """
         return self.grid.snake().position()
 
-    def direction(self) -> Direction:
+    def direction(self) -> np.array:
         """
-        Gets the current direction of the snake.
+        Gets the current relative direction of the snake.
         :return: The current direction of the snake.
         """
         return self._direction
+
+    def absolute_direction(self) -> np.array:
+        """
+        Gets the current absolute direction of the snake, left, right, up, or down.
+        :return: a numpy array
+        """
+
 
     def food_position(self) -> Point:
         """
@@ -181,6 +185,7 @@ class PyGameSnakeGame(SnakeGame):
 
     def __init__(self, screen_width: int, screen_height: int, snake_size: int):
         super().__init__(screen_width, screen_height, snake_size)
+        self.clock = pygame.time.Clock()
 
     def start(self) -> None:
         super().start()
@@ -197,7 +202,7 @@ class PyGameSnakeGame(SnakeGame):
 
         self.__draw_snake()
         self.__draw_food()
-
+        #self.clock.tick(40)
         return snake_head, ate_food, game_over
 
 
