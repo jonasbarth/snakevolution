@@ -2,7 +2,7 @@ import argparse
 from datetime import datetime
 
 from environment.argument_validator import GeneticArgumentValidator
-from export.genetic_exporter import GeneticExporter
+from export.genetic_exporter import GeneticExporter, GeneticPopulationDataExporter
 from export.hyper_parameter_exporter import HyperParameterExporter
 from genetic.generational import Generational
 from genetic.population import SnakePopulation
@@ -58,7 +58,12 @@ if __name__ == '__main__':
         genetic_exporter = GeneticExporter(path)
         genetic_exporter.export(algorithm.best_individual(n_generations - 1))
 
+        genetic_population_data_exporter = GeneticPopulationDataExporter(path)
+        genetic_population_data_exporter.export(algorithm.get_population_data())
+
         hp_exporter = HyperParameterExporter(path)
         hp_exporter.export(args.__dict__)
+
+
 
 

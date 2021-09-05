@@ -52,3 +52,6 @@ class Generational:
         """
         return self.best_individuals[generation]
 
+    def get_population_data(self):
+        return self.population.population_data
+

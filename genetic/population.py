@@ -1,16 +1,18 @@
 import random
 import sys
 
+import numpy as np
 import torch as T
 
 from agents.genetic_agent import GeneticAgent
 from environment.env import Direction
+from export.genetic_exporter import GeneticPopulationDataExporter, GeneticPopulationData
 from rl.snake import SnakeMDP
 
 
 class Population:
 
-    def __init__(self, pop_size: int, mutation_rate: float, crossover_rate: float, elitism: float, fitness_func, selection_func, show_game):
+    def __init__(self, pop_size: int, mutation_rate: float, crossover_rate: float, elitism: float, fitness_func, selection_func, show_game: bool):
         self.pop_size = pop_size
         self.mutation_rate = mutation_rate
         self.crossover_rate = crossover_rate
@@ -19,6 +21,7 @@ class Population:
         self.selection_func = selection_func
         self.individuals = []
         self.best_individual = None
+        self.population_data = None
         self.selected_individuals = []
         self.elites = []
         self.show_game = show_game
@@ -59,6 +62,7 @@ class SnakePopulation(Population):
 
     def __init__(self, pop_size, mutation_rate, crossover_rate, elitism, fitness_func, selection_func, show_game):
         Population.__init__(self, pop_size=pop_size, mutation_rate=mutation_rate, elitism=elitism, crossover_rate=crossover_rate, fitness_func=fitness_func, selection_func=selection_func, show_game=show_game)
+        self.population_data = GeneticPopulationData()
 
     def initialise_population(self):
         self.selected_individuals = []
@@ -88,6 +92,8 @@ class SnakePopulation(Population):
                 self.best_individual = solution
 
         self.individuals = sorted(self.individuals, key=lambda solution: solution.fitness)
+
+        self.population_data.add_generational_fitness(np.array([[solution.fitness for solution in self.individuals]]))
         print(f'\nTop 5 fitness: {[individual.fitness for individual in self.individuals[-5:]]}')
 
     def candidate_selection(self):
