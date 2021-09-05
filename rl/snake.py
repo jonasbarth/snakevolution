@@ -1,9 +1,9 @@
+import numpy as np
+
 from environment.env import Direction
 from game.snake import PyGameSnakeGame, SnakeGame
 from rl.mpd import MDP, MDPAction
-import numpy as np
-
-from rl.state import SnakeState1, SnakeState3
+from rl.state import SnakeState3
 
 
 class SnakeMDP(MDP):

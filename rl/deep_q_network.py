@@ -1,3 +1,5 @@
+from typing import List
+
 import torch as T
 import torch.nn as nn
 import torch.nn.functional as F
@@ -25,3 +27,14 @@ class DeepQNetwork(nn.Module):
         actions = self.fc3(x)
 
         return actions
+
+    def layers(self) -> List:
+        return [self.fc1, self.fc2, self.fc3]
+
+    def layer_sizes(self) -> List:
+        return [self.fc1.weight.data.size(), self.fc2.weight.data.size(), self.fc3.weight.data.size()]
+
+    def set_layers(self, layers):
+        self.fc1.weight.data = layers[0]
+        self.fc2.weight.data = layers[1]
+        self.fc3.weight.data = layers[2]

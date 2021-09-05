@@ -3,6 +3,7 @@ import math
 import torch as T
 import numpy as np
 from rl.deep_q_network import DeepQNetwork
+from rl.ffnn import FFNN
 from rl.mpd import MDP
 from rl.simple_deep_q_network import Linear_QNet
 
@@ -18,31 +19,25 @@ class GeneticAgent(object):
         self.mdp = mdp
         self.neural_network = DeepQNetwork(learning_rate, input_dims, 256,
                                            128, n_actions)
-
-        #self.neural_network = Linear_QNet(11, 256, 3)
+        self.neural_network = FFNN([(input_dims[0], 256), (256, 3)])
         self.mutation_rate = mutation_rate
         self.n_weights = len(self.get_genome())
 
     def get_genome(self):
-        fc1_weights = self.neural_network.fc1.weight.data.flatten()  # gets a 2D array of the data (16, 33)
-        fc2_weights = self.neural_network.fc2.weight.data.flatten()
-        fc3_weights = self.neural_network.fc3.weight.data.flatten()
-
-        return [fc1_weights, fc2_weights, fc3_weights]
+        """
+        Gets the genome of this agent as a list of layers of the agent's neural network.
+        :return: a list of flattened tensors where each tensor is a layer of the network, starting with the input layer,
+        then hidden layers, and ending with the output layer
+        """
+        return [layer.weight.data.flatten() for layer in self.neural_network.layers()]
 
     def set_genome(self, genome):
-        fc1_size = self.neural_network.fc1.weight.data.size()
-        fc1 = genome[0].reshape(fc1_size)
+        layer_sizes = self.neural_network.layer_sizes()
+        reshaped_genome = []
+        for gene, size in zip(genome, layer_sizes):
+            reshaped_genome.append(gene.reshape(size))
 
-        fc2_size = self.neural_network.fc2.weight.data.size()
-        fc2 = genome[1].reshape(fc2_size)
-
-        fc3_size = self.neural_network.fc3.weight.data.size()
-        fc3 = genome[2].reshape(fc3_size)
-
-        self.neural_network.fc1.weight.data = fc1
-        self.neural_network.fc2.weight.data = fc2
-        self.neural_network.fc3.weight.data = fc3
+        self.neural_network.set_layer_data(reshaped_genome)
 
     def set_model(self, state_dict):
         self.neural_network.load_state_dict(state_dict)
@@ -67,10 +62,7 @@ class GeneticAgent(object):
         :param fitness: a function that calculates the fitness of this snake
         :return:
         """
-        # self.fitness = ((self.food_eaten*2)**2) * (self.time_alive**1.5)
-        # self.fitness = self.time_alive
         self.fitness = fitness(self.mdp)
-        #print("Food eaten: %d - Time alive: %d - Fitness: %d" % (self.food_eaten, self.time_alive, self.fitness))
 
     def simulate(self):
         state, reward, done = self.mdp.reset()
