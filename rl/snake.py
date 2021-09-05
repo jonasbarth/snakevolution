@@ -20,6 +20,7 @@ class SnakeMDP(MDP):
         self.environment.start()
         self._reward_sum = 0
         self._n_steps = 0
+        self._score = 0
         return self.state_representation.get_state(), 0, False
 
     def step(self, action: np.array) -> (np.array, float, bool):
@@ -29,6 +30,7 @@ class SnakeMDP(MDP):
 
         if ate_food:
             print("Ate food")
+            self._score += 1
             reward = 10
 
         if is_game_over:
@@ -45,6 +47,7 @@ class SnakeMDP(MDP):
 
     def n_actions(self):
         return 3
+
 
 
 

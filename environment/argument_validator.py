@@ -71,6 +71,12 @@ class GeneticArgumentValidator:
 
         raise Exception("%s is not recognised as a correct argument for %s. It must be in the interval [0, 1]." % (arg, "Elitism"))
 
+    def validate_tournament_size(self, arg: int, pop_size: int) -> int:
+        if 0 < arg <= pop_size:
+            return arg
+
+        raise Exception("%s is not recognised as a correct argument for %s. It must be in the interval [1, %d]." % (arg, "Tournament Size", pop_size))
+
 
 
 
@@ -98,6 +104,7 @@ class SelectionFunctionValidator(ArgumentValidator):
         self.selection_func_mapping = dict()
         self.selection_func_mapping["ROULETTE"] = selection.roulette_wheel
         self.selection_func_mapping["RANK"] = selection.rank_based_selection
+        self.selection_func_mapping["TOURNAMENT"] = selection.tournament_selection
 
     def validate(self, arg: str) -> bool:
         return arg in self.selection_func_mapping.keys()

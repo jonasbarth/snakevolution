@@ -81,7 +81,7 @@ class GeneticAgent(object):
             self.time_alive += 1
             state = state_
 
-        self.food_eaten += self.mdp.env_score()
+        self.food_eaten = self.mdp.env_score()
         return self
 
     def reset(self):

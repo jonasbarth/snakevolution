@@ -20,6 +20,7 @@ if __name__ == '__main__':
     parser.add_argument("-t", "--type", nargs='?', type=str, const="GENERATIONAL", help="the type of genetic algorithm, either generational or steady state. Generational replaces the entire population after each generation, Steady state keeps evolving the same population.")
     parser.add_argument("-r", "--replacement_function", nargs='?', type=str, help="the type of replacement function. Only necessary for steady state algorithms")
     parser.add_argument("-e", "--elitism", nargs='?', type=float, default=0.0, help="percentage of parents that will be copied to the next generation unchanged")
+    parser.add_argument("-ts", "--tournament_size", nargs='?', type=int, default=0, help="if tournament is chosen as a selection function, this will be the size of each tournament round")
     parser.add_argument("--graphics", dest='graphics', action='store_true', help="use this option if you want show the game on the screen")
     parser.add_argument("--no-graphics", dest='graphics', action='store_false', help="use this option if you do not want show the game on the screen")
 
@@ -37,6 +38,9 @@ if __name__ == '__main__':
     selection_func = arg_validator.get_selection_func(args.selection_function)
     algorithm_type = arg_validator.validate_algorithm_type(args.type)
     elitism = arg_validator.validate_elitism(args.elitism)
+
+    if selection_func == "TOURNAMENT":
+        tournament_size = arg_validator.validate_tournament_size(args.tournament_size, pop_size)
     graphics = args.graphics
 
 

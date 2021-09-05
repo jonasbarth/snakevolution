@@ -18,6 +18,7 @@ class MDP(object):
         self.environment = None
         self._reward_sum = 0
         self._n_steps = 0
+        self._score = 0
 
     def reset(self) -> (np.array, float, bool):
         """
@@ -55,7 +56,7 @@ class MDP(object):
         eaten for example
         :return: a float that is the score within the environment
         """
-        return self.environment.score()
+        return self._score
 
     def state_dims(self) -> (int, int):
         """

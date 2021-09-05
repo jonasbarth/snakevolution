@@ -1,3 +1,4 @@
+import math
 import random
 from typing import List
 
@@ -56,11 +57,14 @@ def roulette_wheel(population: List[GeneticAgent], n_parents=1) -> List:
 
 def rank_based_selection(population: List[GeneticAgent], n_parents: int = 1, bias: int = 2) -> List:
     """
-    Performs a rank based selection
-    :param n_parents:
-    :param population:
-    :param bias:
-    :return:
+    Performs a rank based selection. Individuals are sorted according to their fitness and assigned a fitness proportionate
+    rank, i.e. the individual with the highest fitness is assigned the highest rank raised to a bias. A high bias
+    value weighs fitter individuals more than it does weaker individuals, i.e. it increases the selection pressure. A low bias
+    means a lower selection pressure, i.e. weaker individuals have a higher change of being included as well.
+    :param n_parents: The number of parents to be returned by the rank based selection
+    :param population: the population from which the algorithm will choose
+    :param bias: the bias value that decides seleciton pressure
+    :return: a list of selected Genetic Agents
     """
 
     # rank population according to fitness
@@ -84,5 +88,28 @@ def rank_based_selection(population: List[GeneticAgent], n_parents: int = 1, bia
     parents = []
     for n in range(n_parents):
         parents.append(roulette_wheel_select(sorted_probability_population))
+
+    return parents
+
+
+def tournament_selection(population: List[GeneticAgent], n_parents: int, tournament_size: int = 1) -> List:
+    """
+    Performs a tournament selection on a list of Genetic Agents for a specified number of iterations. In a tournament
+    selection, a random number of individuals is chosen from the population out of which the individual with the best
+    fitness is declared winner and added to the parents will be returned.
+    :param population: the population from which the tournament selection algorithm will choose from
+    :param n_parents: the number of parents that should be returned by the overall tournament selection
+    :param tournament_size: the size of each individual tournament round
+    :return: a list of GeneticAgent of length n_parents
+    """
+    tournament_size = math.floor(n_parents * 0.4)
+    parents = []
+    for _ in range(n_parents):
+        tournament_participants = []
+        for _ in range(tournament_size):
+            tournament_participants.append(random.choice(population))
+
+        tournament_winner = sorted(tournament_participants, key=lambda participant: participant.fitness)[-1]
+        parents.append(tournament_winner)
 
     return parents
