@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 
 from environment.env import Direction
@@ -49,6 +51,7 @@ class Snake(object):
         :param grid_slots: The number of grid slots that are available to the snake.
         """
         self.snake_size = snake_size
+        self.grid_slots = grid_slots
         self.segments = np.zeros((grid_slots, 2))
         self.segments[0] = start_position
         self.tail_index = 1
@@ -103,7 +106,7 @@ class Snake(object):
         if add_tail:
             self.tail_index += 1
         else:
-            new_segments[self.tail_index] = np.array([0, 0])
+            new_segments[self.tail_index] = np.array([-1, -1])
 
         self.segments = new_segments
 
@@ -187,7 +190,7 @@ class Grid(object):
         """
         self.width = width
         self.height = height
-        self.grid = np.zeros((width, height))
+        self.grid = np.full((width, height), -1)
         self._snake = Snake(start_position=self.start_position(), direction=Direction.STRAIGHT, snake_size=1, grid_slots=self.grid.size)
         self.set_snake_in_grid()
         self._food = Food(screen_width=width, screen_height=height, position=self.random_food())
@@ -215,6 +218,8 @@ class Grid(object):
         :return: The x,y coordinates of the food
         """
         available_slots = self.available_slots()
+        if available_slots.size == 0:
+            return self._food.position()
         index = np.random.randint(available_slots.shape[0], size=1)
         new_food = available_slots[index]
         return new_food[0]
@@ -227,9 +232,18 @@ class Grid(object):
         extended.
         :return: The x,y coordinates of the new position of the head of the snake as a numpy array.
         """
+        if ate_food and self._snake.length() == self.grid.size:
+            return self._snake.head()
         self._snake.move(direction, ate_food)
         self.update_grid()
         return self._snake.head()
+
+    def move_food(self, location: np.array) -> np.array:
+        if self.is_outside_grid(location) or location.size != 2:
+            return self._food.position()
+        self._food.move(location)
+        self.update_grid()
+        return self._food.position()
 
     def update_grid(self):
         """
@@ -237,8 +251,7 @@ class Grid(object):
         position change.
         :return: None
         """
-        self.grid = np.zeros((self.width, self.height))
-
+        self.grid = np.full((self.width, self.height), -1)
         self.set_food_in_grid()
         self.set_snake_in_grid()
 
@@ -290,15 +303,13 @@ class Grid(object):
 
     def available_slots(self) -> np.array:
         """
-        Calculates the coordinates of all available slots in the grid and returns them as a numpy array. An available
+        Calculates the x,y coordinates of all available slots in the grid and returns them as a numpy array. An available
         slot is defined as grid slot which is neither occupied by the snake nor the food.
         :return: A numpy array of shape (2, n) where n is the number of available slots.
         """
-        indeces = np.where(self.grid == 0)
-        a = indeces[0].reshape((indeces[0].size, 1))
-        b = indeces[1].reshape((indeces[1].size, 1))
-
-        return np.concatenate((a, b), axis=1)
+        indeces = np.argwhere(self.grid == -1)
+        indeces[:, [0, 1]] = indeces[:,[1, 0]]
+        return indeces
 
     def snake_is_touching_food(self) -> bool:
         """
@@ -326,8 +337,8 @@ class Grid(object):
         Calculates and returns the starting position of the snake which is defined as being in the middle of the grid.
         :return: The coordinates of the starting position of the snake as a numpy array.
         """
-        start_x = self.width / 2
-        start_y = self.height / 2
+        start_x = math.floor(self.width / 2)
+        start_y = math.floor(self.height / 2)
         return np.array([start_x, start_y])
 
     def is_outside_grid(self, coordinates: np.array) -> bool:

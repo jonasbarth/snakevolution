@@ -29,12 +29,10 @@ class SnakeMDP(MDP):
         reward = 0
 
         if ate_food:
-            print("Ate food")
             self._score += 1
             reward = 10
 
         if is_game_over:
-            print("Game over")
             reward = -10
 
         self._reward_sum += reward

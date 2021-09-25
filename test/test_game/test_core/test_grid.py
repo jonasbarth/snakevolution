@@ -32,8 +32,8 @@ def test_move_snake_legal_direction(snake):
     assert snake.length() == 1
 
 def test_move_snake_multiple_directions(snake):
-    snake.move(direction=Direction.STRAIGHT.one_hot())
-    snake.move(direction=Direction.STRAIGHT.one_hot())
+    snake.move(direction=Direction.STRAIGHT)
+    snake.move(direction=Direction.STRAIGHT)
     snake.move(direction=Direction.LEFT)
     new_head = snake.move(direction=Direction.STRAIGHT)
     assert (new_head == np.array([8, 8])).all()
@@ -90,6 +90,18 @@ def test_move_snake(grid):
     assert (grid.move_snake(Direction.LEFT, False) == np.array([4, 4])).all()
     assert (grid.move_snake(Direction.STRAIGHT, False) == np.array([3, 4])).all()
 
+def test_move_food(grid):
+    assert(grid.move_food(np.array([1, 3])) == np.array([1, 3])).all()
+    assert(grid.food().position() == np.array([1, 3])).all()
+
+def test_make_snake_win():
+    grid = Grid(2, 2)
+    grid.move_snake(Direction.STRAIGHT, True)
+    grid.move_snake(Direction.LEFT, True)
+    #grid.move_snake(Direction.LEFT, True)
+    grid.move_snake(Direction.LEFT, True)
+    assert(grid.available_slots().size == 0)
+
 def test_set_snake_in_grid(grid):
     grid.move_snake(Direction.LEFT, False)
     grid.set_snake_in_grid()
@@ -114,3 +126,14 @@ def test_coordinate_outside_grid(grid):
 
 def test_legal_coordinates(grid):
     assert(grid.compute_legal_coordinates(2, 2) == np.array([[0, 0], [0, 1], [1, 0], [1, 1]])).all()
+
+def test_available_slots():
+    grid = Grid(2, 2)
+    assert(grid.available_slots().shape[0] == 2)
+    grid.move_snake(Direction.STRAIGHT, True)
+    grid.move_food(grid.random_food())
+    assert (grid.available_slots().shape[0] == 1)
+    grid.move_snake(Direction.LEFT, True)
+    grid.move_food(grid.random_food())
+    assert (grid.available_slots().shape[0] == 0)
+

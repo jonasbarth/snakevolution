@@ -102,7 +102,7 @@ def tournament_selection(population: List[GeneticAgent], n_parents: int, tournam
     :param tournament_size: the size of each individual tournament round
     :return: a list of GeneticAgent of length n_parents
     """
-    tournament_size = math.floor(n_parents * 0.4)
+    tournament_size = math.floor(n_parents * 0.2)
     parents = []
     for _ in range(n_parents):
         tournament_participants = []

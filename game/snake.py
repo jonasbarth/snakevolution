@@ -32,6 +32,8 @@ class SnakeGame(object):
         self._n_food_eaten = 0
         self._n_steps_without_food = 0
 
+        self._max_food = (screen_width / snake_size) * (screen_height / snake_size) - 1
+
         self.grid = Grid(int(screen_width / snake_size), int(screen_height / snake_size))
 
     def start(self) -> None:
@@ -65,7 +67,13 @@ class SnakeGame(object):
             self.ate_food = True
             self._n_food_eaten += 1
             self._n_steps_without_food = 0
-            self.grid.random_food()
+
+            # game is won
+            if self._n_food_eaten == self._max_food:
+                print("Game Won!")
+                self.game_over()
+                return Point.from_numpy(snake_head), self.ate_food, self.is_game_over()
+            self.grid.move_food(self.grid.random_food())
         else:
             self.ate_food = False
             self._n_steps_without_food += 1
@@ -216,7 +224,7 @@ class PyGameSnakeGame(SnakeGame):
 
         self.__draw_snake()
         self.__draw_food()
-        #self.clock.tick(40)
+        self.clock.tick(40)
         return snake_head, ate_food, game_over
 
 
