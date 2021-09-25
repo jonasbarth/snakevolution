@@ -102,9 +102,9 @@ class SelectionFunctionValidator(ArgumentValidator):
 
     def __init__(self):
         self.selection_func_mapping = dict()
-        self.selection_func_mapping["ROULETTE"] = selection.roulette_wheel
-        self.selection_func_mapping["RANK"] = selection.rank_based_selection
-        self.selection_func_mapping["TOURNAMENT"] = selection.tournament_selection
+        self.selection_func_mapping["ROULETTE"] = selection.RouletteWheelSelection({})
+        self.selection_func_mapping["RANK"] = selection.RankSelection({"bias": 2})
+        self.selection_func_mapping["TOURNAMENT"] = selection.TournamentSelection({"tournament_size": 0.2})
 
     def validate(self, arg: str) -> bool:
         return arg in self.selection_func_mapping.keys()

@@ -44,7 +44,7 @@ if __name__ == '__main__':
     graphics = args.graphics
 
 
-    pop = SnakePopulation(pop_size=pop_size, mutation_rate=mutation_rate, crossover_rate=crossover_rate, elitism=elitism, fitness_func=fitness_func, selection_func=selection_func, show_game=graphics)
+    pop = SnakePopulation(pop_size=pop_size, mutation_rate=mutation_rate, crossover_rate=crossover_rate, elitism=elitism, fitness_func=fitness_func, selection=selection_func, show_game=graphics)
 
     print(f'Generations: {n_generations}; Population Size: {pop_size}; Mutation Rate: {mutation_rate}; Crossover Rate: {crossover_rate}; Crossover Points: {crossover_points}; Elitism: {elitism};')
 

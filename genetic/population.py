@@ -7,18 +7,19 @@ import torch as T
 from agents.genetic_agent import GeneticAgent
 from environment.env import Direction
 from export.genetic_exporter import GeneticPopulationDataExporter, GeneticPopulationData
+from genetic.selection import Selection
 from rl.snake import SnakeMDP
 
 
 class Population:
 
-    def __init__(self, pop_size: int, mutation_rate: float, crossover_rate: float, elitism: float, fitness_func, selection_func, show_game: bool):
+    def __init__(self, pop_size: int, mutation_rate: float, crossover_rate: float, elitism: float, fitness_func, selection: Selection, show_game: bool):
         self.pop_size = pop_size
         self.mutation_rate = mutation_rate
         self.crossover_rate = crossover_rate
         self.elitism = elitism
         self.fitness_func = fitness_func
-        self.selection_func = selection_func
+        self.selection = selection
         self.individuals = []
         self.best_individual = None
         self.population_data = None
@@ -60,8 +61,8 @@ class Population:
 
 class SnakePopulation(Population):
 
-    def __init__(self, pop_size, mutation_rate, crossover_rate, elitism, fitness_func, selection_func, show_game):
-        Population.__init__(self, pop_size=pop_size, mutation_rate=mutation_rate, elitism=elitism, crossover_rate=crossover_rate, fitness_func=fitness_func, selection_func=selection_func, show_game=show_game)
+    def __init__(self, pop_size, mutation_rate, crossover_rate, elitism, fitness_func, selection, show_game):
+        Population.__init__(self, pop_size=pop_size, mutation_rate=mutation_rate, elitism=elitism, crossover_rate=crossover_rate, fitness_func=fitness_func, selection=selection, show_game=show_game)
         self.population_data = GeneticPopulationData()
 
     def initialise_population(self):
@@ -108,7 +109,7 @@ class SnakePopulation(Population):
         print(f'\nElite fitness:{[individual.fitness for individual in self.individuals[index:]]}')
 
         print(f'Selecting {index} individuals from the population')
-        selected = self.selection_func(self.individuals[:index], len(self.individuals[:index]))
+        selected = self.selection.select(self.individuals[:index], len(self.individuals[:index]))
         self.selected_individuals.extend(selected)
 
     def crossover(self, n_crossover_points=1):
