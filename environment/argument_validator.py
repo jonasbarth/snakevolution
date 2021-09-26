@@ -26,7 +26,7 @@ class GeneticArgumentValidator:
     def validate_selection_func(self, arg):
         return self.selection_validator.validate(arg)
 
-    def get_selection_func(self, arg):
+    def get_selection(self, arg):
         return self.selection_validator.get(arg)
 
     def validate_n_generations(self, arg: int) -> int:
@@ -103,8 +103,8 @@ class SelectionFunctionValidator(ArgumentValidator):
     def __init__(self):
         self.selection_func_mapping = dict()
         self.selection_func_mapping["ROULETTE"] = selection.RouletteWheelSelection({})
-        self.selection_func_mapping["RANK"] = selection.RankSelection({"bias": 2})
-        self.selection_func_mapping["TOURNAMENT"] = selection.TournamentSelection({"tournament_size": 0.2})
+        self.selection_func_mapping["RANK"] = selection.RankSelection({})
+        self.selection_func_mapping["TOURNAMENT"] = selection.TournamentSelection({})
 
     def validate(self, arg: str) -> bool:
         return arg in self.selection_func_mapping.keys()

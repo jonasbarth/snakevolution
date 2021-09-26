@@ -33,6 +33,9 @@ class Selection:
     def select(self, population: List[GeneticAgent], n_parents: int = 1):
         pass
 
+    def set_params(self, params):
+        pass
+
 
 class RouletteWheelSelection(Selection):
     """
@@ -40,13 +43,14 @@ class RouletteWheelSelection(Selection):
     """
 
     def select(self, population: List[GeneticAgent], n_parents: int = 1):
-        RouletteWheelSelection.roulette_wheel(population, n_parents, self.params)
+        return RouletteWheelSelection.roulette_wheel(population, n_parents, self.params)
 
     @staticmethod
     def roulette_wheel(population: List[GeneticAgent], n_parents: int = 1, params: Dict = {}) -> List:
         """
         Performs a roulette wheel selection on the population fitness. For each entry in the fitness array, the probability
         of it being chosen is proportional to its fitness.
+        :param params:
         :param population:
         :return: a list of parents that have been chosen
         """
@@ -81,7 +85,13 @@ class RankSelection(Selection):
     """
 
     def select(self, population: List[GeneticAgent], n_parents: int = 1):
-        RankSelection.rank_based_selection(population, n_parents, self.params)
+        return RankSelection.rank_based_selection(population, n_parents, self.params)
+
+    def set_params(self, params):
+        if params["bias"]:
+            self.params = params
+        else:
+            raise Exception(f'{params} must contain a value for the key "bias"')
 
     @staticmethod
     def rank_based_selection(population: List[GeneticAgent], n_parents: int = 1, params: Dict = {}) -> List:
@@ -127,7 +137,13 @@ class TournamentSelection(Selection):
     Implementation of a tournament selection algorithm
     """
     def select(self, population: List[GeneticAgent], n_parents: int = 1):
-        TournamentSelection.tournament_selection(population, n_parents, self.params)
+        return TournamentSelection.tournament_selection(population, n_parents, self.params)
+
+    def set_params(self, params):
+        if params["tournament_size"]:
+            self.params = params
+        else:
+            raise Exception(f'{params} must contain a value for the key "tournament_size"')
 
     @staticmethod
     def tournament_selection(population: List[GeneticAgent], n_parents: int, params: Dict = {}) -> List:

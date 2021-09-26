@@ -1,5 +1,3 @@
-import pandas as pd
-
 class Loader:
     """
     Class for loading fitness data

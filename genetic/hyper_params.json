@@ -1,0 +1,16 @@
+{
+    "generations": 1,
+    "population_size": 50,
+    "mutation_rate": 0.01,
+    "crossover_rate": 0.9,
+    "fitness_function": "MAXIMISE_FOOD_EATEN",
+    "crossover_points": 2,
+    "selection_type": "TOURNAMENT",
+    "selection_params": {
+        "tournament_size": 0.2
+    },
+    "type": "GENERATIONAL",
+    "replacement_function": "REPLACEMENT",
+    "elitism": 0.1,
+    "graphics": false
+}
