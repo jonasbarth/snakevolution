@@ -26,7 +26,7 @@ class Generational:
         self.population.initialise_population()
 
         for generation in range(n_generations):
-            print(f"------------- Generation {generation} -------------")
+            print(f"\n------------- Generation {generation} -------------")
             self.population.simulate()
             self.population.calculate_fitness()
             self.best_individuals.append(self.population.best_individual)

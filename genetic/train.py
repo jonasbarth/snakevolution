@@ -12,6 +12,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-hp", "--hyper_params", nargs='?', type=str, help="the path to a hyper parameters json file that will be loaded")
+    parser.add_argument("-ex", "--executions", nargs='?', type=int, default=1, help="the number of times the entire algorithm should be run")
 
     args = parser.parse_args()
     hyper_params_path = args.hyper_params
@@ -22,6 +23,7 @@ if __name__ == '__main__':
     params = loader.get_data()
 
     arg_validator = GeneticArgumentValidator()
+    n_executions = arg_validator.validate_n_executions(args.executions)
     n_generations = arg_validator.validate_n_generations(params["generations"])
     pop_size = arg_validator.validate_population_size(params["population_size"])
     mutation_rate = arg_validator.validate_mutation_rate(params["mutation_rate"])
@@ -34,25 +36,28 @@ if __name__ == '__main__':
     elitism = arg_validator.validate_elitism(params["elitism"])
     graphics = params["graphics"]
 
-    pop = SnakePopulation(pop_size=pop_size, mutation_rate=mutation_rate, crossover_rate=crossover_rate, elitism=elitism, fitness_func=fitness_func, selection=selection, show_game=graphics)
+    for execution in range(n_executions):
+        print(f'Execution: {execution + 1}')
+        pop = SnakePopulation(pop_size=pop_size, mutation_rate=mutation_rate, crossover_rate=crossover_rate, elitism=elitism, fitness_func=fitness_func, selection=selection, show_game=graphics)
 
-    print(f'Generations: {n_generations}; Population Size: {pop_size}; Mutation Rate: {mutation_rate}; Crossover Rate: {crossover_rate}; Crossover Points: {crossover_points}; Elitism: {elitism};')
+        print(f'Generations: {n_generations}; Population Size: {pop_size}; Mutation Rate: {mutation_rate}; Crossover Rate: {crossover_rate}; Crossover Points: {crossover_points}; Elitism: {elitism};')
 
-    if algorithm_type == "GENERATIONAL":
-        algorithm = Generational(pop)
-        algorithm.run(n_generations=n_generations)
+        if algorithm_type == "GENERATIONAL":
 
-        now = datetime.now()
-        date_time = now.strftime("%m_%d_%Y__%H_%M_%S")
-        path = '../models/genetic/' + date_time
-        genetic_exporter = GeneticExporter(path)
-        genetic_exporter.export(algorithm.best_individual(n_generations - 1))
+            algorithm = Generational(pop)
+            algorithm.run(n_generations=n_generations)
 
-        genetic_population_data_exporter = GeneticPopulationDataExporter(path)
-        genetic_population_data_exporter.export(algorithm.get_population_data())
+            now = datetime.now()
+            date_time = now.strftime("%m_%d_%Y__%H_%M_%S")
+            path = '../models/genetic/' + date_time
+            genetic_exporter = GeneticExporter(path)
+            genetic_exporter.export(algorithm.best_individual(n_generations - 1))
 
-        hp_exporter = HyperParameterExporter(path)
-        hp_exporter.export(params)
+            genetic_population_data_exporter = GeneticPopulationDataExporter(path)
+            genetic_population_data_exporter.export(algorithm.get_population_data())
+
+            hp_exporter = HyperParameterExporter(path)
+            hp_exporter.export(params)
 
 
 

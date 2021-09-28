@@ -1,3 +1,4 @@
+import copy
 import random
 import sys
 
@@ -75,6 +76,8 @@ class SnakePopulation(Population):
             self.individuals.append(
                 GeneticAgent(mdp=mdp, learning_rate=0, input_dims=[mdp.state_dims()[0]], n_actions=Direction.n_actions(), mutation_rate=self.mutation_rate))
 
+        self.best_individual = copy.deepcopy(self.individuals[0])
+
     def simulate(self):
         for solution in self.individuals:
 
@@ -83,14 +86,15 @@ class SnakePopulation(Population):
             solution.simulate()
 
     def calculate_fitness(self):
-        highest_fitness = 0
         for solution in self.individuals:
             sys.stdout.write('\r' + f'Calculating fitness ({self.individuals.index(solution) + 1}/{len(self.individuals)})')
             sys.stdout.flush()
             solution.calculate_fitness(self.fitness_func)
-            if solution.fitness >= highest_fitness:
-                highest_fitness = solution.fitness
-                self.best_individual = solution
+
+            # keeping track of the best performing individual across all generations
+            if solution.fitness > self.best_individual.fitness:
+                self.best_individual = copy.deepcopy(solution)
+                print(f'best individual has fitness: {self.best_individual.fitness}')
 
         self.individuals = sorted(self.individuals, key=lambda solution: solution.fitness)
 

@@ -17,6 +17,12 @@ class GeneticArgumentValidator:
         self.fitness_validator = FitnessFunctionValidator()
         self.selection_validator = SelectionFunctionValidator()
 
+    def validate_n_executions(self, arg):
+        if arg > 0:
+            return arg
+
+        raise Exception(f'{arg} is not recognised as a correct argument for number of executions')
+
     def validate_fitness_func(self, arg):
         return self.fitness_validator.validate(arg)
 
