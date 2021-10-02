@@ -1,5 +1,5 @@
-import genetic.fitness as fitness
-import genetic.selection as selection
+import evolution.fitness as fitness
+import evolution.selection as selection
 
 
 class ArgumentValidator:

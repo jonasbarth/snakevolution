@@ -8,7 +8,7 @@ import torch as T
 from agents.genetic_agent import GeneticAgent
 from environment.env import Direction
 from export.genetic_exporter import GeneticPopulationDataExporter, GeneticPopulationData
-from genetic.selection import Selection
+from evolution.selection import Selection
 from rl.snake import SnakeMDP
 
 

@@ -2,11 +2,11 @@ import argparse
 from datetime import datetime
 
 from analysis.json_loader import JsonLoader
-from environment.argument_validator import GeneticArgumentValidator
+from util.argument_validator import GeneticArgumentValidator
 from export.genetic_exporter import GeneticExporter, GeneticPopulationDataExporter
 from export.hyper_parameter_exporter import HyperParameterExporter
-from genetic.generational import Generational
-from genetic.population import SnakePopulation
+from evolution.generational import Generational
+from evolution.population import SnakePopulation
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
             now = datetime.now()
             date_time = now.strftime("%m_%d_%Y__%H_%M_%S")
-            path = '../models/genetic/' + date_time
+            path = '../models/evolution/' + date_time
             genetic_exporter = GeneticExporter(path)
             genetic_exporter.export(algorithm.best_individual(n_generations - 1))
 

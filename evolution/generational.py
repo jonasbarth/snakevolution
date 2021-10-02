@@ -5,12 +5,12 @@ from torch.utils.tensorboard import SummaryWriter
 
 from export.genetic_exporter import GeneticExporter
 from export.hyper_parameter_exporter import HyperParameterExporter
-from genetic.population import Population
+from evolution.population import Population
 
 
 class Generational:
     """
-    Class for a generational genetic algorithm where the entire population is replaced each generation.
+    Class for a generational evolution algorithm where the entire population is replaced each generation.
     """
 
     def __init__(self, population: Population):
@@ -20,7 +20,7 @@ class Generational:
 
     def run(self, n_generations: int) -> None:
         """
-        Runs the generational genetic algorithm with the population for the number of generations.
+        Runs the generational evolution algorithm with the population for the number of generations.
         :return:
         """
         self.population.initialise_population()

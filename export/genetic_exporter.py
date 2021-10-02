@@ -10,7 +10,7 @@ from export.exporter import Exporter
 
 class GeneticExporter(Exporter):
     """
-    Exporter that saves the neural network weights of a genetic agent.
+    Exporter that saves the neural network weights of a evolution agent.
     """
 
     def __init__(self, path: str):

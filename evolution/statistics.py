@@ -1,7 +1,7 @@
 import functools
 from copy import copy
 
-from genetic.population import Population
+from evolution.population import Population
 
 
 def total_fitness(population: Population) -> float:
