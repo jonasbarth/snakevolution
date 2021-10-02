@@ -68,6 +68,11 @@ The state representation chosen is a boolean vector which includes the following
 * the current absolute direction of the snake
 * the location of the food relative to the snake's head
 
+Using a boolean state representation means that the set of possible states the snake has to 
+learn is smaller than a state that is represented with scalars for instance. In fact, the 
+set of states will remain the same size, no matter the size of the game. It means that we can
+train the snake on a smaller game and run it on any size game.
+
 Since we need the inputs to our neural network to be numbers, the boolean values `true` and
 `false` are represented by `1` and `0` respectively.
 
