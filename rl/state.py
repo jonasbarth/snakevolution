@@ -1,8 +1,7 @@
-from environment.env import Direction
-from environment.point import Point
-#from game.core.grid import Snake
-from pysnakegame.game.snake import SnakeGame
 import numpy as np
+from pysnakegame.game.core.direction import Direction
+from pysnakegame.game.core.point import Point
+from pysnakegame.game.snake import SnakeGame
 
 
 class State(object):

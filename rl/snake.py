@@ -1,6 +1,6 @@
 import numpy as np
 
-from environment.env import Direction
+from pysnakegame.game.core.direction import Direction
 from pysnakegame.game.snake import SnakeGame
 from pysnakegame.game.snake import PyGameSnakeGame
 from rl.mpd import MDP, MDPAction

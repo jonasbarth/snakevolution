@@ -1,6 +1,6 @@
 import argparse
 
-from importing.genetic_importer import GeneticImporter
+from util.io.importing.genetic_importer import GeneticImporter
 from rl.snake import SnakeMDP
 
 if __name__ == "__main__":
