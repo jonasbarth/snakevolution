@@ -207,6 +207,7 @@ class PyGameSnakeGame(SnakeGame):
     """
     def __init__(self, screen_width: int, screen_height: int, snake_size: int):
         super().__init__(screen_width, screen_height, snake_size)
+        pygame.init()
         self.clock = pygame.time.Clock()
 
     def start(self) -> None:
@@ -217,6 +218,7 @@ class PyGameSnakeGame(SnakeGame):
 
         self.__draw_snake()
         self.__draw_food()
+        self.__display_score()
 
     def move(self, direction: Direction) -> (Point, bool, bool):
 
@@ -224,6 +226,7 @@ class PyGameSnakeGame(SnakeGame):
 
         self.__draw_snake()
         self.__draw_food()
+        self.__display_score()
         self.clock.tick(40)
         return snake_head, ate_food, game_over
 
@@ -249,3 +252,10 @@ class PyGameSnakeGame(SnakeGame):
             rect = pygame.Rect(segment[0], segment[1], self.snake_size, self.snake_size)
             pygame.draw.rect(self.window, segment_colour, rect)
             pygame.display.flip()
+
+
+    def __display_score(self):
+        score_font = pygame.font.SysFont(None, 30)
+        label = score_font.render(str(self.score()), 1, (255, 255, 255))
+        self.window.blit(label, (1, 1))
+        pygame.display.flip()
