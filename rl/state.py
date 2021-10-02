@@ -1,7 +1,7 @@
 from environment.env import Direction
 from environment.point import Point
-from game.core.grid import Snake
-from game.snake import SnakeGame
+#from game.core.grid import Snake
+from pysnakegame.game.snake import SnakeGame
 import numpy as np
 
 

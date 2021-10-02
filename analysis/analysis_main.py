@@ -37,7 +37,7 @@ def min_mean_max_split(data: np.array) -> (np.array, np.array, np.array):
 
 if __name__ == "__main__":
 
-    loader = CsvLoader("../models/genetic/09_16_2021__15_08_11")
+    loader = CsvLoader("../models/genetic/10_01_2021__15_18_06")
 
     if loader.load():
         data = loader.as_numpy()

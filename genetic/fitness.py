@@ -1,5 +1,4 @@
-from environment.env import Env
-from game.snake import SnakeGame
+from pysnakegame.game.snake import SnakeGame
 from rl.mpd import MDP
 
 
