@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 
 from agents.genetic_agent import GeneticAgent
-from export.genetic_exporter import GeneticExporter, GeneticPopulationDataExporter, GeneticPopulationData
+from util.io.export.genetic_exporter import GeneticExporter, GeneticPopulationDataExporter, GeneticPopulationData
 from rl.mpd import MDP
 
 EXPORTER_PATH = "./test_directory_genetic_exporter"

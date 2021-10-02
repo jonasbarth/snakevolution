@@ -1,7 +1,7 @@
 import torch
 
 from agents.genetic_agent import GeneticAgent
-from importing.importer import Importer
+from util.io.importing import Importer
 from rl.mpd import MDP
 
 

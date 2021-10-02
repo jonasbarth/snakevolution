@@ -6,7 +6,7 @@ import pytest
 import torch
 
 from agents.genetic_agent import GeneticAgent
-from importing.genetic_importer import GeneticImporter
+from util.io.importing import GeneticImporter
 from rl.mpd import MDP
 
 EXPORTER_PATH = "./test_directory_genetic_importer"

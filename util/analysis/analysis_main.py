@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import medfilt
 
-from analysis.csv_loader import CsvLoader
+from util.analysis import CsvLoader
 
 
 def plot_min_mean_max(min_data: np.array, mean_data: np.array, max_data: np.array, smoothed: bool = False):

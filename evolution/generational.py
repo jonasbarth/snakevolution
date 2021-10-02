@@ -1,10 +1,7 @@
 import functools
-from datetime import datetime
 
 from torch.utils.tensorboard import SummaryWriter
 
-from export.genetic_exporter import GeneticExporter
-from export.hyper_parameter_exporter import HyperParameterExporter
 from evolution.population import Population
 
 

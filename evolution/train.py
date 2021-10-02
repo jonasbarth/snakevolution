@@ -1,10 +1,10 @@
 import argparse
 from datetime import datetime
 
-from analysis.json_loader import JsonLoader
+from util.analysis import JsonLoader
 from util.argument_validator import GeneticArgumentValidator
-from export.genetic_exporter import GeneticExporter, GeneticPopulationDataExporter
-from export.hyper_parameter_exporter import HyperParameterExporter
+from util.io.export.genetic_exporter import GeneticExporter, GeneticPopulationDataExporter
+from util.io.export import HyperParameterExporter
 from evolution.generational import Generational
 from evolution.population import SnakePopulation
 

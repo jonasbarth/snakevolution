@@ -2,7 +2,7 @@ import pathlib
 from typing import Dict
 import json
 
-from export.exporter import Exporter
+from util.io.export.exporter import Exporter
 
 
 class HyperParameterExporter(Exporter):

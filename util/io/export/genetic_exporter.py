@@ -5,7 +5,7 @@ import torch
 import pandas as pd
 
 from agents.genetic_agent import GeneticAgent
-from export.exporter import Exporter
+from util.io.export.exporter import Exporter
 
 
 class GeneticExporter(Exporter):

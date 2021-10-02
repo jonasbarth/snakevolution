@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 
-from analysis.loader import Loader
+from util.analysis import Loader
 
 class CsvLoader(Loader):
     """
