@@ -1,7 +1,7 @@
 import pygame
 
-from game.snake import PyGameSnakeGame
-from rl.snake import SnakeMDP
+from pysnakegym.game import PyGameSnakeGame
+from pysnakegym.mdp import SnakeMDP
 
 
 class HumanAgent:

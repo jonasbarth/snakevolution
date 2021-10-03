@@ -3,9 +3,7 @@ import shutil
 
 import pytest
 
-from agents.genetic_agent import GeneticAgent
 from export.hyper_parameter_exporter import HyperParameterExporter
-from rl.mpd import MDP
 
 EXPORTER_PATH = "./test_directory_hyper_parameter_exporter"
 
