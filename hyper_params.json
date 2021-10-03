@@ -12,5 +12,8 @@
     "type": "GENERATIONAL",
     "replacement_function": "REPLACEMENT",
     "elitism": 0.1,
-    "graphics": false
+    "graphics": false,
+    "screen_width": 200,
+    "screen_height": 200,
+    "snake_size": 20
 }

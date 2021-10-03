@@ -18,7 +18,7 @@ class JsonLoader(Loader):
                 self.data = json.load(json_file)
                 return True
         except Exception:
-            print('error')
+            print(f"json file {self.path} could not be loaded")
             return False
 
     def get_data(self):

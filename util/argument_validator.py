@@ -83,6 +83,14 @@ class GeneticArgumentValidator:
 
         raise Exception("%s is not recognised as a correct argument for %s. It must be in the interval [1, %d]." % (arg, "Tournament Size", pop_size))
 
+    def validate_screen_size(self, width: int, height: int, snake_size: int) -> (int, int, int):
+        if width != height:
+            raise Exception(f"Only square formats are allowed. Width: {width} != Height: {height}")
+
+        if width % snake_size != 0:
+            raise Exception(f"((width + height) % snake_size) = 0 must be true")
+
+        return width, height, snake_size
 
 
 

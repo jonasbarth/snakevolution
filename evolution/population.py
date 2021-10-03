@@ -4,17 +4,17 @@ import sys
 
 import numpy as np
 import torch as T
+from pysnakegym.game.core import Direction
+from pysnakegym.mdp import SnakeMDP
 
 from agents.genetic_agent import GeneticAgent
-from pysnakegym.game.core import Direction
-from util.io.export.genetic_exporter import GeneticPopulationData
 from evolution.selection import Selection
-from pysnakegym.mdp import SnakeMDP
+from util.io.export.genetic_exporter import GeneticPopulationData
 
 
 class Population:
 
-    def __init__(self, pop_size: int, mutation_rate: float, crossover_rate: float, elitism: float, fitness_func, selection: Selection, show_game: bool):
+    def __init__(self, pop_size: int, mutation_rate: float, crossover_rate: float, elitism: float, fitness_func, selection: Selection, show_game: bool, screen_width: int, screen_height: int, snake_size: int):
         self.pop_size = pop_size
         self.mutation_rate = mutation_rate
         self.crossover_rate = crossover_rate
@@ -27,6 +27,9 @@ class Population:
         self.selected_individuals = []
         self.elites = []
         self.show_game = show_game
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+        self.snake_size = snake_size
         pass
 
     def initialise_population(self):
@@ -62,8 +65,18 @@ class Population:
 
 class SnakePopulation(Population):
 
-    def __init__(self, pop_size, mutation_rate, crossover_rate, elitism, fitness_func, selection, show_game):
-        Population.__init__(self, pop_size=pop_size, mutation_rate=mutation_rate, elitism=elitism, crossover_rate=crossover_rate, fitness_func=fitness_func, selection=selection, show_game=show_game)
+    def __init__(self, pop_size, mutation_rate, crossover_rate, elitism, fitness_func, selection, show_game, screen_width, screen_height, snake_size):
+        Population.__init__(self,
+                            pop_size=pop_size,
+                            mutation_rate=mutation_rate,
+                            elitism=elitism,
+                            crossover_rate=crossover_rate,
+                            fitness_func=fitness_func,
+                            selection=selection,
+                            show_game=show_game,
+                            screen_width=screen_width,
+                            screen_height=screen_height,
+                            snake_size=snake_size)
         self.population_data = GeneticPopulationData()
 
     def initialise_population(self):
@@ -72,7 +85,7 @@ class SnakePopulation(Population):
         for n in range(self.pop_size):
             sys.stdout.write('\r' + f'Initialising population ({n + 1}/{self.pop_size})')
             sys.stdout.flush()
-            mdp = SnakeMDP(self.show_game)
+            mdp = SnakeMDP(screen_width=self.screen_width, screen_height=self.screen_height, snake_size=self.snake_size, show_game=self.show_game)
             self.individuals.append(
                 GeneticAgent(mdp=mdp, learning_rate=0, input_dims=[mdp.state_dims()[0]], n_actions=Direction.n_actions(), mutation_rate=self.mutation_rate))
 
