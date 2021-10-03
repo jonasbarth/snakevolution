@@ -1,5 +1,5 @@
-from pysnakegame.game.snake import SnakeGame
-from rl.mpd import MDP
+from pysnakegym.game import SnakeGame
+from pysnakegym.mdp import MDP
 
 
 def maximise_moves(env: SnakeGame) -> float:

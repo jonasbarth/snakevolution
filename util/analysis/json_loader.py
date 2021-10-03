@@ -1,6 +1,6 @@
 import json
 
-from util.analysis import Loader
+from util.analysis.loader import Loader
 
 
 class JsonLoader(Loader):

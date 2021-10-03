@@ -6,10 +6,10 @@ import numpy as np
 import torch as T
 
 from agents.genetic_agent import GeneticAgent
-from environment.env import Direction
+from pysnakegym.game.core import Direction
 from util.io.export.genetic_exporter import GeneticPopulationData
 from evolution.selection import Selection
-from rl.snake import SnakeMDP
+from pysnakegym.mdp import SnakeMDP
 
 
 class Population:

@@ -1,9 +1,9 @@
 import numpy as np
 import torch as T
 
-from rl.deep_q_network import DeepQNetwork
-from rl.ffnn import FFNN
-from rl.mpd import MDP
+from pysnakegym.model import DeepQNetwork
+from pysnakegym.model import FFNN
+from pysnakegym.mdp import MDP
 
 
 class GeneticAgent(object):

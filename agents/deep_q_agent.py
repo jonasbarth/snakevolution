@@ -1,7 +1,6 @@
 import math
 
 from rl.deep_q_network import DeepQNetwork
-from util.replay_memory import ReplayMemory
 import numpy as np
 import torch as T
 

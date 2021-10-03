@@ -1,7 +1,7 @@
 import argparse
 
 from util.io.importing.genetic_importer import GeneticImporter
-from rl.snake import SnakeMDP
+from pysnakegym.mdp import SnakeMDP
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
