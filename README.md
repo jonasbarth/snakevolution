@@ -121,16 +121,9 @@ Example values for the vector are:
 
 # 5. Project Structure
 * agents
-* analysis
-* environment
-* export
-* game
-* genetic
-* importing
-* qlearning
-* rl
-* test
+* evolution
 * util
+* test
 
 # 6. Understanding selection pressure
 In biology, selection pressures are external factors which affect an organism's ability to survive
@@ -157,7 +150,7 @@ generations: int (-inf, inf) -> the number of generations that the population wi
 population_size: int (-inf, inf) -> the number of individuals in the population
 mutation_rate: float [0.0, 1.0] -> the probability of a random mutation occurring for each gene
 crossover_rate: float [0.0, 1.0] -> the probability that a crossover between two parents will occur
-fitness_function: string {"MAXIMISE_MOVES", "MAXIMISE_FOOD_EATEND"} -> the name of the fitness function to be used
+fitness_function: string {"MAXIMISE_MOVES", "MAXIMISE_FOOD_EATEN"} -> the name of the fitness function to be used
 crossover_points: int [0, ] -> the number of crossover points that will be used in each crossover
 selection_type: string {"TOURNAMENT", "RANK", "ROULETTE"} -> the name of the selection function to be used
 selection_params: {} -> additional parameters that will be passed to the selection function
@@ -166,5 +159,25 @@ replacement_function: string {"REPLACEMENT"} -> the type of replacement function
 elitism: float [0.0, 1.0] -> the percentage of best performing individuals that will be copied to the next generation unchanged
 graphics: bool {true, false} -> whether to show the graphics of the snake game
 ```
+
+These hyperparameters are passed to a program in a `.json` file. The `hyper_params.json` file
+is an example file, though the file can live anywhere on the file system. Once the file is
+created, the training can be started as follows:
+```
+python train.py -hp=hyper_params.json -ex=1
+```
+The `-hp` flag takes the path to the parameters file and the `ex` flag is how often the training
+should be executed. If you want to gather some data on how a set of hyper parameters performs you
+can specify to run it as many times as needed.
+
+# 8. How to play with a trained model
+To load a trained model you simply need to provide the path to the directory where the `torch` model 
+lives on the file system. The loader will then look for a `torch_model` file within that directory
+and load it, if it is found.
+```
+python play.py -m=path_to_directory
+```
+
+
 
 
