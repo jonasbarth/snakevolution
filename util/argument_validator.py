@@ -1,3 +1,5 @@
+from typing import List
+
 import evolution.fitness as fitness
 import evolution.selection as selection
 
@@ -91,6 +93,14 @@ class GeneticArgumentValidator:
             raise Exception(f"((width + height) % snake_size) = 0 must be true")
 
         return width, height, snake_size
+
+    def validate_neural_network(self, layers: List[int]) -> List[int]:
+        for layer in layers:
+            if type(layer) != int:
+                raise Exception(f"The list {layers} must only contains ints.")
+            if layer < 1:
+                raise Exception(f"the number of nodes in a layer must be at least 1. It cannot be {layer}")
+        return layers
 
 
 

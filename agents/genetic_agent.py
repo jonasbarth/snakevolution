@@ -1,9 +1,8 @@
 import numpy as np
 import torch as T
-
-from pysnakegym.model import DeepQNetwork
-from pysnakegym.model import FFNN
+import torch.nn as nn
 from pysnakegym.mdp import MDP
+from pysnakegym.model import FFNN
 
 
 class GeneticAgent(object):
@@ -14,11 +13,9 @@ class GeneticAgent(object):
     time_alive = 0
     generation_fitness = []
 
-    def __init__(self, mdp: MDP, learning_rate: float, input_dims, n_actions: int, mutation_rate: float):
+    def __init__(self, mdp: MDP, neural_network: nn.Module, mutation_rate: float):
         self.mdp = mdp
-        self.neural_network = DeepQNetwork(learning_rate, input_dims, 256,
-                                           128, n_actions)
-        self.neural_network = FFNN([(input_dims[0], 128), (128, 3)])
+        self.neural_network = neural_network
         self.mutation_rate = mutation_rate
         self.n_weights = len(self.get_genome())
 

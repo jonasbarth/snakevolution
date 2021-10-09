@@ -36,10 +36,11 @@ if __name__ == '__main__':
     elitism = arg_validator.validate_elitism(params["elitism"])
     screen_width, screen_height, snake_size = arg_validator.validate_screen_size(params["screen_width"], params["screen_height"], params["snake_size"])
     graphics = params["graphics"]
+    neural_network = arg_validator.validate_neural_network(params["neural_network"])
 
     for execution in range(n_executions):
         print(f'Execution: {execution + 1}')
-        pop = SnakePopulation(pop_size=pop_size, mutation_rate=mutation_rate, crossover_rate=crossover_rate, elitism=elitism, fitness_func=fitness_func, selection=selection, show_game=graphics, screen_width=screen_width, screen_height=screen_height, snake_size=snake_size)
+        pop = SnakePopulation(pop_size=pop_size, hidden_layers=neural_network, mutation_rate=mutation_rate, crossover_rate=crossover_rate, elitism=elitism, fitness_func=fitness_func, selection=selection, show_game=graphics, screen_width=screen_width, screen_height=screen_height, snake_size=snake_size)
 
         print(f'Generations: {n_generations}; Population Size: {pop_size}; Mutation Rate: {mutation_rate}; Crossover Rate: {crossover_rate}; Crossover Points: {crossover_points}; Elitism: {elitism};')
 

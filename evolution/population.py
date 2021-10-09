@@ -6,6 +6,7 @@ import numpy as np
 import torch as T
 from pysnakegym.game.core import Direction
 from pysnakegym.mdp import SnakeMDP
+from pysnakegym.model import FFNN
 
 from agents.genetic_agent import GeneticAgent
 from evolution.selection import Selection
@@ -14,8 +15,9 @@ from util.io.export.genetic_exporter import GeneticPopulationData
 
 class Population:
 
-    def __init__(self, pop_size: int, mutation_rate: float, crossover_rate: float, elitism: float, fitness_func, selection: Selection, show_game: bool, screen_width: int, screen_height: int, snake_size: int):
+    def __init__(self, pop_size: int, hidden_layers, mutation_rate: float, crossover_rate: float, elitism: float, fitness_func, selection: Selection, show_game: bool, screen_width: int, screen_height: int, snake_size: int):
         self.pop_size = pop_size
+        self.hidden_layers = hidden_layers
         self.mutation_rate = mutation_rate
         self.crossover_rate = crossover_rate
         self.elitism = elitism
@@ -65,9 +67,10 @@ class Population:
 
 class SnakePopulation(Population):
 
-    def __init__(self, pop_size, mutation_rate, crossover_rate, elitism, fitness_func, selection, show_game, screen_width, screen_height, snake_size):
+    def __init__(self, pop_size, hidden_layers, mutation_rate, crossover_rate, elitism, fitness_func, selection, show_game, screen_width, screen_height, snake_size):
         Population.__init__(self,
                             pop_size=pop_size,
+                            hidden_layers=hidden_layers,
                             mutation_rate=mutation_rate,
                             elitism=elitism,
                             crossover_rate=crossover_rate,
@@ -86,8 +89,12 @@ class SnakePopulation(Population):
             sys.stdout.write('\r' + f'Initialising population ({n + 1}/{self.pop_size})')
             sys.stdout.flush()
             mdp = SnakeMDP(screen_width=self.screen_width, screen_height=self.screen_height, snake_size=self.snake_size, show_game=self.show_game)
+            layers = self.hidden_layers.copy()
+            layers.insert(0, mdp.state_dims()[0])
+            layers.append(Direction.n_actions())
+            neural_network = FFNN(layers)
             self.individuals.append(
-                GeneticAgent(mdp=mdp, learning_rate=0, input_dims=[mdp.state_dims()[0]], n_actions=Direction.n_actions(), mutation_rate=self.mutation_rate))
+                GeneticAgent(mdp=mdp, neural_network=neural_network, input_dims=[mdp.state_dims()[0]], n_actions=Direction.n_actions(), mutation_rate=self.mutation_rate))
 
         self.best_individual = copy.deepcopy(self.individuals[0])
 

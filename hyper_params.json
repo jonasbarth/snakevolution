@@ -1,6 +1,6 @@
 {
     "generations": 1000,
-    "population_size": 50,
+    "population_size": 10,
     "mutation_rate": 0.01,
     "crossover_rate": 0.9,
     "fitness_function": "MAXIMISE_FOOD_EATEN",
@@ -11,9 +11,10 @@
     },
     "type": "GENERATIONAL",
     "replacement_function": "REPLACEMENT",
-    "elitism": 0.1,
+    "elitism": 0.0,
     "graphics": false,
     "screen_width": 200,
     "screen_height": 200,
-    "snake_size": 20
+    "snake_size": 20,
+    "neural_network": [22]
 }
