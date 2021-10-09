@@ -199,9 +199,16 @@ class SnakePopulation(Population):
                 return random.random() * 2 - 1
             return value
 
+        def mutate_gauss(value, mean, sd):
+            if self.mutation_rate > random.random():
+                return np.random.normal(loc=mean, scale=sd, size=1)
+            return value
+
         for child_genome in self.children_genomes:
             for layer_genome in child_genome:
-                layer_genome.apply_(lambda x: mutate(x))
+                mean = np.mean(layer_genome.numpy())
+                sd = np.std(layer_genome.numpy())
+                layer_genome.apply_(lambda x: mutate_gauss(x, mean, sd))
 
     def replace(self):
         """
