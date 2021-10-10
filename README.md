@@ -125,6 +125,25 @@ Example values for the vector are:
 * util
 * test
 
+# 6. Setting up the Project
+
+## 6.1 Install conda
+snakevolution is a conda project, so conda needs to be installed to run the program. Follow the
+instructions on the official [conda page](https://conda.io/projects/conda/en/latest/user-guide/install/index.html).
+
+## 6.2 Setup the conda environment
+After installing conda, the conda environment needs to be set up. The environment is described with the `environment.yml`
+file. To create a conda environment from the file execute the following in the root directory of the project:
+``` 
+conda env create -f environment.yml
+```
+
+## 6.3 Activate the conda environment
+The conda environment needs to be activated for the program to run.
+```
+conda activate snakevolution
+```
+
 # 6. Understanding selection pressure
 In biology, selection pressures are external factors which affect an organism's ability to survive
 in an environment. If the selection pressures are high, only the individuals with the most desirable
@@ -158,6 +177,7 @@ type: string {"GENERATIONAL", "STEADY_STATE"} -> the type of algorithm to be run
 replacement_function: string {"REPLACEMENT"} -> the type of replacement function to be used
 elitism: float [0.0, 1.0] -> the percentage of best performing individuals that will be copied to the next generation unchanged
 graphics: bool {true, false} -> whether to show the graphics of the snake game
+neural_network: [int] -> the hidden layers to be used in the neural network. [5] means a single hidden layer with 5 nodes
 ```
 
 These hyperparameters are passed to a program in a `.json` file. The `hyper_params.json` file
