@@ -1,4 +1,4 @@
-name: snake
+name: snakevolution
 channels:
   - pytorch
   - conda-forge
