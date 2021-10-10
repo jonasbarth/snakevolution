@@ -94,7 +94,7 @@ class SnakePopulation(Population):
             layers.append(Direction.n_actions())
             neural_network = FFNN(layers)
             self.individuals.append(
-                GeneticAgent(mdp=mdp, neural_network=neural_network, input_dims=[mdp.state_dims()[0]], n_actions=Direction.n_actions(), mutation_rate=self.mutation_rate))
+                GeneticAgent(mdp=mdp, neural_network=neural_network, mutation_rate=self.mutation_rate))
 
         self.best_individual = copy.deepcopy(self.individuals[0])
 
@@ -213,9 +213,10 @@ class SnakePopulation(Population):
 
         for child_genome in self.children_genomes:
             for layer_genome in child_genome:
-                mean = np.mean(layer_genome.numpy())
-                sd = np.std(layer_genome.numpy())
-                layer_genome.apply_(lambda x: mutate_gauss(x, mean, sd))
+                #mean = np.mean(layer_genome.numpy())
+                #sd = np.std(layer_genome.numpy())
+                #layer_genome.apply_(lambda x: mutate_gauss(x, mean, sd))
+                layer_genome.apply_(lambda x: mutate(x))
 
     def replace(self):
         """
