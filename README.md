@@ -144,7 +144,7 @@ The conda environment needs to be activated for the program to run.
 conda activate snakevolution
 ```
 
-# 6. Understanding selection pressure
+# 7. Understanding selection pressure
 In biology, selection pressures are external factors which affect an organism's ability to survive
 in an environment. If the selection pressures are high, only the individuals with the most desirable
 traits are able to reproduce. Contrary, if the selection pressures are low, weaker individuals are also
@@ -159,26 +159,24 @@ the diversity within the population will decrease, causing the explored search s
 which in turn means that the algorithm to converge faster. A lower selection pressure then means that we keep
 a more diverse population and can keep exploring a larger search space at the cost of slower convergence.
 
-# 7. How to train the evolutionary algorithm
+# 8. How to train the evolutionary algorithm
 Evolutionary algorithms have many hyperparameters that affect the performance and convergence of the
-algorithm. Many of the hyperparameters affect the selection pressure experienced by the population.
+algorithm. Many of the hyperparameters affect the selection pressure experienced by the population. These 
+are the hyperparameters, their legal values, and their types available for tuning:
 
-These are the hyperparameters, their legal values, and their types available for tuning:
-```
-generations: int (-inf, inf) -> the number of generations that the population will evolve for
-population_size: int (-inf, inf) -> the number of individuals in the population
-mutation_rate: float [0.0, 1.0] -> the probability of a random mutation occurring for each gene
-crossover_rate: float [0.0, 1.0] -> the probability that a crossover between two parents will occur
-fitness_function: string {"MAXIMISE_MOVES", "MAXIMISE_FOOD_EATEN"} -> the name of the fitness function to be used
-crossover_points: int [0, ] -> the number of crossover points that will be used in each crossover
-selection_type: string {"TOURNAMENT", "RANK", "ROULETTE"} -> the name of the selection function to be used
-selection_params: {} -> additional parameters that will be passed to the selection function
-type: string {"GENERATIONAL", "STEADY_STATE"} -> the type of algorithm to be run
-replacement_function: string {"REPLACEMENT"} -> the type of replacement function to be used
-elitism: float [0.0, 1.0] -> the percentage of best performing individuals that will be copied to the next generation unchanged
-graphics: bool {true, false} -> whether to show the graphics of the snake game
-neural_network: [int] -> the hidden layers to be used in the neural network. [5] means a single hidden layer with 5 nodes
-```
+|hyper parameter   | type  | legal values  | explanation  |  
+|---|---|---|---|
+| generations  | int  | (-inf, inf)  |  the number of generations that the population will evolve for  |  
+| population_size  | int  | (-inf, inf)  | the number of individuals in the population  |  
+| mutation_rate  | int  | [0.0, 1.0]  |  the probability of a random mutation occurring for each gene  | 
+| crossover_rate | float | [0.0, 1.0] | the probability that a crossover between two parents will occur |
+| selection_type| string | {"TOURNAMENT", "RANK", "ROULETTE"} | the name of the selection function to be used |
+| selection_params| {} | additional parameters that will be passed to the selection function | 
+| type| string | {"GENERATIONAL", "STEADY_STATE"} | the type of algorithm to be run |
+| replacement_function| string | {"REPLACEMENT"} | the type of replacement function to be used |
+| elitism| float | [0.0, 1.0] | the percentage of best performing individuals that will be copied to the next generation unchanged |
+| graphics| bool | {true, false} | whether to show the graphics of the snake game |
+| neural_network| [int] | any positive integer | the hidden layers to be used in the neural network. [5] means a single hidden layer with 5 nodes |
 
 These hyperparameters are passed to a program in a `.json` file. The `hyper_params.json` file
 is an example file, though the file can live anywhere on the file system. Once the file is
@@ -190,7 +188,7 @@ The `-hp` flag takes the path to the parameters file and the `ex` flag is how of
 should be executed. If you want to gather some data on how a set of hyper parameters performs you
 can specify to run it as many times as needed.
 
-# 8. How to play with a trained model
+# 9. How to play with a trained model
 To load a trained model you simply need to provide the path to the directory where the `torch` model 
 lives on the file system. The loader will then look for a `torch_model` file within that directory
 and load it, if it is found.
