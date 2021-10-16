@@ -78,7 +78,7 @@ train the snake on a smaller game and run it on any size game.
 Since we need the inputs to our neural network to be numbers, the boolean values `true` and
 `false` are represented by `1` and `0` respectively.
 
-<img src="docs/full_state_example" width="400" height="400"/>
+<img src="docs/full_state_example.jpg" width="400" height="400"/>
 
 ### 4.3.1 Immediate Danger
 The immediate danger is a 1D vector of 3 booleans which tells the snake whether there is any 
