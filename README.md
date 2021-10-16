@@ -38,7 +38,7 @@ Initially, the snake starts out with a length of 1. The game is won when the sna
 up every single block in the game, i.e. 100 blocks for a 10x10 grid. The game is 
 over if the snake either hits any of the walls or itself. 
 
-![snake_gameplay](docs/snake_gameplay.gif)
+<img src="docs/snake_gameplay.gif" width="200" height="200"/>
 
 # 4. Snake Representation
 Each snake is a Feed Forward Network (FFN) which receives an input representing the current 
