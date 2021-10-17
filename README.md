@@ -62,7 +62,9 @@ food is relative to the snake's head.
 
 There is of course more information that can be useful, e.g. the current length of the snake or
 the position of all of the snake's segments. The reason they are not considered here is because
-all of the previous mentioned information can be encoded in a simple boolean vector.
+of the simplicity of using a boolean vector. It encodes less information and likely won't help
+the snake completely finish the game, yet still lets the snake do some learning to show the
+effectiveness of using evolutionary algorithms.
 
 ## 4.3 Boolean State Representation
 The state representation chosen is a boolean vector which includes the following information
