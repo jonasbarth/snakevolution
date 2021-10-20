@@ -38,7 +38,10 @@ Initially, the snake starts out with a length of 1. The game is won when the sna
 up every single block in the game, i.e. 100 blocks for a 10x10 grid. The game is 
 over if the snake either hits any of the walls or itself. 
 
+<figure>
 <img src="docs/snake_gameplay.gif" width="200" height="200"/>
+<figcaption>Example of a Snake that has <br>been evolved for 1000 generations</figcaption>
+</figure>
 
 # 4. Snake + Evolution
 
