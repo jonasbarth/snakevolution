@@ -16,10 +16,10 @@ class GeneticExporter(Exporter):
     def __init__(self, path: str):
         super().__init__(path)
 
-    def export(self, agent: GeneticAgent):
+    def export(self, agent: GeneticAgent, file_name: str):
         pathlib.Path(self.path).mkdir(parents=True, exist_ok=True)
 
-        torch.save(agent.neural_network.state_dict(), self.path + "/torch_model")
+        torch.save(agent.neural_network.state_dict(), self.path + file_name)
 
 
 class GeneticPopulationData:
