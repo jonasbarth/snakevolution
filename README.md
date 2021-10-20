@@ -40,10 +40,20 @@ over if the snake either hits any of the walls or itself.
 
 <img src="docs/snake_gameplay.gif" width="200" height="200"/>
 
-# 4. Snake Representation
-Each snake is a Feed Forward Network (FFN) which receives an input representing the current 
+# 4. Snake + Evolution
+
+The **phenotype** of an organism consists out of its properties that are observable to the outside world, e.g.
+behaviour and appearance. In this case, the phenotype is a Feed Forward Network (FFN) which receives an input representing the current 
 state of the game and then outputs an action for the snake to take. The state of the game can be
 thought of as what the snake sees at a given point in the game. 
+
+The **genotype** of an organism are the genes that it carries and which determine the phenotype. In this case, the 
+genotype are the bits and pieces that make up the neural network, i.e. the weights, connections,
+and nodes. 
+
+The individual weights of the network are the genes of the genotype. By evolving these weights,
+the algorithm can produce phenotypes which are capable of playing the game of snake.
+
 
 # 5. Project Structure
 * agents
