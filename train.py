@@ -51,9 +51,11 @@ if __name__ == '__main__':
 
             now = datetime.now()
             date_time = now.strftime("%m_%d_%Y__%H_%M_%S")
-            path = '../models/evolution/' + date_time
-            genetic_exporter = GeneticExporter(path)
-            genetic_exporter.export(algorithm.best_individual(n_generations - 1))
+            path = './models/evolution/' + date_time
+
+            for n in range(n_generations):
+                genetic_exporter = GeneticExporter(path)
+                genetic_exporter.export(algorithm.best_individual(n), f'/torch_model_gen_{n + 1}.pth')
 
             genetic_population_data_exporter = GeneticPopulationDataExporter(path)
             genetic_population_data_exporter.export(algorithm.get_population_data())
