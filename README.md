@@ -61,6 +61,10 @@ the algorithm can produce phenotypes which are capable of playing the game of sn
 <img src="docs/genotype_to_phenotype.svg"/>
 </figure>
 
+The **genotype** is part of the search space in which we look for good combinations of genes to solve the problem.
+It maps to a **phenotype** which exists in a solution space where the external attributes of the solution are
+evaluated against the problem to compute the fitness score.
+
 
 # 5. Project Structure
 * agents
