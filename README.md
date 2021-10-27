@@ -45,7 +45,7 @@ over if the snake either hits any of the walls or itself.
 
 # 4. Snake + Evolution
 
-The **phenotype** of an organism consists out of its properties that are observable to the outside world, e.g.
+How is the concept of evolution combined with the The **phenotype** of an organism consists out of its properties that are observable to the outside world, e.g.
 behaviour and appearance. In this case, the phenotype is a Feed Forward Network (FFN) which receives an input representing the current 
 state of the game and then outputs an action for the snake to take. The state of the game can be
 thought of as what the snake sees at a given point in the game. 
@@ -56,6 +56,10 @@ and nodes.
 
 The individual weights of the network are the genes of the genotype. By evolving these weights,
 the algorithm can produce phenotypes which are capable of playing the game of snake.
+
+<figure>
+<img src="docs/genotype_to_phenotype.svg"/>
+</figure>
 
 
 # 5. Project Structure
