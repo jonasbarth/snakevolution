@@ -91,24 +91,10 @@ The conda environment needs to be activated for the program to run.
 conda activate snakevolution
 ```
 
-# 7. Understanding selection pressure
-In biology, selection pressures are external factors which affect an organism's ability to survive
-in an environment. If the selection pressures are high, only the individuals with the most desirable
-traits are able to reproduce. Contrary, if the selection pressures are low, weaker individuals are also
-able to reproduce.
-
-Within evolutionary computing, a high selection pressure means that we are more likely to select
-individuals that have a high fitness score for reproduction. A low selection pressure means that
-individuals with lower fitness scores are also able to reproduce. 
-
-If the selection pressure is high and only the fittest individuals are allowed to reproduce, 
-the diversity within the population will decrease, causing the explored search space to shrink faster, 
-which in turn means that the algorithm to converge faster. A lower selection pressure then means that we keep
-a more diverse population and can keep exploring a larger search space at the cost of slower convergence.
-
 # 8. How to train the evolutionary algorithm
 Evolutionary algorithms have many hyperparameters that affect the performance and convergence of the
-algorithm. Many of the hyperparameters affect the selection pressure experienced by the population. These 
+algorithm. Many of the hyperparameters affect the selection pressure experienced by the population. Read
+[section 8.1](#8.1-understanding-selection-pressure) for an explanation of selection pressure. Below
 are the hyperparameters, their legal values, and their types available for tuning:
 
 |hyper parameter   | type  | legal values  | explanation  |  
@@ -134,6 +120,22 @@ python train.py -hp=hyper_params.json -ex=1
 The `-hp` flag takes the path to the parameters file and the `ex` flag is how often the training
 should be executed. If you want to gather some data on how a set of hyper parameters performs you
 can specify to run it as many times as needed.
+
+# 8.1 Understanding selection pressure
+In biology, selection pressures are external factors which affect an organism's ability to survive
+in an environment. If the selection pressures are high, only the individuals with the most desirable
+traits are able to reproduce. Contrary, if the selection pressures are low, weaker individuals are also
+able to reproduce.
+
+Within evolutionary computing, a high selection pressure means that we are more likely to select
+individuals that have a high fitness score for reproduction. A low selection pressure means that
+individuals with lower fitness scores are also able to reproduce. 
+
+If the selection pressure is high and only the fittest individuals are allowed to reproduce, 
+the diversity within the population will decrease, causing the explored search space to shrink faster, 
+which in turn means that the algorithm to converge faster. A lower selection pressure then means that we keep
+a more diverse population and can keep exploring a larger search space at the cost of slower convergence.
+
 
 # 9. How to play with a trained model
 To load a trained model you simply need to provide the path to the directory where the `torch` model 
