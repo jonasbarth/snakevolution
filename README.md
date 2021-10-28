@@ -18,18 +18,10 @@ parents to create two offspring that inherit traits from both parents. Finally, 
 are mutated, i.e. some genes are randomly changed, and we create a new generation of solutions
 with the recombined and mutated solutions.
 
-The overall algorithm can be described as follows:
-
-```
-initialise population of size n
-
-while stop criterion not met:
-    evaluate fitness of candidate solutions
-    make selection of candidate solutions
-    crossover selection to create new candidate solutions
-    mutate new candidate solutions
-    create new population
-```
+<figure>
+<img src="docs/evolutionary_algorithm.svg"/>
+<figcaption>Steps in the evolutionary algorithm</figcaption>
+</figure>
 
 # 3. Snake
 Snake is a video game where the player controls a line representing the snake with the goal to grow the snake
