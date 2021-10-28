@@ -94,8 +94,7 @@ conda activate snakevolution
 # 8. How to train the evolutionary algorithm
 Evolutionary algorithms have many hyperparameters that affect the performance and convergence of the
 algorithm. Many of the hyperparameters affect the selection pressure experienced by the population. Read
-[section 8.1](#8.1-understanding-selection-pressure) for an explanation of selection pressure. Below
-are the hyperparameters, their legal values, and their types available for tuning:
+**8.1** for an explanation of selection pressure. Below are the hyperparameters, their legal values, and their types available for tuning:
 
 |hyper parameter   | type  | legal values  | explanation  |  
 |---|---|---|---|
