@@ -20,7 +20,7 @@ with the recombined and mutated solutions.
 
 <figure>
 <img src="docs/evolutionary_algorithm.svg"/>
-<figcaption>Steps in the evolutionary algorithm</figcaption>
+<figcaption class="figure-caption text-center">Steps in the evolutionary algorithm</figcaption>
 </figure>
 
 # 3. Snake
@@ -32,7 +32,7 @@ over if the snake either hits any of the walls or itself.
 
 <figure>
 <img src="docs/snake_gameplay.gif" width="200" height="200"/>
-<figcaption>Example of a Snake that has <br>been evolved for 1000 generations</figcaption>
+<figcaption class="figure-caption text-center">Example of a Snake that has <br>been evolved for 1000 generations</figcaption>
 </figure>
 
 # 4. Snake + Evolution
