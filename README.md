@@ -12,6 +12,8 @@ too large to find an exact solution. An evolutionary algorithm approximates the 
 <figcaption class="figure-caption text-center">Visualisation of a search space.<br>Brighter areas of the search space represent better solutions</figcaption>
 </figure>
 
+
+
 First, a set of so called **candidate solutions** is randomly initialised. 
 Thereafter, these solutions are assigned a fitness score depending on how well
 they solve the problem. Usually, there is a positive correlation between the fitness score and the
