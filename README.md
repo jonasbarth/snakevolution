@@ -9,7 +9,7 @@ too large to find an exact solution. An evolutionary algorithm approximates the 
 
 <figure>
 <img src="docs/search_space.svg"/>
-<figcaption class="figure-caption text-center">Visualisation of a search space.<br>Brighter areas of the search space represent better solutions</figcaption>
+<figcaption class="figure-caption text-center">Visualisation of a search space.<br>Brighter areas of the search space represent better solutions<br></figcaption>
 </figure>
 
 
