@@ -7,12 +7,11 @@ tasks is often difficult due to the large search space, i.e. the set of possible
 too large to find an exact solution. An evolutionary algorithm approximates the solution to an optimisation problem by evolving a set of
 **candidate solutions** until a stop criterion is reached. 
 
+
 <figure>
 <img src="docs/search_space.svg"/>
-<figcaption class="figure-caption text-center">Visualisation of a search space.<br>Brighter areas of the search space represent better solutions</figcaption>
 </figure>
 
-<br>
 First, a set of so called **candidate solutions** is randomly initialised. 
 Thereafter, these solutions are assigned a fitness score depending on how well
 they solve the problem. Usually, there is a positive correlation between the fitness score and the
