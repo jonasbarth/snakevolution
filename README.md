@@ -64,10 +64,11 @@ evaluated against the problem to compute the fitness score.
 
 
 # 5. Project Structure
-* agents
-* evolution
-* util
-* test
+* agents: contains classes that interfaces with the game
+* docs: contains documentation
+* evolution: contains the logic for the evolutionary algorithm
+* test: contains tests
+* util: contains classes for io and analysis operations
 
 # 6. Setting up the Project
 
@@ -116,6 +117,11 @@ python train.py -hp=hyper_params.json -ex=1
 The `-hp` flag takes the path to the parameters file and the `ex` flag is how often the training
 should be executed. If you want to gather some data on how a set of hyper parameters performs you
 can specify to run it as many times as needed.
+
+After each execution of the evolutionary algorithm, the following are saved in `models/evolution/<datetime>`:
+* a csv file `fitness_data.csv` containing fitness data where columns are the generations and rows are individuals
+* a json file `hyperparameters.json` containing the hyper parameters that were used to run the algorithm 
+* the best performing individual of each generation saved as a `.pth` file
 
 # 8. Understanding selection pressure
 In biology, selection pressures are external factors which affect an organism's ability to survive
