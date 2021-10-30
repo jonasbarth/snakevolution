@@ -24,7 +24,7 @@ are mutated, i.e. some genes are randomly changed, and we create a new generatio
 with the recombined and mutated solutions.
 
 <figure>
-<img src="docs/evolutionary_algorithm.svg"/>
+<img src="docs/evolutionary_algorithm_steps.svg"/>
 <figcaption class="figure-caption text-center">Steps in the evolutionary algorithm</figcaption>
 </figure>
 
