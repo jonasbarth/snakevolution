@@ -88,10 +88,10 @@ The conda environment needs to be activated for the program to run.
 conda activate snakevolution
 ```
 
-# 8. How to train the evolutionary algorithm
+# 7. How to train the evolutionary algorithm
 Evolutionary algorithms have many hyperparameters that affect the performance and convergence of the
 algorithm. Many of the hyperparameters affect the selection pressure experienced by the population. Read
-**8.1** for an explanation of selection pressure. Below are the hyperparameters, their legal values, and their types available for tuning:
+**8** for an explanation of selection pressure. Below are the hyperparameters, their legal values, and their types available for tuning:
 
 |hyper parameter   | type  | legal values  | explanation  |  
 |---|---|---|---|
@@ -100,7 +100,7 @@ algorithm. Many of the hyperparameters affect the selection pressure experienced
 | mutation_rate  | int  | [0.0, 1.0]  |  the probability of a random mutation occurring for each gene  | 
 | crossover_rate | float | [0.0, 1.0] | the probability that a crossover between two parents will occur |
 | selection_type| string | {"TOURNAMENT", "RANK", "ROULETTE"} | the name of the selection function to be used |
-| selection_params| {} | additional parameters that will be passed to the selection function | 
+| selection_params| {} | depends on the fitness function | additional parameters that will be passed to the selection function |
 | type| string | {"GENERATIONAL", "STEADY_STATE"} | the type of algorithm to be run |
 | replacement_function| string | {"REPLACEMENT"} | the type of replacement function to be used |
 | elitism| float | [0.0, 1.0] | the percentage of best performing individuals that will be copied to the next generation unchanged |
@@ -117,7 +117,7 @@ The `-hp` flag takes the path to the parameters file and the `ex` flag is how of
 should be executed. If you want to gather some data on how a set of hyper parameters performs you
 can specify to run it as many times as needed.
 
-# 8.1 Understanding selection pressure
+# 8. Understanding selection pressure
 In biology, selection pressures are external factors which affect an organism's ability to survive
 in an environment. If the selection pressures are high, only the individuals with the most desirable
 traits are able to reproduce. Contrary, if the selection pressures are low, weaker individuals are also
