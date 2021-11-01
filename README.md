@@ -40,6 +40,9 @@ over if the snake either hits any of the walls or itself.
 <figcaption class="figure-caption text-center">Example of a Snake that has <br>been evolved for 1000 generations</figcaption>
 </figure>
 
+This project uses my `pysnakegym` package for simulating the game. More details about this package can be found
+on its [github page](https://github.com/jonasbarth/pysnakegym).
+
 # 4. Snake + Evolution
 
 How is the concept of evolution combined with the The **phenotype** of an organism consists out of its properties that are observable to the outside world, e.g.
