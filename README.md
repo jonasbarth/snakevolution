@@ -82,13 +82,13 @@ instructions on the official [conda page](https://conda.io/projects/conda/en/lat
 ## 6.2 Setup the conda environment
 After installing conda, the conda environment needs to be set up. The environment is described with the `environment.yml`
 file. To create a conda environment from the file execute the following in the root directory of the project:
-``` 
+```bash
 conda env create -f environment.yml
 ```
 
 ## 6.3 Activate the conda environment
 The conda environment needs to be activated for the program to run.
-```
+```bash
 conda activate snakevolution
 ```
 
@@ -114,7 +114,7 @@ algorithm. Many of the hyperparameters affect the selection pressure experienced
 These hyperparameters are passed to a program in a `.json` file. The `hyper_params.json` file
 is an example file, though the file can live anywhere on the file system. Once the file is
 created, the training can be started as follows:
-```
+```bash
 python train.py -hp=hyper_params.json -ex=1
 ```
 The `-hp` flag takes the path to the parameters file and the `ex` flag is how often the training
@@ -146,7 +146,7 @@ a more diverse population and can keep exploring a larger search space at the co
 To load a trained model you simply need to provide the path to the directory where the `torch` model 
 lives on the file system. The loader will then look for a `torch_model` file within that directory
 and load it, if it is found.
-```
+```bash
 python play.py -m=path_to_directory
 ```
 
