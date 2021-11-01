@@ -7,6 +7,7 @@ import torch as T
 from pysnakegym.game.core import Direction
 from pysnakegym.mdp import SnakeMDP
 from pysnakegym.model import FFNN
+from tqdm import tqdm, trange
 
 from agents.genetic_agent import GeneticAgent
 from evolution.selection import Selection
@@ -85,9 +86,8 @@ class SnakePopulation(Population):
     def initialise_population(self):
         self.selected_individuals = []
         self.children_genomes = []
-        for n in range(self.pop_size):
-            sys.stdout.write('\r' + f'Initialising population ({n + 1}/{self.pop_size})')
-            sys.stdout.flush()
+
+        for _ in trange(self.pop_size, desc='Initialising population'):
             mdp = SnakeMDP(screen_width=self.screen_width, screen_height=self.screen_height, snake_size=self.snake_size, show_game=self.show_game)
             layers = self.hidden_layers.copy()
             layers.insert(0, mdp.state_dims()[0])
@@ -99,39 +99,30 @@ class SnakePopulation(Population):
         self.best_individual = copy.deepcopy(self.individuals[0])
 
     def simulate(self):
-        for solution in self.individuals:
-
-            sys.stdout.write('\r' + f'Simulating ({self.individuals.index(solution) + 1}/{len(self.individuals)})')
-            sys.stdout.flush()
+        for solution in tqdm(self.individuals, desc='Simulating'):
             solution.simulate()
 
     def calculate_fitness(self):
-        for solution in self.individuals:
-            sys.stdout.write('\r' + f'Calculating fitness ({self.individuals.index(solution) + 1}/{len(self.individuals)})')
-            sys.stdout.flush()
+        for solution in tqdm(self.individuals, desc='Calculating fitness'):
             solution.calculate_fitness(self.fitness_func)
 
             # keeping track of the best performing individual across all generations
             if solution.fitness > self.best_individual.fitness:
                 self.best_individual = copy.deepcopy(solution)
-                print(f'best individual has fitness: {self.best_individual.fitness}')
+
+        print(f'best fitness: {self.best_individual.fitness}')
 
         self.individuals = sorted(self.individuals, key=lambda solution: solution.fitness)
-
         self.population_data.add_generational_fitness(np.array([[solution.fitness for solution in self.individuals]]))
-        print(f'\nTop 5 fitness: {[individual.fitness for individual in self.individuals[-5:]]}')
 
     def candidate_selection(self):
         # self.elitism of len of self.individuals
         index = len(self.individuals) - int(self.elitism * len(self.individuals))
         elites = self.individuals[index:]
-        for elite in elites:
-            sys.stdout.write('\r' + f'Copying over ({elites.index(elite) + 1}/{len(elites)}) elites into the next generation')
-            sys.stdout.flush()
+        for elite in tqdm(elites, desc='Copying elites into the next generation'):
             self.elites.append(elite.get_genome())
 
-        print(f'\nElite fitness:{[individual.fitness for individual in self.individuals[index:]]}')
-
+        print(f'Elite fitness:{[individual.fitness for individual in self.individuals[index:]]}')
         print(f'Selecting {index} individuals from the population')
         selected = self.selection.select(self.individuals[:index], len(self.individuals[:index]))
         self.selected_individuals.extend(selected)
