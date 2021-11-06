@@ -101,6 +101,6 @@ dependencies:
   - zipp=3.6.0=pyhd3eb1b0_0
   - zlib=1.2.11=h62dcd97_4
   - pip:
-    - pygame==1.9.4
-    - pysnakegym==0.0.5
+    - pysnakegym
+    - frametovideo
 prefix: C:\Users\Jonas\Anaconda3\envs\snake

@@ -24,7 +24,7 @@ class GeneticImporter(Importer):
         self.n_actions = n_actions
 
     def import_model(self) -> GeneticAgent:
-        model = torch.load(self.path + "/torch_model")
+        model = torch.load(self.path)
         genetic_agent = GeneticAgent(self.mdp, FFNN(self.__get_layers(model)), 0.0)
         genetic_agent.set_model(model)
         return genetic_agent
