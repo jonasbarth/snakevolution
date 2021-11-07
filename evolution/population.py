@@ -1,6 +1,5 @@
 import copy
 import random
-import sys
 
 import numpy as np
 import torch as T
@@ -9,14 +8,16 @@ from pysnakegym.mdp import SnakeMDP
 from pysnakegym.model import FFNN
 from tqdm import tqdm, trange
 
-from agents.genetic_agent import GeneticAgent
+from agents import GeneticAgent
 from evolution.selection import Selection
-from util.io.export.genetic_exporter import GeneticPopulationData
+from util.io.export import GeneticPopulationData
 
 
 class Population:
 
-    def __init__(self, pop_size: int, hidden_layers, mutation_rate: float, crossover_rate: float, elitism: float, fitness_func, selection: Selection, show_game: bool, screen_width: int, screen_height: int, snake_size: int):
+    def __init__(self, pop_size: int, hidden_layers, mutation_rate: float, crossover_rate: float, elitism: float,
+                 fitness_func, selection: Selection, show_game: bool, screen_width: int, screen_height: int,
+                 snake_size: int):
         self.pop_size = pop_size
         self.hidden_layers = hidden_layers
         self.mutation_rate = mutation_rate
@@ -68,7 +69,8 @@ class Population:
 
 class SnakePopulation(Population):
 
-    def __init__(self, pop_size, hidden_layers, mutation_rate, crossover_rate, elitism, fitness_func, selection, show_game, screen_width, screen_height, snake_size):
+    def __init__(self, pop_size, hidden_layers, mutation_rate, crossover_rate, elitism, fitness_func, selection,
+                 show_game, screen_width, screen_height, snake_size):
         Population.__init__(self,
                             pop_size=pop_size,
                             hidden_layers=hidden_layers,
@@ -88,7 +90,8 @@ class SnakePopulation(Population):
         self.children_genomes = []
 
         for _ in trange(self.pop_size, desc='Initialising population'):
-            mdp = SnakeMDP(screen_width=self.screen_width, screen_height=self.screen_height, snake_size=self.snake_size, show_game=self.show_game)
+            mdp = SnakeMDP(screen_width=self.screen_width, screen_height=self.screen_height, snake_size=self.snake_size,
+                           show_game=self.show_game)
             layers = self.hidden_layers.copy()
             layers.insert(0, mdp.state_dims()[0])
             layers.append(Direction.n_actions())
@@ -101,6 +104,7 @@ class SnakePopulation(Population):
     def simulate(self):
         for solution in tqdm(self.individuals, desc='Simulating'):
             solution.simulate()
+
 
     def calculate_fitness(self):
         for solution in tqdm(self.individuals, desc='Calculating fitness'):
@@ -117,14 +121,14 @@ class SnakePopulation(Population):
 
     def candidate_selection(self):
         # self.elitism of len of self.individuals
-        index = len(self.individuals) - int(self.elitism * len(self.individuals))
-        elites = self.individuals[index:]
+        elite_index = len(self.individuals) - int(self.elitism * len(self.individuals))
+        elites = self.individuals[elite_index:]
         for elite in tqdm(elites, desc='Copying elites into the next generation'):
             self.elites.append(elite.get_genome())
 
-        print(f'Elite fitness:{[individual.fitness for individual in self.individuals[index:]]}')
-        print(f'Selecting {index} individuals from the population')
-        selected = self.selection.select(self.individuals[:index], len(self.individuals[:index]))
+        print(f'Elite fitness:{[individual.fitness for individual in self.individuals[elite_index:]]}')
+        print(f'Selecting {elite_index} individuals from the population')
+        selected = self.selection.select(self.individuals, len(self.individuals[:elite_index]))
         self.selected_individuals.extend(selected)
 
     def crossover(self, n_crossover_points=1):
@@ -154,7 +158,6 @@ class SnakePopulation(Population):
 
                 self.children_genomes.append(child_1_genomes)
                 self.children_genomes.append(child_2_genomes)
-
 
     def _make_children(self, parent_1_genome, parent_2_genome, n_crossover_points: int):
         crossover_indexes = self._get_crossover_indeces(n_crossover_points, parent_1_genome)
@@ -192,6 +195,7 @@ class SnakePopulation(Population):
 
         :return:
         """
+
         def mutate(value):
             if self.mutation_rate > random.random():
                 return random.random() * 2 - 1
@@ -204,9 +208,9 @@ class SnakePopulation(Population):
 
         for child_genome in self.children_genomes:
             for layer_genome in child_genome:
-                #mean = np.mean(layer_genome.numpy())
-                #sd = np.std(layer_genome.numpy())
-                #layer_genome.apply_(lambda x: mutate_gauss(x, mean, sd))
+                # mean = np.mean(layer_genome.numpy())
+                # sd = np.std(layer_genome.numpy())
+                # layer_genome.apply_(lambda x: mutate_gauss(x, mean, sd))
                 layer_genome.apply_(lambda x: mutate(x))
 
     def replace(self):
@@ -220,7 +224,6 @@ class SnakePopulation(Population):
         self.children_genomes.extend(self.elites)
         for solution, child in zip(self.individuals, self.children_genomes):
             solution.set_genome(child)
-
 
     def reset(self):
         for solution in self.individuals:

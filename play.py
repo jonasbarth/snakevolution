@@ -5,7 +5,7 @@ import pygame
 from frametovideo.writer import Mp4Writer
 from frametovideo.writer import ImageType
 
-from util.io.importing.genetic_importer import GeneticImporter
+from util.io.loader import GeneticLoader
 from pysnakegym.mdp import SnakeMDP
 
 if __name__ == "__main__":
@@ -23,13 +23,13 @@ if __name__ == "__main__":
     screen_height = 800
 
     mdp = SnakeMDP(screen_width=screen_width, screen_height=screen_height, snake_size=80, show_game=True)
-    importer = GeneticImporter(model_path, mdp, [mdp.state_dims()[0]], mdp.n_actions())
+    importer = GeneticLoader(model_path, mdp, [mdp.state_dims()[0]], mdp.n_actions())
     genetic_agent = importer.import_model()
 
     state, reward, done = mdp.reset()
     n = 0
 
-    base_path = f'docs/images/{model_path[:-4]}'
+    base_path = f'docs/{model_path[:-4]}'
     frames_path = f'{base_path}/frames'
     output_path = f'{base_path}/'
 
@@ -46,4 +46,4 @@ if __name__ == "__main__":
     if record:
         writer = Mp4Writer(frames_path=frames_path, output_path=output_path, frame_size=(screen_width, screen_height), fps=60, image_type=ImageType.JPG)
         writer.convert()
-        writer.clean_frames()
+        #writer.clean_frames()

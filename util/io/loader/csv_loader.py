@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 
-from util.analysis.loader import Loader
+from util.io.loader import Loader
 
 class CsvLoader(Loader):
     """
@@ -16,8 +16,8 @@ class CsvLoader(Loader):
         try:
             self.df = pd.read_csv(self.path + "/fitness_data.csv", index_col=0)
             return True
-        except Exception:
-            print("Exception")
+        except Exception as e:
+            print("Exception", e)
             return False
 
     def as_numpy(self) -> np.array:

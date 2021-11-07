@@ -1,12 +1,12 @@
 import torch
 from pysnakegym.model import FFNN
 
-from agents.genetic_agent import GeneticAgent
-from util.io.importing.importer import Importer
+from agents import GeneticAgent
+from util.io.loader import Loader
 from pysnakegym.mdp import MDP
 
 
-class GeneticImporter(Importer):
+class GeneticLoader(Loader):
     """
     Importer that imports a neural network model and makes it available
     """

@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import medfilt
 
-from util.analysis.csv_loader import CsvLoader
+from util.io.loader import CsvLoader
 
 
 def plot_min_mean_max(min_data: np.array, mean_data: np.array, max_data: np.array, smoothed: bool = False):
@@ -37,7 +37,7 @@ def min_mean_max_split(data: np.array) -> (np.array, np.array, np.array):
 
 if __name__ == "__main__":
 
-    loader = CsvLoader("../models/genetic/10_01_2021__15_18_06")
+    loader = CsvLoader("../../models/evolution/10_01_2021__08_07_26")
 
     if loader.load():
         data = loader.as_numpy()

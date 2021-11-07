@@ -1,7 +1,11 @@
-class Loader:
+from abc import ABC
+
+
+class Loader(ABC):
     """
-    Class for loading fitness data
+    Abstract Base Class for generic loader a model
     """
+
     def __init__(self, path: str):
         self.path = path
 

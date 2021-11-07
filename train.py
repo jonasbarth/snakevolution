@@ -1,12 +1,13 @@
 import argparse
 from datetime import datetime
 
-from util.analysis.json_loader import JsonLoader
-from util.argument_validator import GeneticArgumentValidator
-from util.io.export.genetic_exporter import GeneticExporter, GeneticPopulationDataExporter
-from util.io.export.hyper_parameter_exporter import HyperParameterExporter
-from evolution.generational import Generational
-from evolution.population import SnakePopulation
+from util.io.loader.json_loader import JsonLoader
+from util import GeneticArgumentValidator
+from util.io.export import GameSequenceExporter
+from util.io.export import GeneticExporter, GeneticPopulationDataExporter
+from util.io.export import HyperParameterExporter
+from evolution import Generational
+from evolution import SnakePopulation
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -55,13 +56,17 @@ if __name__ == '__main__':
 
             for n in range(n_generations):
                 genetic_exporter = GeneticExporter(path)
-                genetic_exporter.export(algorithm.best_individual(n), f'/torch_model_gen_{n + 1}.pth')
+                genetic_exporter.export(algorithm.best_individual_of(n), f'/torch_model_gen_{n + 1}.pth')
 
             genetic_population_data_exporter = GeneticPopulationDataExporter(path)
             genetic_population_data_exporter.export(algorithm.get_population_data())
 
             hp_exporter = HyperParameterExporter(path)
             hp_exporter.export(params)
+
+            game_sequence_exporter = GameSequenceExporter(path)
+            game_sequence_exporter.export(algorithm.best_individual_of(n_generations - 1).get_replay())
+
 
 
 
