@@ -1,8 +1,8 @@
 import numpy as np
 import torch as T
 import torch.nn as nn
+from pysnakegym.game import SnakeGameSequencePlayer, GameSequence
 from pysnakegym.mdp import MDP
-from pysnakegym.model import FFNN
 
 
 class GeneticAgent(object):
@@ -12,6 +12,7 @@ class GeneticAgent(object):
     food_eaten = 0
     time_alive = 0
     generation_fitness = []
+    game_sequences = []
 
     def __init__(self, mdp: MDP, neural_network: nn.Module, mutation_rate: float):
         self.mdp = mdp
@@ -25,7 +26,7 @@ class GeneticAgent(object):
         :return: a list of flattened tensors where each tensor is a layer of the network, starting with the input layer,
         then hidden layers, and ending with the output layer
         """
-        return [layer.weight.data.flatten() for layer in self.neural_network.layers()]
+        return [layer.weight.data.flatten() for layer in self.neural_network.layers()].copy()
 
     def set_genome(self, genome):
         layer_sizes = self.neural_network.layer_sizes()
@@ -63,15 +64,28 @@ class GeneticAgent(object):
 
     def simulate(self):
         state, reward, done = self.mdp.reset()
+        self.game_sequences = []
+        self.game_sequences.append(self.mdp.environment.get_sequence())
 
         while not done:
             action = self.choose_action(state)
             state_, reward, done = self.mdp.step(action=action)
+            self.game_sequences.append(self.mdp.environment.get_sequence())
             self.time_alive += 1
             state = state_
 
         self.food_eaten = self.mdp.env_score()
         return self
+
+    def replay(self):
+        player = SnakeGameSequencePlayer(20)
+        for sequence in self.game_sequences:
+            player.add(sequence)
+
+        player.play()
+
+    def get_replay(self) -> [GameSequence]:
+        return self.game_sequences
 
     def reset(self):
         self.fitness = 0

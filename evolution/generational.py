@@ -2,7 +2,8 @@ import functools
 
 from torch.utils.tensorboard import SummaryWriter
 
-from evolution.population import Population
+from agents import GeneticAgent
+from evolution import Population
 
 
 class Generational:
@@ -40,7 +41,7 @@ class Generational:
             #
             self.population.reset()
 
-    def best_individual(self, generation: int):
+    def best_individual_of(self, generation: int) -> GeneticAgent:
         """
         Returns the best individual of the specified generation where the first generations is generation 0. The last
         generation is n_generations - 1.
@@ -48,6 +49,9 @@ class Generational:
         :return: the best individual of a generation. If the generation doesn't exist, None is returned
         """
         return self.best_individuals[generation]
+
+    def best_individual(self) -> GeneticAgent:
+        return self.population.best_individual
 
     def get_population_data(self):
         return self.population.population_data
