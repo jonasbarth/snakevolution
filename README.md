@@ -141,13 +141,25 @@ the diversity within the population will decrease, causing the explored search s
 which in turn means that the algorithm to converge faster. A lower selection pressure then means that we keep
 a more diverse population and can keep exploring a larger search space at the cost of slower convergence.
 
+# 9. How to replay a trained model
+After the evolutionary algorithm has finished, the game that was played by the best individual is saved
+in a `sequence.json` file. This file can be used to replay that game again.
 
-# 9. How to play with a trained model
-To load a trained model you simply need to provide the path to the directory where the `torch` model 
-lives on the file system. The loader will then look for a `torch_model` file within that directory
-and load it, if it is found.
+* `-s`: the path to the sequence file.
+
 ```bash
-python play.py -m=path_to_directory
+python replay.py -s=path_to_sequence.json
+```
+
+# 10. How to play with a trained model
+To play with a trained model you need to run `play.py` with a path of the `torch` model.
+
+* `-m`: takes the path to the model file.
+* `-r`: optional flag specifies whether to record the game. If recorded, an `.mp4` file will be saved
+in `/docs/<path of model>`.
+
+```bash
+python play.py -m=path_to_model.pth -r
 ```
 
 
