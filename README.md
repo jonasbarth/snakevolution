@@ -23,9 +23,9 @@ parents to create two offspring that inherit traits from both parents. Finally, 
 are mutated, i.e. some genes are randomly changed, and we create a new generation of solutions
 with the recombined and mutated solutions.
 
-<div>
+<div align="center">
 <figure>
-<img align="center" src="docs/evolutionary_algorithm_steps.svg"/>
+<img src="docs/evolutionary_algorithm_steps.svg"/>
 <br>
 <figcaption align="center"><b>Steps in the evolutionary algorithm</b></figcaption>
 </figure>
