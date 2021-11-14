@@ -26,6 +26,7 @@ with the recombined and mutated solutions.
 <div>
 <figure>
 <img align="center" src="docs/evolutionary_algorithm_steps.svg"/>
+<br>
 <figcaption align="center"><b>Steps in the evolutionary algorithm</b></figcaption>
 </figure>
 </div>
