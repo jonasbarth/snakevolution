@@ -37,6 +37,7 @@ over if the snake either hits any of the walls or itself.
 
 <p align="center">
 <img src="docs/snake_gameplay.gif" width="200" height="200"/>
+<figcaption align="center"><b>Example of a Snake that has <br>been evolved for 1000 generations</b></figcaption>
 </p>
 
 This project uses my `pysnakegym` package for simulating the game. More details about this package can be found
