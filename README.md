@@ -39,6 +39,7 @@ over if the snake either hits any of the walls or itself.
 
 <div align="center">
 <img src="docs/snake_gameplay.gif" width="200" height="200"/>
+<br>
 <figcaption align="center"><b>Example of a Snake that has <br>been evolved for 1000 generations</b></figcaption>
 </div>
 
