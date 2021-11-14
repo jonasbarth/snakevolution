@@ -23,7 +23,7 @@ if __name__ == "__main__":
     importer = GameSequenceLoader(sequence_path)
     sequences = importer.import_sequence()
 
-    player = SnakeGameSequencePlayer(20)
+    player = SnakeGameSequencePlayer(delay=20, record=record, record_path='docs/images')
     for sequence in sequences:
         player.add(sequence)
 

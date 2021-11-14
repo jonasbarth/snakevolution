@@ -150,9 +150,10 @@ After the evolutionary algorithm has finished, the game that was played by the b
 in a `sequence.json` file. This file can be used to replay that game again.
 
 * `-s`: the path to the sequence file.
+* `-r`: will record the sequence
 
 ```bash
-python replay.py -s=path_to_sequence.json
+python replay.py -s=path_to_sequence.json -r
 ```
 
 # 10. How to play with a trained model
