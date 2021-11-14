@@ -24,8 +24,8 @@ are mutated, i.e. some genes are randomly changed, and we create a new generatio
 with the recombined and mutated solutions.
 
 <figure>
-<img src="docs/evolutionary_algorithm_steps.svg"/>
-<figcaption class="figure-caption text-center">Steps in the evolutionary algorithm</figcaption>
+<img align="center" src="docs/evolutionary_algorithm_steps.svg"/>
+<figcaption align="center"><b>Steps in the evolutionary algorithm</b></figcaption>
 </figure>
 
 # 3. Snake
@@ -36,8 +36,8 @@ up every single block in the game, i.e. 100 blocks for a 10x10 grid. The game is
 over if the snake either hits any of the walls or itself. 
 
 <figure>
-<img src="docs/snake_gameplay.gif" width="200" height="200"/>
-<figcaption class="figure-caption text-center">Example of a Snake that has <br>been evolved for 1000 generations</figcaption>
+<img align="center" src="docs/snake_gameplay.gif" width="200" height="200"/>
+<figcaption align="center"><b>Example of a Snake that has <br>been evolved for 1000 generations</b></figcaption>
 </figure>
 
 This project uses my `pysnakegym` package for simulating the game. More details about this package can be found
