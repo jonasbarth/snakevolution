@@ -23,10 +23,12 @@ parents to create two offspring that inherit traits from both parents. Finally, 
 are mutated, i.e. some genes are randomly changed, and we create a new generation of solutions
 with the recombined and mutated solutions.
 
+<div>
 <figure>
 <img align="center" src="docs/evolutionary_algorithm_steps.svg"/>
 <figcaption align="center"><b>Steps in the evolutionary algorithm</b></figcaption>
 </figure>
+</div>
 
 # 3. Snake
 Snake is a video game where the player controls a line representing the snake with the goal to grow the snake
