@@ -2,9 +2,9 @@
 Snakevolution is a project applying the concept of evolutionary computing to the game of Snake.
 
 # 2. Evolutionary Algorithms
-An evolutionary algorithm is a strategy to solve optimisation problems. Finding solutions for such
-tasks is often difficult due to the large search space, i.e. the set of possible solutions is 
-too large to find an exact solution. An evolutionary algorithm approximates the solution to an optimisation problem by evolving a set of
+An evolutionary algorithm is a **strategy** to **solve optimisation problems**. Finding solutions for such
+tasks is often difficult due to the **large search space**, i.e. the set of possible solutions is 
+too large to find an exact solution. An evolutionary algorithm **approximates** the solution to an optimisation problem by evolving a set of
 **candidate solutions** until a stop criterion is reached. 
 
 
@@ -12,16 +12,23 @@ too large to find an exact solution. An evolutionary algorithm approximates the 
 <img src="docs/search_space.svg"/>
 </figure>
 
-First, a set of so called **candidate solutions** is randomly initialised. 
-Thereafter, these solutions are assigned a fitness score depending on how well
+The evolutionary algorithm works as follows:
+
+1. First, a set of so-called **candidate solutions** is randomly initialised. 
+
+1. Thereafter, these solutions are evaluated and assigned a **fitness score** depending on how well
 they solve the problem. Usually, there is a positive correlation between the fitness score and the
 performance of a solution, i.e. the higher the fitness score, the better the individual performed.
-A better performing individual has more desirable traits, so the next step is to select a subset
-of the population with desirable traits that we will recombine to create the next generation.
-To do this step, we make use of crossover operators which will combine the genes of two
-parents to create two offspring that inherit traits from both parents. Finally, the solutions
-are mutated, i.e. some genes are randomly changed, and we create a new generation of solutions
-with the recombined and mutated solutions.
+
+1. A better performing individual has **more desirable** traits, so the next step is to **select** a subset
+of the population with desirable traits that we will **recombine** to create the next generation.
+To create the next generation, we use **crossover operators** which will **combine the genes** of two
+parents to create two offspring that inherit traits from both parents. 
+
+1. Finally, the solutions are **mutated**, i.e. some genes are **randomly changed**, and we create a new generation of solutions
+with the **recombined and mutated** solutions.
+
+1. Now repeat steps **1-3** until solutions have converged or the max number of iterations has been reached.
 
 <div align="center">
 <figure>
@@ -49,16 +56,16 @@ on its [github page](https://github.com/jonasbarth/pysnakegym).
 
 # 4. Snake + Evolution
 
-How is the concept of evolution combined with the The **phenotype** of an organism consists out of its properties that are observable to the outside world, e.g.
-behaviour and appearance. In this case, the phenotype is a Feed Forward Network (FFN) which receives an input representing the current 
+How is the concept of evolution combined with the game of snake? The **phenotype** of an organism consists out of its properties that are observable to the outside world, e.g.
+behaviour and appearance. In this case, the phenotype is a **Feed Forward Network (FFN)** which receives an input representing the current 
 state of the game and then outputs an action for the snake to take. The state of the game can be
-thought of as what the snake sees at a given point in the game. 
+thought of as what the snake **sees** at a given point in the game. 
 
 The **genotype** of an organism are the genes that it carries and which determine the phenotype. In this case, the 
 genotype are the bits and pieces that make up the neural network, i.e. the weights, connections,
 and nodes. 
 
-The individual weights of the network are the genes of the genotype. By evolving these weights,
+The **individual weights** of the network are the **genes** of the genotype. By evolving these weights,
 the algorithm can produce phenotypes which are capable of playing the game of snake.
 
 <figure>
